@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { DoubleSide } from 'three';
-import {GLTFLoader} from './examples/jsm/loaders/GLTFLoader.js';
+import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
+import { Reflector } from './examples/jsm/objects/Reflector.js';
 
 
 //import './resources'; 
@@ -8,6 +9,8 @@ import {GLTFLoader} from './examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
+
+var waterCamera, waterTile;
 
 init();
 //render(); // remove when using next line for animation loop (requestAnimationFrame)
@@ -61,16 +64,21 @@ function init() {
     //world.scale.set(5,5,5);
     scene.add( world );
 
-    const model_loader = new GLTFLoader();
-        model_loader.load('./resources/models/stylizedTree/scene.gltf',function (gltf) {
-            scene.add(gltf.scene);   
-            gltf.scene.scale.set(20,20,20); 
-            gltf.scene.position.set(30,30,30);  
-        },(xhr) => xhr, ( err ) => console.error( e ));
+    let geometry;
 
-    const tree = Tree(40,30,30);
-    
-    scene.add( tree );
+    // geometry = new THREE.PlaneGeometry(10,10);
+    // waterCamera = new Reflector( geometry, {
+    //     clipBias: 0.003,
+    //     textureWidth: window.innerWidth * window.devicePixelRatio,
+    //     textureHeight: window.innerHeight * window.devicePixelRatio,
+    //     color: 0x777777
+    // });
+
+    // waterCamera.position.set(20,3,50);
+    // waterCamera.rotateX( -Math.PI / 2 );
+    // scene.add( waterCamera );
+
+
 
     // lights
 
@@ -112,6 +120,8 @@ function animate() {
 
 function render() {
 
+    //renderer.render( scene, camera, renderTarget, true );
+    
     renderer.render( scene, camera );
 
 }
@@ -132,7 +142,7 @@ function World() {
         new THREE.PlaneBufferGeometry(100,210),
         new THREE.MeshBasicMaterial({color: '#A5682A', side: DoubleSide})
     );
-    floor.position.set(50,1,105);
+    floor.position.set(45,1,100);
     floor.rotation.set(Math.PI/2,0,0);
     world.add(floor);
 
@@ -142,7 +152,7 @@ function World() {
                     [1,1,0,0,0,0,0,1,1,1],
                     [1,1,0,1,1,1,0,1,0,1],
                     [1,0,0,0,1,1,0,0,0,1],
-                    [1,0,0,0,1,1,0,1,0,1],
+                    [1,0,2,0,1,1,0,1,0,1],
                     [1,0,0,0,1,1,0,1,0,1],
                     [1,1,1,1,1,1,0,1,0,1],
                     [1,1,1,1,0,0,0,1,0,1],
@@ -155,40 +165,85 @@ function World() {
                     [1,1,1,1,0,1,1,1,1,1],
                     [1,1,1,1,0,1,1,0,0,1],
                     [1,1,0,0,0,0,0,0,0,1],
-                    [1,1,0,1,1,1,1,1,1,1],
-                    [1,1,0,0,1,1,1,1,1,1],
+                    [1,1,0,1,1,1,1,0,0,1],
+                    [1,1,0,0,1,1,1,2,1,1],
                     [1,1,1,0,1,1,1,1,1,1],];
 
     for(let i=0;i<21;i++){
         for(let j=0;j<21;j++){
             if(filled[j][i] == 1){   
-                const mesh = floorTile(i*10+5,j*10+5)
-                
+                const mesh = floorTile(i*10,j*10)
+                var x = Math.floor((Math.random() * 5) + 1);
+                if (x >= 3){
+                    const tree = Tree(i*10,j*10);   
+                    world.add( tree );
+                }
                 world.add( mesh );
+            }
+            if (filled[j][i] == 2){
+                const water = Water(i*10,j*10);
+                world.add(water);
             }
         }
     }
+
 
     return world;
 }
 
 function floorTile(x,z){
-    const tile = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(10,2.5,10),
-        new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
-    );
+    const geometry = new THREE.BoxGeometry(10, 2.5, 10);
+    const loader = new THREE.TextureLoader();
+    const cubeMaterials = [
+        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
+        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
+        new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
+        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
+        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
+    ];
+    const tile = new THREE.Mesh(geometry, cubeMaterials);
     tile.position.set(x,2.5/2,z);
+
     return tile;
+
+    // const tile = new THREE.Mesh(
+    //     new THREE.BoxBufferGeometry(10,2.5,10),
+    //     new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
+    // );
+    // tile.position.set(x,2.5/2,z);
+    // return tile;
 }
 
-function Tree(x,y,z){
+function Tree(x,z){
     const tree = new THREE.Group;
 
     const model_loader = new GLTFLoader();
         model_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
-            tree.add(gltf.scene);   
-            gltf.scene.scale.set(20,20,20); 
-            gltf.scene.position.set(x,y,z);  
+            gltf.scene.scale.set(5,5,5); 
+            gltf.scene.position.set(x,0,z); 
+            //gltf.scene.rotation.set(-Math.PI/2,0,0);
+            tree.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
     return tree;
+}
+
+function Water(x,z) {
+    let water = new THREE.Group
+
+    let geometry;
+
+    geometry = new THREE.PlaneGeometry(10,10);
+    waterCamera = new Reflector( geometry, {
+        clipBias: 0.003,
+        textureWidth: window.innerWidth * window.devicePixelRatio,
+        textureHeight: window.innerHeight * window.devicePixelRatio,
+        color: 0x777777
+    });
+
+    waterCamera.position.set(x,2,z);
+    waterCamera.rotateX( -Math.PI / 2 );
+    water.add( waterCamera );
+
+    return water;
 }
