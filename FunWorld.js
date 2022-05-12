@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { DoubleSide } from 'three';
+import {GLTFLoader} from './examples/jsm/loaders/GLTFLoader.js';
+
 
 //import './resources'; 
 
@@ -17,16 +19,16 @@ function init() {
 
     const loader = new THREE.CubeTextureLoader();
         const texture = loader.load([
-            './resources/istockphoto-948602070-170667a.jpg',
-            './resources/istockphoto-948602070-170667a.jpg',
-            './resources/istockphoto-948602070-170667a.jpg',
-            './resources/istockphoto-948602070-170667a.jpg',
-            './resources/istockphoto-948602070-170667a.jpg',
-            './resources/istockphoto-948602070-170667a.jpg',
+            './resources/img/istockphoto-948602070-170667a.jpg',
+            './resources/img/istockphoto-948602070-170667a.jpg',
+            './resources/img/istockphoto-948602070-170667a.jpg',
+            './resources/img/istockphoto-948602070-170667a.jpg',
+            './resources/img/istockphoto-948602070-170667a.jpg',
+            './resources/img/istockphoto-948602070-170667a.jpg',
         ]);
         scene.background = texture;
 
-    scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+    //scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -59,6 +61,16 @@ function init() {
     //world.scale.set(5,5,5);
     scene.add( world );
 
+    const model_loader = new GLTFLoader();
+        model_loader.load('./resources/models/stylizedTree/scene.gltf',function (gltf) {
+            scene.add(gltf.scene);   
+            gltf.scene.scale.set(20,20,20); 
+            gltf.scene.position.set(30,30,30);  
+        },(xhr) => xhr, ( err ) => console.error( e ));
+
+    const tree = Tree(40,30,30);
+    
+    scene.add( tree );
 
     // lights
 
@@ -117,10 +129,10 @@ function World() {
     world.add(underFloor);
 
     const floor = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(200,420),
+        new THREE.PlaneBufferGeometry(100,210),
         new THREE.MeshBasicMaterial({color: '#A5682A', side: DoubleSide})
     );
-    floor.position.set(100,1,210);
+    floor.position.set(50,1,105);
     floor.rotation.set(Math.PI/2,0,0);
     world.add(floor);
 
@@ -150,7 +162,8 @@ function World() {
     for(let i=0;i<21;i++){
         for(let j=0;j<21;j++){
             if(filled[j][i] == 1){   
-                const mesh = floorTile(i*20+10,j*20+10)
+                const mesh = floorTile(i*10+5,j*10+5)
+                
                 world.add( mesh );
             }
         }
@@ -159,11 +172,23 @@ function World() {
     return world;
 }
 
-    function floorTile(x,z){
-        const tile = new THREE.Mesh(
-            new THREE.BoxBufferGeometry(20,5,20),
-            new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
-        );
-        tile.position.set(x,2.5,z);
-        return tile;
-    }
+function floorTile(x,z){
+    const tile = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(10,2.5,10),
+        new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
+    );
+    tile.position.set(x,2.5/2,z);
+    return tile;
+}
+
+function Tree(x,y,z){
+    const tree = new THREE.Group;
+
+    const model_loader = new GLTFLoader();
+        model_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
+            tree.add(gltf.scene);   
+            gltf.scene.scale.set(20,20,20); 
+            gltf.scene.position.set(x,y,z);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    return tree;
+}
