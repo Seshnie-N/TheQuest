@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { DoubleSide } from 'three';
 
+//import './resources'; 
+
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
@@ -12,8 +14,19 @@ animate();
 function init() {
 
     scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0xcccccc );
-    //scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+
+    const loader = new THREE.CubeTextureLoader();
+        const texture = loader.load([
+            './resources/istockphoto-948602070-170667a.jpg',
+            './resources/istockphoto-948602070-170667a.jpg',
+            './resources/istockphoto-948602070-170667a.jpg',
+            './resources/istockphoto-948602070-170667a.jpg',
+            './resources/istockphoto-948602070-170667a.jpg',
+            './resources/istockphoto-948602070-170667a.jpg',
+        ]);
+        scene.background = texture;
+
+    scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
@@ -43,6 +56,7 @@ function init() {
     // world
 
     const world = World();
+    //world.scale.set(5,5,5);
     scene.add( world );
 
 
@@ -94,7 +108,7 @@ function World() {
     const world = new THREE.Group();
 
     const underFloor = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(1200,1200),
+        new THREE.PlaneBufferGeometry(2000,2000),
         new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide})
     );
     //underFloor.position.set(100,1,210);
