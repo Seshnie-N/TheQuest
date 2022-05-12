@@ -2,15 +2,64 @@ import * as THREE from 'three';
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from './examples/jsm/loaders/GLTFLoader.js';
 
+const DEFAULT_MASS = 10;
+
+class RigidBody {
+    constructor() {
+    }
+
+    setRestitution(val) {
+        this.body_.setRestitution(val);
+    }
+
+    setFriction(val) {
+        this.body_.setFriction(val);
+    }
+
+    setRollingFriction(val) {
+        this.body_.setRollingFriction(val);
+    }
+
+    createBox(mass, pos, quat, size) {
+        this.transform_ = new Ammo.btTransform();
+        this.transform_.setIdentity();
+        this.transform_.setOrigin(new Ammo.btVector3(pos.x, pos.y, pos.z));
+        this.transform_.setRotation(new Ammo.btQuaternion(quat.x, quat.y, quat.z, quat.w));
+        this.motionState_ = new Ammo.btDefaultMotionState(this.transform_);
+
+        const btSize = new Ammo.btVector3(size.x * 0.5, size.y * 0.5, size.z * 0.5);
+        this.shape_ = new Ammo.btBoxShape(btSize);
+        this.shape_.setMargin(0.05);
+
+        this.inertia_ = new Ammo.btVector3(0, 0, 0);
+        if (mass > 0) {
+            this.shape_.calculateLocalInertia(mass, this.inertia_);
+        }
+
+        this.info_ = new Ammo.btRigidBodyConstructionInfo(
+            mass, this.motionState_, this.shape_, this.inertia_);
+        this.body_ = new Ammo.btRigidBody(this.info_);
+
+        Ammo.destroy(btSize);
+    }
+
+}
+
 class TestWorld{
     constructor(){
-        this.init();
     }
 
     init(){
-        this.canvas = document.querySelector('canvas');
+        //initialise physics
+        this.collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
+        this.dispatcher = new Ammo.btCollisionDispatcher(this.collisionConfiguration);
+        this.broadphase = new Ammo.btDbvtBroadphase();
+        this.solver = new Ammo.btSequentialImpulseConstraintSolver();
+        this.physicsWorld = new Ammo.btDiscreteDynamicsWorld(
+            this.dispatcher, this.broadphase, this.solver, this.collisionConfiguration);
+        this.physicsWorld.setGravity(new Ammo.btVector3(0,-10,0));
+
         this.renderer = new THREE.WebGLRenderer({
-            canvas: this.canvas,
             antialias: true,
         });
         this.renderer.shadowMap.enabled = true;
@@ -62,80 +111,40 @@ class TestWorld{
 
         controls.maxPolarAngle = Math.PI / 2;
 
-        // const loader = new THREE.CubeTextureLoader();
-        // const texture = loader.load([
-        //     '.jpg',
-        //     '.jpg',
-        //     '.jpg',
-        //     '.jpg',
-        //     '.jpg',
-        //     '.jpg',
-        // ]);
-        // this.scene.background = texture;
+        const ground = new THREE.Mesh(
+            new THREE.BoxGeometry(100,1,100),
+            new THREE.MeshStandardMaterial({color: 0x808080}));
+        ground.castShadow = false;
+        ground.receiveShadow = true;
+        this.scene.add(ground);
 
-        const plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(800, 800, 10, 10),
-            new THREE.MeshStandardMaterial({
-                color: 0xFFFFFF,
-            }));
-        plane.position.set(0,-10,0)
-        plane.castShadow = false;
-        plane.receiveShadow = true;
-        plane.rotation.x = -Math.PI / 2;
-        this.scene.add(plane);
+        const rbGround = new RigidBody();
+        rbGround.createBox(0,ground.position, ground.quaternion, new THREE.Vector3(100,1,100));
+        rbGround.setRestitution(0.99);
+        this.physicsWorld.addRigidBody(rbGround.body_);
 
         const box = new THREE.Mesh(
-            new THREE.BoxGeometry(20, 20, 20),
+            new THREE.BoxGeometry(4, 4, 4),
             new THREE.MeshLambertMaterial({
                 color: 0x808080,
             }));
-        box.position.set(-20, 0, 0);
+        box.position.set(0, 40, 0);
         box.castShadow = true;
         box.receiveShadow = true;
         this.scene.add(box);
 
-        const box2 = new THREE.Mesh(
-            new THREE.BoxGeometry(20, 20, 20),
-            new THREE.MeshLambertMaterial({
-                color: 0x95d917,
-            }));
-        box.position.set(20, 0, 0);
-        box.castShadow = true;
-        box.receiveShadow = true;
-        this.scene.add(box2);
+        const rbBox = new RigidBody();
+        rbBox.createBox(1, box.position, box.quaternion, new THREE.Vector3(4,4,4));
+        rbBox.setRestitution(0.25);
+        rbBox.setFriction(1);
+        rbBox.setRollingFriction(5);
+        this.physicsWorld.addRigidBody(rbBox.body_)
 
-        //load stage model
-        // const model_loader = new GLTFLoader();
-        // model_loader.load('./resources/models/museum/scene.gltf',(gltf) => {
-        //     this.scene.add(gltf.scene);
-        // },
-        //     function ( xhr ) {
-        //         console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        //     },
-        //     // called when loading has errors
-        //     function ( error ) {
-        //         console.log( 'An error happened' );
-        //     }
-        // );
+        this.rigidBodies_ = [];
+        this.rigidBodies_.push({mesh: box, rigidBody: rbBox});
 
-        document.onkeydown = function (e) {
-            if (e.code === "KeyW" || e.code === "ArrowUp") {
-                box.position.z -= 20;
-            }
-            if (e.code === "KeyS" || e.code === "ArrowDown") {
-                box.position.z += 20;
-            }
-            if (e.code === "KeyA" || e.code === "ArrowRight") {
-                box.position.x -= 20;
-            }
-            if (e.code === "KeyD" || e.code === "ArrowLeft") {
-                box.position.x += 20;
-            }
-            if (e.code === "Space") {
-                box.position.y += 20;
-            }
-        }
-
+        this.tmpTransform_ = new Ammo.btTransform();
+        this.previousRAF_ = null;
         this.animate();
     }
 
@@ -146,20 +155,42 @@ class TestWorld{
     }
 
     animate() {
-        requestAnimationFrame(() => {
+        requestAnimationFrame((t) => {
+            if (this.previousRAF_ === null){
+                this.previousRAF_ = t;
+            }
+
+            this.step(t - this.previousRAF_);
             this.renderer.render(this.scene, this.camera);
             this.animate();
+            this.previousRAF_ = t;
         });
     }
 
-    initInput(){
+    step(timeElapsed){
+        const timeElapsedS = timeElapsed * 0.01;
+        this.physicsWorld.stepSimulation(timeElapsedS, 10);
 
+        for (let i = 0; i < this.rigidBodies_.length; i++){
+            this.rigidBodies_[i].rigidBody.motionState_.getWorldTransform(this.tmpTransform_);
+            const pos = this.tmpTransform_.getOrigin();
+            const quat = this.tmpTransform_.getRotation();
+            const pos3 = new THREE.Vector3(pos.x(), pos.y(), pos.z());
+            const quat3 = new THREE.Quaternion(quat.x(), quat.y(), quat.z(), quat.w());
+
+            this.rigidBodies_[i].mesh.position.copy(pos3);
+            this.rigidBodies_[i].mesh.quaternion.copy(quat3);
+        }
     }
 
 }
 
-    let _APP = null;
+    let APP_ = null;
 
-    window.addEventListener('DOMContentLoaded', () => {
-        _APP = new TestWorld();
+    window.addEventListener('DOMContentLoaded', async () => {
+        Ammo().then((lib) => {
+            Ammo = lib;
+            APP_ = new TestWorld();
+            APP_.init();
+        });
     });
