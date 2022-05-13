@@ -61,24 +61,7 @@ function init() {
     // world
 
     const world = World();
-    //world.scale.set(5,5,5);
     scene.add( world );
-
-    let geometry;
-
-    // geometry = new THREE.PlaneGeometry(10,10);
-    // waterCamera = new Reflector( geometry, {
-    //     clipBias: 0.003,
-    //     textureWidth: window.innerWidth * window.devicePixelRatio,
-    //     textureHeight: window.innerHeight * window.devicePixelRatio,
-    //     color: 0x777777
-    // });
-
-    // waterCamera.position.set(20,3,50);
-    // waterCamera.rotateX( -Math.PI / 2 );
-    // scene.add( waterCamera );
-
-
 
     // lights
 
@@ -119,8 +102,6 @@ function animate() {
 }
 
 function render() {
-
-    //renderer.render( scene, camera, renderTarget, true );
     
     renderer.render( scene, camera );
 
@@ -147,34 +128,34 @@ function World() {
     world.add(floor);
 
     var filled = [
-                    [1,1,1,1,1,1,0,1,1,1],
-                    [1,1,1,1,1,1,0,1,1,1],
-                    [1,1,0,0,0,0,0,1,1,1],
-                    [1,1,0,1,1,1,0,1,0,1],
-                    [1,0,0,0,1,1,0,0,0,1],
-                    [1,0,2,0,1,1,0,1,0,1],
-                    [1,0,0,0,1,1,0,1,0,1],
-                    [1,1,1,1,1,1,0,1,0,1],
-                    [1,1,1,1,0,0,0,1,0,1],
-                    [1,0,0,1,0,1,1,1,0,1],
-                    [1,0,0,0,0,1,1,1,0,1],
-                    [1,0,0,1,1,1,1,1,0,1],
-                    [1,1,1,1,1,1,1,0,0,1],
-                    [1,1,1,1,0,0,0,0,0,1],
-                    [1,1,1,1,0,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,0,0,1],
-                    [1,1,0,0,0,0,0,0,0,1],
-                    [1,1,0,1,1,1,1,0,0,1],
-                    [1,1,0,0,1,1,1,2,1,1],
-                    [1,1,1,0,1,1,1,1,1,1],];
+                    [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,2,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,0,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
 
     for(let i=0;i<21;i++){
         for(let j=0;j<21;j++){
             if(filled[j][i] == 1){   
                 const mesh = floorTile(i*10,j*10)
                 var x = Math.floor((Math.random() * 5) + 1);
-                if (x >= 3){
+                if (x >= 5){
                     const tree = Tree(i*10,j*10);   
                     world.add( tree );
                 }
@@ -192,27 +173,27 @@ function World() {
 }
 
 function floorTile(x,z){
-    const geometry = new THREE.BoxGeometry(10, 2.5, 10);
-    const loader = new THREE.TextureLoader();
-    const cubeMaterials = [
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
-        new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
-    ];
-    const tile = new THREE.Mesh(geometry, cubeMaterials);
-    tile.position.set(x,2.5/2,z);
-
-    return tile;
-
-    // const tile = new THREE.Mesh(
-    //     new THREE.BoxBufferGeometry(10,2.5,10),
-    //     new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
-    // );
+    // const geometry = new THREE.BoxGeometry(10, 2.5, 10);
+    // const loader = new THREE.TextureLoader();
+    // const cubeMaterials = [
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
+    //     new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
+    // ];
+    // const tile = new THREE.Mesh(geometry, cubeMaterials);
     // tile.position.set(x,2.5/2,z);
+
     // return tile;
+
+    const tile = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(10,2.5,10),
+        new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
+    );
+    tile.position.set(x,2.5/2,z);
+    return tile;
 }
 
 function Tree(x,z){
@@ -225,6 +206,7 @@ function Tree(x,z){
             //gltf.scene.rotation.set(-Math.PI/2,0,0);
             tree.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
+        tree.castShadow =true;
     return tree;
 }
 
