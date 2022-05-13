@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Tree
+* source:	https://sketchfab.com/3d-models/low-poly-tree-4598c065d5534c40b6050c16b69d1b77
+* author:	Šimon Ustal (https://sketchfab.com/simonustal)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Tree" (https://sketchfab.com/3d-models/low-poly-tree-4598c065d5534c40b6050c16b69d1b77) by Šimon Ustal (https://sketchfab.com/simonustal) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
