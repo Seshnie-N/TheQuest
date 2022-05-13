@@ -64,7 +64,7 @@ function init() {
     //world.scale.set(5,5,5);
     scene.add( world );
 
-    let geometry;
+    //let geometry;
 
     // geometry = new THREE.PlaneGeometry(10,10);
     // waterCamera = new Reflector( geometry, {
@@ -147,27 +147,27 @@ function World() {
     world.add(floor);
 
     var filled = [
-                    [1,1,1,1,1,1,0,1,1,1],
-                    [1,1,1,1,1,1,0,1,1,1],
-                    [1,1,0,0,0,0,0,1,1,1],
-                    [1,1,0,1,1,1,0,1,0,1],
-                    [1,0,0,0,1,1,0,0,0,1],
-                    [1,0,2,0,1,1,0,1,0,1],
-                    [1,0,0,0,1,1,0,1,0,1],
-                    [1,1,1,1,1,1,0,1,0,1],
-                    [1,1,1,1,0,0,0,1,0,1],
-                    [1,0,0,1,0,1,1,1,0,1],
-                    [1,0,0,0,0,1,1,1,0,1],
-                    [1,0,0,1,1,1,1,1,0,1],
-                    [1,1,1,1,1,1,1,0,0,1],
-                    [1,1,1,1,0,0,0,0,0,1],
-                    [1,1,1,1,0,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,0,0,1],
-                    [1,1,0,0,0,0,0,0,0,1],
-                    [1,1,0,1,1,1,1,0,0,1],
-                    [1,1,0,0,1,1,1,2,1,1],
-                    [1,1,1,0,1,1,1,1,1,1],];
+                    [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,2,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,0,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
 
     for(let i=0;i<21;i++){
         for(let j=0;j<21;j++){
@@ -192,27 +192,27 @@ function World() {
 }
 
 function floorTile(x,z){
-    const geometry = new THREE.BoxGeometry(10, 2.5, 10);
-    const loader = new THREE.TextureLoader();
-    const cubeMaterials = [
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
-        new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
-    ];
-    const tile = new THREE.Mesh(geometry, cubeMaterials);
-    tile.position.set(x,2.5/2,z);
-
-    return tile;
-
-    // const tile = new THREE.Mesh(
-    //     new THREE.BoxBufferGeometry(10,2.5,10),
-    //     new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
-    // );
+    // const geometry = new THREE.BoxGeometry(10, 2.5, 10);
+    // const loader = new THREE.TextureLoader();
+    // const cubeMaterials = [
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
+    //     new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
+    // ];
+    // const tile = new THREE.Mesh(geometry, cubeMaterials);
     // tile.position.set(x,2.5/2,z);
+
     // return tile;
+
+    const tile = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(10,2.5,10),
+        new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
+    );
+    tile.position.set(x,2.5/2,z);
+    return tile;
 }
 
 function Tree(x,z){
