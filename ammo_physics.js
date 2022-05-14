@@ -99,7 +99,7 @@ class TestWorld{
         light.shadow.camera.right = -100;
         light.shadow.camera.top = 100;
         light.shadow.camera.bottom = -100;
-        this.scene.add(light);
+        this.sun = light;
 
         light = new THREE.AmbientLight(0x101010);
         this.scene.add(light);
