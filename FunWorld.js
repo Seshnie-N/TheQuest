@@ -10,7 +10,7 @@ import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
 
-var waterCamera, waterTile;
+var waterCamera, cubeMaterials;
 
 init();
 //render(); // remove when using next line for animation loop (requestAnimationFrame)
@@ -60,6 +60,7 @@ function init() {
 
     // world
 
+    InitaliseGrass();
     const world = World();
     scene.add( world );
 
@@ -120,34 +121,34 @@ function World() {
     world.add(underFloor);
 
     const floor = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(100,210),
+        new THREE.PlaneBufferGeometry(200,210),
         new THREE.MeshBasicMaterial({color: '#A5682A', side: DoubleSide})
     );
-    floor.position.set(45,1,100);
+    floor.position.set(95,1,100);
     floor.rotation.set(Math.PI/2,0,0);
     world.add(floor);
 
     var filled = [
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,2,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
+                    [1,1,0,1,1,1,0,1,1,1,1,1,1,0,0,0,2,2,0,1],
+                    [1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,2,2,0,1],
+                    [1,0,2,0,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
+                    [1,0,0,0,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,1],
+                    [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+                    [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+                    [1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
+                    [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
+                    [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
+                    [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
+                    [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1],
+                    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1],
+                    [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,2,1,1,1],
+                    [1,1,0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1],
                     [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
 
     for(let i=0;i<21;i++){
@@ -188,9 +189,16 @@ function floorTile(x,z){
 
     // return tile;
 
+    // const tile = new THREE.Mesh(
+    //     new THREE.BoxBufferGeometry(10,2.5,10),
+    //     new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
+    // );
+    // tile.position.set(x,2.5/2,z);
+    // return tile;
+
     const tile = new THREE.Mesh(
         new THREE.BoxBufferGeometry(10,2.5,10),
-        new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
+        cubeMaterials
     );
     tile.position.set(x,2.5/2,z);
     return tile;
@@ -228,4 +236,16 @@ function Water(x,z) {
     water.add( waterCamera );
 
     return water;
+}
+
+function InitaliseGrass() {
+    const loader = new THREE.TextureLoader();
+    cubeMaterials = [
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
+            new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
+        ];
 }
