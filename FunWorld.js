@@ -10,7 +10,7 @@ import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
 
-var waterCamera, cubeMaterials;
+var waterCamera, cubeMaterials, tree_loader;
 
 init();
 //render(); // remove when using next line for animation loop (requestAnimationFrame)
@@ -113,7 +113,7 @@ function World() {
 
     const underFloor = new THREE.Mesh(
         new THREE.PlaneBufferGeometry(2000,2000),
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide})
+        new THREE.MeshBasicMaterial({color: '#42662e', side: DoubleSide})
     );
     //underFloor.position.set(100,1,210);
     underFloor.rotation.set(Math.PI/2,0,0);
@@ -207,14 +207,14 @@ function floorTile(x,z){
 function Tree(x,z){
     const tree = new THREE.Group;
 
-    const model_loader = new GLTFLoader();
-        model_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(5,5,5); 
-            gltf.scene.position.set(x,0,z); 
-            //gltf.scene.rotation.set(-Math.PI/2,0,0);
-            tree.add(gltf.scene);  
-        },(xhr) => xhr, ( err ) => console.error( err ));
-        tree.castShadow =true;
+    tree_loader = new GLTFLoader();
+    tree_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(5,5,5); 
+        gltf.scene.position.set(x,0,z); 
+        //gltf.scene.rotation.set(-Math.PI/2,0,0);
+        tree.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
     return tree;
 }
 
@@ -249,3 +249,13 @@ function InitaliseGrass() {
             new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
         ];
 }
+
+// function InitaliseTree() {
+//     tree_loader = new GLTFLoader();
+//         tree_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
+//             gltf.scene.scale.set(5,5,5); 
+//             gltf.scene.position.set(x,0,z); 
+//             //gltf.scene.rotation.set(-Math.PI/2,0,0);
+//             tree.add(gltf.scene);  
+//         },(xhr) => xhr, ( err ) => console.error( err ));
+// }
