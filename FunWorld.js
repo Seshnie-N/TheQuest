@@ -30,9 +30,23 @@ function init() {
             './resources/img/istockphoto-948602070-170667a.jpg',
         ]);
         scene.background = texture;
-
-    //scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
-
+     /*   dracoloader.setDecoderPath('../examples/jsm/draco/');
+        gltfloader.setDRACOLoader(dracoloader);
+                
+          
+             gltfloader.load('./resources/img/avatar.glb',  function (gltf){
+                gltf.scene.scale.set(10,10,10); 
+                gltf.scene.position.set(59,1,0); 
+                 
+                 world.add(gltf.scene); 
+                 loadingBar.visible = !loadingBar.domElement 
+             }, xhr => {
+                 loadingBar.update('map', xhr.loaded, xhr.total)
+             },
+             err =>{
+                 console.error(err.message)
+             })*/
+           
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
