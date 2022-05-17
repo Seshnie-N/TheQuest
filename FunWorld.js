@@ -3,6 +3,7 @@ import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
 
+import { DRACOLoader} from './examples/jsm/loaders/DRACOLoader.js';
 
 //import './resources'; 
 
@@ -30,23 +31,9 @@ function init() {
             './resources/img/istockphoto-948602070-170667a.jpg',
         ]);
         scene.background = texture;
-     /*   dracoloader.setDecoderPath('../examples/jsm/draco/');
-        gltfloader.setDRACOLoader(dracoloader);
-                
-          
-             gltfloader.load('./resources/img/avatar.glb',  function (gltf){
-                gltf.scene.scale.set(10,10,10); 
-                gltf.scene.position.set(59,1,0); 
-                 
-                 world.add(gltf.scene); 
-                 loadingBar.visible = !loadingBar.domElement 
-             }, xhr => {
-                 loadingBar.update('map', xhr.loaded, xhr.total)
-             },
-             err =>{
-                 console.error(err.message)
-             })*/
-           
+
+    //scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
+
     renderer = new THREE.WebGLRenderer( { antialias: true } );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
@@ -77,6 +64,22 @@ function init() {
     InitaliseGrass();
     const world = World();
     scene.add( world );
+
+    // character
+    
+    const dracoloader = new DRACOLoader();
+    const gltfloader = new GLTFLoader();
+
+    dracoloader.setDecoderPath('./examples/js/libs/draco');
+        gltfloader.setDRACOLoader(dracoloader);
+
+
+            gltfloader.load('./resources/img/avatar.glb',  function (gltf){
+                gltf.scene.scale.set(10,10,10); 
+                gltf.scene.position.set(59,20,0); 
+                console.log('yes');
+                world.add(gltf.scene); 
+            },(xhr) => xhr, ( err ) => console.error( err ));   
 
     // lights
 
