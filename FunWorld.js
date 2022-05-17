@@ -70,13 +70,13 @@ function init() {
     const dracoloader = new DRACOLoader();
     const gltfloader = new GLTFLoader();
 
-    dracoloader.setDecoderPath('./examples/js/libs/draco');
+    dracoloader.setDecoderPath('./examples/js/libs/draco/');
         gltfloader.setDRACOLoader(dracoloader);
 
 
             gltfloader.load('./resources/img/avatar.glb',  function (gltf){
-                gltf.scene.scale.set(10,10,10); 
-                gltf.scene.position.set(59,20,0); 
+                gltf.scene.scale.set(4,4,4); 
+                gltf.scene.position.set(59,1,0); 
                 console.log('yes');
                 world.add(gltf.scene); 
             },(xhr) => xhr, ( err ) => console.error( err ));   
