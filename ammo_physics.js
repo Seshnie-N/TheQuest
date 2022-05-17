@@ -99,7 +99,8 @@ class TestWorld{
         light.shadow.camera.right = -100;
         light.shadow.camera.top = 100;
         light.shadow.camera.bottom = -100;
-        this.sun = light;
+        this.sun = light
+        this.scene.add(this.sun);
 
         light = new THREE.AmbientLight(0x101010);
         this.scene.add(light);
@@ -185,12 +186,12 @@ class TestWorld{
 
 }
 
-    let APP_ = null;
+let APP_ = null;
 
-    window.addEventListener('DOMContentLoaded', async () => {
-        Ammo().then((lib) => {
-            Ammo = lib;
-            APP_ = new TestWorld();
-            APP_.init();
-        });
+window.addEventListener('DOMContentLoaded', async () => {
+    Ammo().then((lib) => {
+        Ammo = lib;
+        APP_ = new TestWorld();
+        APP_.init();
     });
+});

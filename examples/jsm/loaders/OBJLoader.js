@@ -497,7 +497,7 @@ class OBJLoader extends Loader {
 
 		if ( text.indexOf( '\\\n' ) !== - 1 ) {
 
-			// join lines separated by a line continuation character (\)
+			// join lines separated by a line continuation entity (\)
 			text = text.replace( /\\\n/g, '' );
 
 		}

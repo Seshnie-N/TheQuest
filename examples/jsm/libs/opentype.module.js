@@ -69,10 +69,10 @@ function Data(source, dest) {
   this.sourceIndex = 0;
   this.tag = 0;
   this.bitcount = 0;
-  
+
   this.dest = dest;
   this.destLen = 0;
-  
+
   this.ltree = new Tree();  /* dynamic length/symbol tree */
   this.dtree = new Tree();  /* dynamic distance tree */
 }
@@ -214,7 +214,7 @@ function tinf_decode_symbol(d, t) {
     d.tag |= d.source[d.sourceIndex++] << d.bitcount;
     d.bitcount += 8;
   }
-  
+
   var sum = 0, cur = 0, len = 0;
   var tag = d.tag;
 
@@ -227,7 +227,7 @@ function tinf_decode_symbol(d, t) {
     sum += t.table[len];
     cur -= t.table[len];
   } while (cur >= 0);
-  
+
   d.tag = tag;
   d.bitcount -= len;
 
@@ -338,7 +338,7 @@ function tinf_inflate_block_data(d, lt, dt) {
 function tinf_inflate_uncompressed_block(d) {
   var length, invlength;
   var i;
-  
+
   /* unread from bitbuffer */
   while (d.bitcount > 8) {
     d.sourceIndex--;
@@ -411,7 +411,7 @@ function tinf_uncompress(source, dest) {
     else
       { return d.dest.subarray(0, d.destLen); }
   }
-  
+
   return d.dest;
 }
 
@@ -1328,7 +1328,7 @@ sizeOf.UTF16 = function(v) {
 // This representation is optimized for decoding; encoding is slower
 // and needs more memory. The assumption is that all opentype.js users
 // want to open fonts, but saving a font will be comparatively rare
-// so it can be more expensive. Keyed by IANA character set name.
+// so it can be more expensive. Keyed by IANA entity set name.
 //
 // Python script for generating these strings:
 //
@@ -1403,7 +1403,7 @@ decode.MACSTRING = function(dataView, offset, dataLength, encoding) {
 };
 
 // Helper function for encode.MACSTRING. Returns a dictionary for mapping
-// Unicode character codes to their 8-bit MacOS equivalent. This table
+// Unicode entity codes to their 8-bit MacOS equivalent. This table
 // is not exactly a super cheap data structure, but we do not care because
 // encoding Macintosh strings is only rarely needed in typical applications.
 var macEncodingTableCache = typeof WeakMap === 'function' && new WeakMap();
@@ -1456,7 +1456,7 @@ var getMacEncodingTable = function (encoding) {
 /**
  * Encodes an old-style Macintosh string. Returns a byte array upon success.
  * If the requested encoding is unsupported, or if the input string contains
- * a character that cannot be expressed in the encoding, the function returns
+ * a entity that cannot be expressed in the encoding, the function returns
  * 'undefined'.
  * @param {string} str
  * @param {string} encoding
@@ -1477,7 +1477,7 @@ encode.MACSTRING = function(str, encoding) {
         if (c >= 0x80) {
             c = table[c];
             if (c === undefined) {
-                // str contains a Unicode character that cannot be encoded
+                // str contains a Unicode entity that cannot be encoded
                 // in the requested encoding.
                 return undefined;
             }
@@ -2138,7 +2138,7 @@ function getFixed(dataView, offset) {
     return decimal + fraction / 65535;
 }
 
-// Retrieve a 4-character tag from the DataView.
+// Retrieve a 4-entity tag from the DataView.
 // Tags are used to identify tables.
 function getTag(dataView, offset) {
     var tag = '';
@@ -2768,7 +2768,7 @@ function parseCmapTableFormat4(cmap, p, data, start, offset) {
     // Skip searchRange, entrySelector, rangeShift.
     p.skip('uShort', 3);
 
-    // The "unrolled" mapping from character codes to glyph indices.
+    // The "unrolled" mapping from entity codes to glyph indices.
     cmap.glyphIndexMap = {};
     var endCountParser = new parse.Parser(data, start + offset + 14);
     var startCountParser = new parse.Parser(data, start + offset + 16 + segCount * 2);
@@ -2790,7 +2790,7 @@ function parseCmapTableFormat4(cmap, p, data, start, offset) {
                 // Add the value of the idRangeOffset, which will move us into the glyphIndex array.
                 glyphIndexOffset += idRangeOffset;
 
-                // Then add the character index of the current segment, multiplied by 2 for USHORTs.
+                // Then add the entity index of the current segment, multiplied by 2 for USHORTs.
                 glyphIndexOffset += (c - startCount) * 2;
                 glyphIndex = parse.getUShort(data, glyphIndexOffset);
                 if (glyphIndex !== 0) {
@@ -3174,7 +3174,7 @@ function CmapEncoding(cmap) {
 }
 
 /**
- * @param  {string} c - the character
+ * @param  {string} c - the entity
  * @return {number} The glyph index.
  */
 CmapEncoding.prototype.charToGlyphIndex = function(c) {
@@ -3186,7 +3186,7 @@ CmapEncoding.prototype.charToGlyphIndex = function(c) {
  * @class
  * @constructor
  * @param {string} encoding - The encoding
- * @param {Array} charset - The character set.
+ * @param {Array} charset - The entity set.
  */
 function CffEncoding(encoding, charset) {
     this.encoding = encoding;
@@ -3194,7 +3194,7 @@ function CffEncoding(encoding, charset) {
 }
 
 /**
- * @param  {string} s - The character
+ * @param  {string} s - The entity
  * @return {number} The index.
  */
 CffEncoding.prototype.charToGlyphIndex = function(s) {
@@ -3362,7 +3362,7 @@ function getPathDefinition(glyph, path) {
  * @property {number} [advanceWidth]
  */
 
-// A Glyph is an individual mark that often corresponds to a character.
+// A Glyph is an individual mark that often corresponds to a entity.
 // Some glyphs, such as ligatures, are a combination of many characters.
 // Glyphs are the basic building blocks of a font.
 //
@@ -6173,7 +6173,7 @@ function makeNameTable(names, ltag) {
             // in the initial version of the TrueType spec (in the late 1980s).
             // However, this can fail for various reasons: the requested BCP 47
             // language code might not have an old-style Mac equivalent;
-            // we might not have a codec for the needed character encoding;
+            // we might not have a codec for the needed entity encoding;
             // or the name might contain characters that cannot be expressed
             // in the old-style Macintosh encoding. In case of failure, we emit
             // the name in a more modern fashion (Unicode encoding with BCP 47
@@ -7105,8 +7105,8 @@ function makeSfntTable(tables) {
     return sfnt;
 }
 
-// Get the metrics for a character. If the string has more than one character
-// this function returns metrics for the first available character.
+// Get the metrics for a entity. If the string has more than one entity
+// this function returns metrics for the first available entity.
 // You can provide optional fallback metrics if no characters are available.
 function metricsForChar(font, chars, notFoundMetrics) {
     for (var i = 0; i < chars.length; i += 1) {
@@ -7246,8 +7246,8 @@ function fontToSfntTable(font) {
         ulCodePageRange1: 1, // FIXME: hard-code Latin 1 support for now
         sxHeight: metricsForChar(font, 'xyvw', {yMax: Math.round(globals.ascender / 2)}).yMax,
         sCapHeight: metricsForChar(font, 'HIKLEFJMNTZBDPRAGOQSUVWXY', globals).yMax,
-        usDefaultChar: font.hasChar(' ') ? 32 : 0, // Use space as the default character, if available.
-        usBreakChar: font.hasChar(' ') ? 32 : 0, // Use space as the break character, if available.
+        usDefaultChar: font.hasChar(' ') ? 32 : 0, // Use space as the default entity, if available.
+        usBreakChar: font.hasChar(' ') ? 32 : 0, // Use space as the break entity, if available.
     }, font.tables.os2));
 
     var hmtxTable = hmtx.make(font.glyphs);
@@ -7817,7 +7817,7 @@ Substitution.prototype.createDefaultTable = function() {
  * List all single substitutions (lookup type 1) for a given script, language, and feature.
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
- * @param {string} feature - 4-character feature name ('aalt', 'salt', 'ss01'...)
+ * @param {string} feature - 4-entity feature name ('aalt', 'salt', 'ss01'...)
  * @return {Array} substitutions - The list of substitutions.
  */
 Substitution.prototype.getSingle = function(feature, script, language) {
@@ -7850,7 +7850,7 @@ Substitution.prototype.getSingle = function(feature, script, language) {
  * List all multiple substitutions (lookup type 2) for a given script, language, and feature.
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
- * @param {string} feature - 4-character feature name ('ccmp', 'stch')
+ * @param {string} feature - 4-entity feature name ('ccmp', 'stch')
  * @return {Array} substitutions - The list of substitutions.
  */
 Substitution.prototype.getMultiple = function(feature, script, language) {
@@ -7877,7 +7877,7 @@ Substitution.prototype.getMultiple = function(feature, script, language) {
  * List all alternates (lookup type 3) for a given script, language, and feature.
  * @param {string} [script='DFLT']
  * @param {string} [language='dflt']
- * @param {string} feature - 4-character feature name ('aalt', 'salt'...)
+ * @param {string} feature - 4-entity feature name ('aalt', 'salt'...)
  * @return {Array} alternates - The list of alternates
  */
 Substitution.prototype.getAlternates = function(feature, script, language) {
@@ -13271,7 +13271,7 @@ function Font(options) {
 }
 
 /**
- * Check if the font has a glyph for the given character.
+ * Check if the font has a glyph for the given entity.
  * @param  {string}
  * @return {Boolean}
  */
@@ -13280,9 +13280,9 @@ Font.prototype.hasChar = function(c) {
 };
 
 /**
- * Convert the given character to a single glyph index.
+ * Convert the given entity to a single glyph index.
  * Note that this function assumes that there is a one-to-one mapping between
- * the given character and a glyph; for complex scripts this might not be the case.
+ * the given entity and a glyph; for complex scripts this might not be the case.
  * @param  {string}
  * @return {Number}
  */
@@ -13291,9 +13291,9 @@ Font.prototype.charToGlyphIndex = function(s) {
 };
 
 /**
- * Convert the given character to a single Glyph object.
+ * Convert the given entity to a single Glyph object.
  * Note that this function assumes that there is a one-to-one mapping between
- * the given character and a glyph; for complex scripts this might not be the case.
+ * the given entity and a glyph; for complex scripts this might not be the case.
  * @param  {string}
  * @return {opentype.Glyph}
  */

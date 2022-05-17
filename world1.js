@@ -1,37 +1,31 @@
 import * as THREE from 'three';
-import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
-import * as Avatar from './Avatar.js';
+import {OrbitControls} from "./examples/jsm/controls/OrbitControls.js";
+import {player_entity} from "./player.js";
+import {player_input} from "./player_input.js";
+import {entity} from "./entity.js";
+import {entity_manager} from "./entity_manager.js";
+import {ThirdPersonCamera} from "./third_person_camera.js";
 
-class TestWorld{
-    constructor(){
-
+class World1 {
+    constructor() {
     }
 
-    init(){
-        //initialise physics
-        this.collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
-        this.dispatcher = new Ammo.btCollisionDispatcher(this.collisionConfiguration);
-        this.broadphase = new Ammo.btDbvtBroadphase();
-        this.solver = new Ammo.btSequentialImpulseConstraintSolver();
-        this.physicsWorld = new Ammo.btDiscreteDynamicsWorld(
-            this.dispatcher, this.broadphase, this.solver, this.collisionConfiguration);
-        this.physicsWorld.setGravity(new Ammo.btVector3(0,-10,0));
+    init() {
+        this.ConfigWorld();
+        this.ConfigPhysics();
+        this.AddGround();
 
-        //init renderer
-        this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
-        });
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.BasicShadowMap;
-        this.renderer.setPixelRatio(window.devicePixelRatio);
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.entity_man = new entity_manager.EntityManager();
 
-        document.body.appendChild(this.renderer.domElement);
+        this.LoadPlayer();
 
-        window.addEventListener('resize', () => {
-            this.OnWindowResize();
-        }, false);
+        this.tmpTransform_ = new Ammo.btTransform();
+        this.previousRAF_ = null;
+        this.animate();
+    }
 
+    ConfigWorld() {
+        //camera
         const fov = 60;
         const aspect = 1920 / 1080;
         const near = 1.0;
@@ -58,10 +52,25 @@ class TestWorld{
         light.shadow.camera.right = -100;
         light.shadow.camera.top = 100;
         light.shadow.camera.bottom = -100;
-        this.scene.add(light);
+        this.sun = light;
+        this.scene.add(this.sun);
 
         light = new THREE.AmbientLight(0x101010);
         this.scene.add(light);
+
+        //set up renderer
+        this.renderer = new THREE.WebGLRenderer({
+            antialias: true,
+        });
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.BasicShadowMap;
+        this.renderer.setPixelRatio(window.devicePixelRatio);
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(this.renderer.domElement);
+
+        window.addEventListener('resize', () => {
+            this.OnWindowResize();
+        }, false);
 
         //initialise and config orbit controls
         const controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -69,56 +78,49 @@ class TestWorld{
         controls.update();
 
         controls.maxPolarAngle = Math.PI / 2;
+    }
 
-        //create plane object
+    ConfigPhysics() {
+        this.collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
+        this.dispatcher = new Ammo.btCollisionDispatcher(this.collisionConfiguration);
+        this.broadphase = new Ammo.btDbvtBroadphase();
+        this.solver = new Ammo.btSequentialImpulseConstraintSolver();
+        this.physicsWorld = new Ammo.btDiscreteDynamicsWorld(
+            this.dispatcher, this.broadphase, this.solver, this.collisionConfiguration);
+        this.physicsWorld.setGravity(new Ammo.btVector3(0,-10,0));
+    }
+
+    AddGround() {
+        //add ground to scene
         const ground = new THREE.Mesh(
             new THREE.BoxGeometry(100,1,100),
             new THREE.MeshStandardMaterial({color: 0x808080}));
+        ground.position.set(-25,0,0)
         ground.castShadow = false;
         ground.receiveShadow = true;
         this.scene.add(ground);
 
-        //add plane object to physics world
+        //add ground to physics world
         const rbGround = new RigidBody();
         rbGround.createBox(0,ground.position, ground.quaternion, new THREE.Vector3(100,1,100));
         rbGround.setRestitution(0.99);
         this.physicsWorld.addRigidBody(rbGround.body_);
 
-        const box = new THREE.Mesh(
-            new THREE.BoxGeometry(4, 4, 4),
-            new THREE.MeshLambertMaterial({
-                color: 0x808080,
-            }));
-        box.position.set(0, 40, 0);
-        box.castShadow = true;
-        box.receiveShadow = true;
-        this.scene.add(box);
-
-        //initialise inputs
-
-
-
-
-        const rbBox = new RigidBody();
-        rbBox.createBox(1, box.position, box.quaternion, new THREE.Vector3(4,4,4));
-        rbBox.setRestitution(0.25);
-        rbBox.setFriction(1);
-        rbBox.setRollingFriction(5);
-        this.physicsWorld.addRigidBody(rbBox.body_);
-
-        //add objects that gravity must be applied on
         this.rigidBodies_ = [];
-        this.rigidBodies_.push({mesh: box, rigidBody: rbBox});
-
-        this.tmpTransform_ = new Ammo.btTransform();
-        this.previousRAF_ = null;
-        this.animate();
+        //this.rigidBodies_.push();
     }
 
-    OnWindowResize() {
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
+    LoadPlayer() {
+        const params = {
+            camera: this.camera,
+            scene: this.scene,
+        };
+
+        const player = new entity.Entity();
+        player.addComponent(new player_input.ControllerInput(params));
+        player.addComponent(new player_entity.PlayerController(params));
+        this.entity_man.add(player, 'player');
+
     }
 
     animate() {
@@ -135,8 +137,9 @@ class TestWorld{
     }
 
     step(timeElapsed){
-        const timeElapsedS = timeElapsed * 0.005;
+        const timeElapsedS = timeElapsed * 0.01;
         this.physicsWorld.stepSimulation(timeElapsedS, 10);
+        this.entity_man.update(timeElapsedS);
 
         for (let i = 0; i < this.rigidBodies_.length; i++){
             this.rigidBodies_[i].rigidBody.motionState_.getWorldTransform(this.tmpTransform_);
@@ -150,8 +153,15 @@ class TestWorld{
         }
     }
 
+    OnWindowResize() {
+        this.camera.aspect = window.innerWidth / window.innerHeight;
+        this.camera.updateProjectionMatrix();
+        this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
 }
 
+//allows creation of rigid bodies to add to physics world
 class RigidBody {
     constructor() {
     }
@@ -198,7 +208,7 @@ let APP_ = null;
 window.addEventListener('DOMContentLoaded', async () => {
     Ammo().then((lib) => {
         Ammo = lib;
-        APP_ = new TestWorld();
+        APP_ = new World1();
         APP_.init();
     });
 });

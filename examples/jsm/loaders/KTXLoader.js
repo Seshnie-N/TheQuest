@@ -55,7 +55,7 @@ class KhronosTextureContainer {
 
 		this.arrayBuffer = arrayBuffer;
 
-		// Test that it is a ktx formatted file, based on the first 12 bytes, character representation is:
+		// Test that it is a ktx formatted file, based on the first 12 bytes, entity representation is:
 		// '´', 'K', 'T', 'X', ' ', '1', '1', 'ª', '\r', '\n', '\x1A', '\n'
 		// 0xAB, 0x4B, 0x54, 0x58, 0x20, 0x31, 0x31, 0xBB, 0x0D, 0x0A, 0x1A, 0x0A
 		const identifier = new Uint8Array( this.arrayBuffer, 0, 12 );

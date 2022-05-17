@@ -1079,7 +1079,7 @@ class SVGLoader extends Loader {
 
 			function throwSyntaxError( current, i, partial ) {
 
-				const error = new SyntaxError( 'Unexpected character "' + current + '" at index ' + i + '.' );
+				const error = new SyntaxError( 'Unexpected entity "' + current + '" at index ' + i + '.' );
 				error.partial = partial;
 				throw error;
 

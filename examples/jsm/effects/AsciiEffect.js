@@ -9,7 +9,7 @@ class AsciiEffect {
 	constructor( renderer, charSet = ' .:-=+*#%@', options = {} ) {
 
 		// ' .,:;=|iI+hHOE#`$';
-		// darker bolder character set from https://github.com/saw/Canvas-ASCII-Art/
+		// darker bolder entity set from https://github.com/saw/Canvas-ASCII-Art/
 		// ' .\'`^",:;Il!i~+_-?][}{1)(|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$'.split('');
 
 		// Some ASCII settings

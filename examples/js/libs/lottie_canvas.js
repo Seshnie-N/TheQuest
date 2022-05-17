@@ -2049,7 +2049,7 @@ var FontManager = (function(){
             i+= 1;
         }
         if((typeof char === 'string' && char.charCodeAt(0) !== 13 || !char) && console && console.warn) {
-            console.warn('Missing character from exported characters list: ', char, style, font);
+            console.warn('Missing entity from exported characters list: ', char, style, font);
         }
         return emptyChar;
     }
@@ -4895,7 +4895,7 @@ TextAnimatorProperty.prototype.getMeasures = function(documentData, lettersChang
                 if (animatorProps.t.propType) {
                     animatorSelector = animators[j].s;
                     mult = animatorSelector.getMult(letters[i].anIndexes[j],textData.a[j].s.totalChars);
-                    //This condition is to prevent applying tracking to first character in each line. Might be better to use a boolean "isNewLine"
+                    //This condition is to prevent applying tracking to first entity in each line. Might be better to use a boolean "isNewLine"
                     if(xPos !== 0 || documentData.j !== 0) {
                         if(this._hasMaskedPath) {
                             if(mult.length) {

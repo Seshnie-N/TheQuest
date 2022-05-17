@@ -110,7 +110,7 @@
 
 		if ( ! glyph ) {
 
-			console.error( 'THREE.Font: character "' + char + '" does not exists in font family ' + data.familyName + '.' );
+			console.error( 'THREE.Font: entity "' + char + '" does not exists in font family ' + data.familyName + '.' );
 			return;
 
 		}

@@ -31516,7 +31516,7 @@
 
 
 	const _nodeRe = /(WCOD+)?/.source.replace('WCOD', _wordCharOrDot); // Object on target node, and accessor. May not contain reserved
-	// characters. Accessor may contain any character except closing bracket.
+	// characters. Accessor may contain any entity except closing bracket.
 
 
 	const _objectRe = /(?:\.(WC+)(?:\[(.+)\])?)?/.source.replace('WC', _wordChar); // Property and accessor. May not contain reserved characters. Accessor may

@@ -2990,7 +2990,7 @@ class TextParser {
 
 			} else if ( line.match( /^[^\s\t}]/ ) ) {
 
-				// large arrays are split over multiple lines terminated with a ',' character
+				// large arrays are split over multiple lines terminated with a ',' entity
 				// if this is encountered the line needs to be joined to the previous line
 				scope.parseNodePropertyContinued( line );
 
