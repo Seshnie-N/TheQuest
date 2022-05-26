@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 import {skybox} from "./skybox.js";
-import {Avatar} from "./Avatar.js";
-import {FBXLoader} from "./examples/jsm/loaders/FBXLoader.js";
+import * as CANNON from './resources/cannon-es/dist/cannon-es.js';
+import * as CHARACTER from "./Character.js";
 
 class stage1{
     constructor(){
@@ -10,8 +10,11 @@ class stage1{
     }
 
     init(){
+        this._mixers = [];
+
         //adding models to scene
-        this._ConfigWorld();
+        this._ConfigWorld()
+        this._ConfigPhysics();
 
         //add skybox
         const params = {
@@ -21,8 +24,6 @@ class stage1{
         this.sb = this.Skybox.makeSkybox();
 
         this.addGround();
-
-        this._mixers = [];
 
         //load in character here
         this._LoadAnimatedModel();
@@ -85,15 +86,15 @@ class stage1{
         controls.maxPolarAngle = Math.PI / 2;
     }
 
-    // _ConfigPhysics() {
-    //     this.collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
-    //     this.dispatcher = new Ammo.btCollisionDispatcher(this.collisionConfiguration);
-    //     this.broadphase = new Ammo.btDbvtBroadphase();
-    //     this.solver = new Ammo.btSequentialImpulseConstraintSolver();
-    //     this.physicsWorld = new Ammo.btDiscreteDynamicsWorld(
-    //         this.dispatcher, this.broadphase, this.solver, this.collisionConfiguration);
-    //     this.physicsWorld.setGravity(new Ammo.btVector3(0,-10,0));
-    // }
+    _ConfigPhysics() {
+        this.world = new CANNON.World();
+        this.world.gravity.set(0, -200, 0);
+        this.world.broadphase = new CANNON.NaiveBroadphase();
+        this.world.broadphase.useBoundingBoxes = true;
+        this.world.solver.iterations = 10;
+        this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
+        this.world.defaultContactMaterial.contactEquationRegularizationTime = 4;
+    }
 
     addGround() {
         const plane = new THREE.Mesh(
@@ -144,6 +145,24 @@ class stage1{
         }
     }
 
+    _LoadAnimatedModel() {
+        //Params to be passed to the character class.
+        const CharParams = {
+            renderer: this.renderer,
+            camera: this.camera,
+            scene: this.scene,
+            world: this.world,
+            meshes: this.meshes,
+            bodies: this.bodies,
+            pokemon: pokemonList,
+            startPos: this.StartPos,
+            rBodies: this.removeBodies,
+            rMeshes: this.removeMeshes,
+            canvas: this.canvas,
+            mapCamera: this.mapCamera,
+        }
+        this.Character = new CHARACTER.Character(CharParams);
+    }
 }
 
 let APP_ = null;
