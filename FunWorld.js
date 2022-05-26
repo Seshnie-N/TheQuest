@@ -2,10 +2,7 @@ import * as THREE from 'three';
 import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
-
 import { DRACOLoader} from './examples/jsm/loaders/DRACOLoader.js';
-
-//import './resources'; 
 
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
@@ -14,7 +11,7 @@ let camera, controls, scene, renderer;
 var waterCamera, cubeMaterials, tree_loader;
 
 init();
-//render(); // remove when using next line for animation loop (requestAnimationFrame)
+
 animate();
 
 function init() {
@@ -73,11 +70,10 @@ function init() {
     dracoloader.setDecoderPath('./examples/js/libs/draco/');
         gltfloader.setDRACOLoader(dracoloader);
 
-
             gltfloader.load('./resources/img/avatar.glb',  function (gltf){
                 gltf.scene.scale.set(4,4,4); 
                 gltf.scene.position.set(59,1,0); 
-                console.log('yes');
+               // console.log('yes');
                 world.add(gltf.scene); 
             },(xhr) => xhr, ( err ) => console.error( err ));   
 
@@ -148,14 +144,14 @@ function World() {
     var filled = [
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
+                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
                     [1,1,0,1,1,1,0,1,1,1,1,1,1,0,0,0,2,2,0,1],
                     [1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,2,2,0,1],
                     [1,0,2,0,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
                     [1,0,0,0,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,1],
                     [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
                     [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
-                    [1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
+                    [1,3,0,1,0,1,1,1,0,1,1,0,3,0,1,1,0,1,1,1],
                     [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
                     [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
                     [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
@@ -179,9 +175,13 @@ function World() {
                 }
                 world.add( mesh );
             }
-            if (filled[j][i] == 2){
+            if (filled[j][i] == 2 ){
                 const water = Water(i*10,j*10);
                 world.add(water);
+            }
+            if (filled[j][i] == 3 ){
+                const key = Key(i*10,j*10);
+                world.add(key);
             }
         }
     }
@@ -191,28 +191,6 @@ function World() {
 }
 
 function floorTile(x,z){
-    // const geometry = new THREE.BoxGeometry(10, 2.5, 10);
-    // const loader = new THREE.TextureLoader();
-    // const cubeMaterials = [
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
-    //     new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
-    // ];
-    // const tile = new THREE.Mesh(geometry, cubeMaterials);
-    // tile.position.set(x,2.5/2,z);
-
-    // return tile;
-
-    // const tile = new THREE.Mesh(
-    //     new THREE.BoxBufferGeometry(10,2.5,10),
-    //     new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
-    // );
-    // tile.position.set(x,2.5/2,z);
-    // return tile;
-
     const tile = new THREE.Mesh(
         new THREE.BoxBufferGeometry(10,2.5,10),
         cubeMaterials
@@ -233,6 +211,21 @@ function Tree(x,z){
     },(xhr) => xhr, ( err ) => console.error( err ));
 
     return tree;
+}
+
+function Key(x,z){
+    const key = new THREE.Group;
+
+    tree_loader = new GLTFLoader();
+    tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(0.01,0.01,0.01); 
+        gltf.scene.position.set(x,5,z); 
+        gltf.scene.rotation.set(-Math.PI/2,0,0);
+        key.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    return key;
+
 }
 
 function Water(x,z) {
@@ -267,12 +260,3 @@ function InitaliseGrass() {
         ];
 }
 
-// function InitaliseTree() {
-//     tree_loader = new GLTFLoader();
-//         tree_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
-//             gltf.scene.scale.set(5,5,5); 
-//             gltf.scene.position.set(x,0,z); 
-//             //gltf.scene.rotation.set(-Math.PI/2,0,0);
-//             tree.add(gltf.scene);  
-//         },(xhr) => xhr, ( err ) => console.error( err ));
-// }
