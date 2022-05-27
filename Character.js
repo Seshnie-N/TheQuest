@@ -9,7 +9,7 @@ import * as CANNON from './resources/cannon-es/dist/cannon-es.js';
 
 export class Character {
     constructor(params) {
-        init(params);
+        this.init(params);
     }
 
     init(params){
@@ -55,7 +55,7 @@ export class Character {
 
         //Mouse event listeners.
         document.addEventListener("dblclick", (e)=> this._onDoubleClick(e), false)
-        document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false)
+       //document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false)
 
         //Load Model.
         this._LoadModel();
@@ -113,7 +113,7 @@ export class Character {
                 c.castShadow = true;
             });
             this.Character = fbx;
-            this.Character.add(this.mapCamera);
+            //this.Character.add(this.mapCamera);
 
             //Add Physics
             let box = new THREE.Box3().setFromObject(fbx);
@@ -395,11 +395,11 @@ class CharacterFSM extends FiniteStateMachine {
     _Init() {
         this.AddState('idle', IdleState);
         this.AddState('walk', WalkState);
-        this.AddState('run', RunState);
-        this.AddState('jump', JumpState);
-        this.AddState('run_jump', RunningJumpState);
-        this.AddState('walk_jump', WalkingJumpState);
-        this.AddState('throw', ThrowState);
+        // this.AddState('run', RunState);
+        // this.AddState('jump', JumpState);
+        // this.AddState('run_jump', RunningJumpState);
+        // this.AddState('walk_jump', WalkingJumpState);
+        // this.AddState('throw', ThrowState);
     }
 }
 

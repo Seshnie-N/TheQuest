@@ -154,7 +154,6 @@ class stage1{
             world: this.world,
             meshes: this.meshes,
             bodies: this.bodies,
-            pokemon: pokemonList,
             startPos: this.StartPos,
             rBodies: this.removeBodies,
             rMeshes: this.removeMeshes,
