@@ -220,7 +220,7 @@ function Key(x,z){
     tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
         gltf.scene.scale.set(0.01,0.01,0.01); 
         gltf.scene.position.set(x,5,z); 
-        gltf.scene.rotation.set(-Math.PI/2,0,0);
+        gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
         key.add(gltf.scene);  
     },(xhr) => xhr, ( err ) => console.error( err ));
 
