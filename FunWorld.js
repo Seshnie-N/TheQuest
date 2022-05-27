@@ -11,7 +11,7 @@ import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
 
-var waterCamera, cubeMaterials, tree_loader;
+var waterCamera, cubeMaterials, tree_loader, shrub_loader, grass_loader;
 
 init();
 //render(); // remove when using next line for animation loop (requestAnimationFrame)
@@ -67,19 +67,19 @@ function init() {
 
     // character
     
-    const dracoloader = new DRACOLoader();
-    const gltfloader = new GLTFLoader();
+    // const dracoloader = new DRACOLoader();
+    // const gltfloader = new GLTFLoader();
 
-    dracoloader.setDecoderPath('./examples/js/libs/draco/');
-        gltfloader.setDRACOLoader(dracoloader);
+    // dracoloader.setDecoderPath('./examples/js/libs/draco/');
+    //     gltfloader.setDRACOLoader(dracoloader);
 
 
-            gltfloader.load('./resources/img/avatar.glb',  function (gltf){
-                gltf.scene.scale.set(4,4,4); 
-                gltf.scene.position.set(59,1,0); 
-                console.log('yes');
-                world.add(gltf.scene); 
-            },(xhr) => xhr, ( err ) => console.error( err ));   
+    //         gltfloader.load('./resources/img/avatar.glb',  function (gltf){
+    //             gltf.scene.scale.set(4,4,4); 
+    //             gltf.scene.position.set(59,1,0); 
+    //             console.log('yes');
+    //             world.add(gltf.scene); 
+    //         },(xhr) => xhr, ( err ) => console.error( err ));   
 
     // lights
 
@@ -172,10 +172,16 @@ function World() {
         for(let j=0;j<21;j++){
             if(filled[j][i] == 1){   
                 const mesh = floorTile(i*10,j*10)
-                var x = Math.floor((Math.random() * 5) + 1);
-                if (x >= 5){
+                var x = Math.floor((Math.random() * 50) + 1);
+                if (x >= 40){
                     const tree = Tree(i*10,j*10);   
                     world.add( tree );
+                } else if (x>= 20 && x<=25){
+                    const shrub = Shrub(i*10,j*10);   
+                    world.add( shrub );
+                } else if(x<=5){
+                    const spineGrass = SpineGrass(i*10,j*10);   
+                    world.add( spineGrass );
                 }
                 world.add( mesh );
             }
@@ -212,7 +218,6 @@ function floorTile(x,z){
     // );
     // tile.position.set(x,2.5/2,z);
     // return tile;
-
     const tile = new THREE.Mesh(
         new THREE.BoxBufferGeometry(10,2.5,10),
         cubeMaterials
@@ -265,6 +270,34 @@ function InitaliseGrass() {
             new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
             new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
         ];
+}
+
+function Shrub(x,z){
+    const shrub = new THREE.Group;
+
+    shrub_loader = new GLTFLoader();
+    shrub_loader.load('./resources/models/low_poly_shrub/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(10,10,10); 
+        gltf.scene.position.set(x,2,z); 
+        //gltf.scene.rotation.set(-Math.PI/2,0,0);
+        shrub.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    return shrub;
+}
+
+function SpineGrass(x,z){
+    const grass = new THREE.Group;
+
+    grass_loader = new GLTFLoader();
+    grass_loader.load('./resources/models/spine_grass/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(2,2,2); 
+        gltf.scene.position.set(x,2,z); 
+        //gltf.scene.rotation.set(-Math.PI/2,0,0);
+        grass.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    return grass;
 }
 
 // function InitaliseTree() {
