@@ -1,4 +1,4 @@
-import { Vec3, Quaternion, Shape } from '../../../resources/cannon-es/dist/cannon-es.js' ;
+import { Vec3, Quaternion, Shape } from '../../cannon-es/dist/cannon-es.js' ;
 import { MeshBasicMaterial, SphereGeometry, BoxGeometry, PlaneGeometry, Mesh, CylinderGeometry, BufferGeometry, Float32BufferAttribute } from '../../../resources/threejs/r128/build/three.module.js';
 
 function cannonDebugger(scene, bodies, options = {}) {
