@@ -3,8 +3,7 @@ import {FBXLoader} from "./examples/jsm/loaders/FBXLoader.js";
 import * as CANNON from './resources/cannon-es/dist/cannon-es.js';
 
 /*
-* The Character uses a FBX model with animations.
-* Model downloaded from: Mixamo.com
+* FBX Model and animations downloaded from: Mixamo.com
 * Based on a tutorial by SimonDev found on Youtube.*/
 
 export class Character {
@@ -36,11 +35,6 @@ export class Character {
         // this.pokeballs = params.pokeballs;
 
         this.Stop=false;
-        //Array of names of the caught pokemon.
-        this.caught = []
-        this.seen = []
-
-        this.WorkStation = params.WorkStation
 
         //used to store animations that are loaded.
         this.allAnimations = {};
@@ -48,8 +42,8 @@ export class Character {
         // this.pokedex = new Pokedex()
 
         //Initialise
-        let proxy = new ControllerProxy(this.allAnimations)
-        this.stateMachine = new CharacterFSM(proxy)
+        let proxy = new ControllerProxy(this.allAnimations);
+        this.stateMachine = new CharacterFSM(proxy);
         this.position = new THREE.Vector3();
         this.raycaster = new THREE.Raycaster();
 
@@ -59,7 +53,7 @@ export class Character {
 
         //Load Model.
         this._LoadModel();
-        this.input = new CharacterController(params, this.CharacterBody);
+        this.input = new CharacterController();
     }
 
     //getter functions
@@ -206,7 +200,7 @@ export class Character {
          const _Q = new THREE.Quaternion();
 
         //Speed of movement.
-        let speed = 2;
+        let speed = 0.8;
         let rSpeed = speed / 3;
 
         //Used to see if the model is standing on another object.
@@ -220,7 +214,7 @@ export class Character {
 
 
         //Increase Speed if the run key is pressed.
-        if (this.input.CharacterMovement.run) {
+        if (this.input.CharacterMotions.run) {
             speed *= 4;
             rSpeed *= 2;
         }
@@ -279,12 +273,11 @@ class ControllerProxy {
 }
 
 class CharacterController {
-    constructor(params) {
-        this.init(params);
+    constructor() {
+        this.init();
     }
 
-    init(params) {
-        this._params = params;
+    init() {
         this.CharacterMotions = {
             forward: false,
             backward: false,
@@ -298,20 +291,20 @@ class CharacterController {
     }
 
     _onKeyDown(event) {
-        switch (event.keyCode) {
-            case 87: // w
+        switch (event.code) {
+            case "KeyW": //
                 this.CharacterMotions.forward = true;
                 break;
-            case 65: // a
+            case "KeyA": // a
                 this.CharacterMotions.left = true;
                 break;
-            case 83: // s
+            case "KeyS": // s
                 this.CharacterMotions.backward = true;
                 break;
-            case 68: // d
+            case "KeyD": // d
                 this.CharacterMotions.right = true;
                 break;
-            case 16: // SHIFT
+            case "ShiftLeft": // SHIFT
                 this.CharacterMotions.run = true;
                 break;
             case 38: // up
@@ -323,21 +316,21 @@ class CharacterController {
     }
 
     _onKeyUp(event) {
-        switch(event.keyCode) {
-            case 87: // w
+        switch(event.code) {
+            case "KeyW": // w
                 this.CharacterMotions.forward = false;
                 break;
-            case 65: // a
+            case "KeyA": // a
                 this.CharacterMotions.left = false;
                 break;
-            case 83: // s
+            case "KeyS": // s
                 this.CharacterMotions.backward = false;
                 break;
-            case 68: // d
+            case "KeyD": // d
                 this.CharacterMotions.right = false;
                 break;
-            case 16: // SHIFT
-                this.CharacterMotions.run = true;
+            case "ShiftLeft": // SHIFT
+                this.CharacterMotions.run = false;
                 break;
             case 38: // up
             case 37: // left
@@ -349,7 +342,7 @@ class CharacterController {
 
 }
 
-//finite state machine. This is the parent class that will be used fot inheritance
+//finite state machine. This is the parent class that will be used for inheritance
 class FiniteStateMachine {
     constructor() {
         this._states = {};
@@ -514,11 +507,11 @@ class IdleState extends State {
     Update(_, input) {
         if (input.CharacterMotions.forward || input.CharacterMotions.backward) {
             this._parent.SetState('walk');
-        } else if (input.CharacterMotions.jump) {
-            this._parent.SetState('jump');
-        } else if(input.CharacterMotions.throw){
-            this._parent.SetState('throw');
-        }
+         } //else if (input.CharacterMotions.jump) {
+        //     this._parent.SetState('jump');
+        // } else if(input.CharacterMotions.throw){
+        //     this._parent.SetState('throw');
+        // }
     }
 }
 

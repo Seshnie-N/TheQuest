@@ -139,9 +139,14 @@ class stage1{
         //update rotation of skybox for dynamic skybox
         this.sb.rotation.y += timeElapsedS*0.1;
 
-        //update character movement
-        if (this._controls) {
-            this._controls.Update(timeElapsedS);
+        //Updates
+        if (this.Character) {
+            this.Character.Update(timeElapsedS);
+
+            //If Game is over
+            if (this.Character.getStop === true) {
+                this.Pause = true;
+            }
         }
     }
 
