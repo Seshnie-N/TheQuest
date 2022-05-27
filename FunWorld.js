@@ -156,7 +156,7 @@ function World() {
                     [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
                     [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
                     [1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
-                    [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
+                    [1,0,0,0,0,1,1,1,0,1,1,0,3,0,1,1,0,0,0,1],
                     [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
                     [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
                     [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
@@ -172,18 +172,22 @@ function World() {
         for(let j=0;j<21;j++){
             if(filled[j][i] == 1){   
                 const mesh = floorTile(i*10,j*10)
-                var x = Math.floor((Math.random() * 50) + 1);
-                if (x >= 40){
-                    const tree = Tree(i*10,j*10);   
-                    world.add( tree );
-                } else if (x>= 20 && x<=25){
-                    const shrub = Shrub(i*10,j*10);   
-                    world.add( shrub );
-                } else if(x<=5){
-                    const spineGrass = SpineGrass(i*10,j*10);   
-                    world.add( spineGrass );
-                }
+                // var x = Math.floor((Math.random() * 50) + 1);
+                // if (x >= 40){
+                //     const tree = Tree(i*10,j*10);   
+                //     world.add( tree );
+                // } else if (x>= 20 && x<=25){
+                //     const shrub = Shrub(i*10,j*10);   
+                //     world.add( shrub );
+                // } else if(x<=5){
+                //     const spineGrass = SpineGrass(i*10,j*10);   
+                //     world.add( spineGrass );
+                // }
                 world.add( mesh );
+            }
+            if (filled[j][i] == 3){
+                const spineGrass = SpineGrass(i*10,j*10);   
+                world.add( spineGrass );
             }
             if (filled[j][i] == 2){
                 const water = Water(i*10,j*10);
@@ -219,10 +223,11 @@ function floorTile(x,z){
     // tile.position.set(x,2.5/2,z);
     // return tile;
     const tile = new THREE.Mesh(
-        new THREE.BoxBufferGeometry(10,2.5,10),
+        // new THREE.BoxBufferGeometry(10,2.5,10),
+        new THREE.BoxBufferGeometry(10,10,10),
         cubeMaterials
     );
-    tile.position.set(x,2.5/2,z);
+    tile.position.set(x,5,z);
     return tile;
 }
 
@@ -263,12 +268,12 @@ function Water(x,z) {
 function InitaliseGrass() {
     const loader = new THREE.TextureLoader();
     cubeMaterials = [
-            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
-            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
+            new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //right side
+            new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //left side
             new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
             new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
-            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
-            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
+            new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //front side
+            new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //back side
         ];
 }
 
