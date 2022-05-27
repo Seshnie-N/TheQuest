@@ -2,10 +2,7 @@ import * as THREE from 'three';
 import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
-
 import { DRACOLoader} from './examples/jsm/loaders/DRACOLoader.js';
-
-//import './resources'; 
 
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
@@ -14,7 +11,7 @@ let camera, controls, scene, renderer;
 var waterCamera, cubeMaterials, tree_loader, shrub_loader, grass_loader;
 
 init();
-//render(); // remove when using next line for animation loop (requestAnimationFrame)
+
 animate();
 
 function init() {
@@ -72,14 +69,13 @@ function init() {
 
     // dracoloader.setDecoderPath('./examples/js/libs/draco/');
     //     gltfloader.setDRACOLoader(dracoloader);
-
-
     //         gltfloader.load('./resources/img/avatar.glb',  function (gltf){
     //             gltf.scene.scale.set(4,4,4); 
     //             gltf.scene.position.set(59,1,0); 
     //             console.log('yes');
     //             world.add(gltf.scene); 
     //         },(xhr) => xhr, ( err ) => console.error( err ));   
+
 
     // lights
 
@@ -148,15 +144,15 @@ function World() {
     var filled = [
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
+                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
                     [1,1,0,1,1,1,0,1,1,1,1,1,1,0,0,0,2,2,0,1],
                     [1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,2,2,0,1],
                     [1,0,2,0,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
                     [1,0,0,0,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,1],
                     [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
                     [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
-                    [1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
-                    [1,0,0,0,0,1,1,1,0,1,1,0,3,0,1,1,0,0,0,1],
+                    [1,3,0,1,0,1,1,1,0,1,1,0,3,0,1,1,0,1,1,1],
+                    [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
                     [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
                     [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
                     [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
@@ -192,6 +188,10 @@ function World() {
             if (filled[j][i] == 2){
                 const water = Water(i*10,j*10);
                 world.add(water);
+            }
+            if (filled[j][i] == 3 ){
+                const key = Key(i*10,j*10);
+                world.add(key);
             }
         }
     }
@@ -243,6 +243,21 @@ function Tree(x,z){
     },(xhr) => xhr, ( err ) => console.error( err ));
 
     return tree;
+}
+
+function Key(x,z){
+    const key = new THREE.Group;
+
+    tree_loader = new GLTFLoader();
+    tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(0.01,0.01,0.01); 
+        gltf.scene.position.set(x,5,z); 
+        gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
+        key.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    return key;
+
 }
 
 function Water(x,z) {
