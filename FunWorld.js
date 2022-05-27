@@ -3,6 +3,7 @@ import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
 
+import { DRACOLoader} from './examples/jsm/loaders/DRACOLoader.js';
 
 //import './resources'; 
 
@@ -10,7 +11,7 @@ import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
 
-var waterCamera, waterTile;
+var waterCamera, cubeMaterials, tree_loader, shrub_loader, grass_loader;
 
 init();
 //render(); // remove when using next line for animation loop (requestAnimationFrame)
@@ -60,25 +61,25 @@ function init() {
 
     // world
 
+    InitaliseGrass();
     const world = World();
-    //world.scale.set(5,5,5);
     scene.add( world );
 
-    //let geometry;
+    // character
+    
+    // const dracoloader = new DRACOLoader();
+    // const gltfloader = new GLTFLoader();
 
-    // geometry = new THREE.PlaneGeometry(10,10);
-    // waterCamera = new Reflector( geometry, {
-    //     clipBias: 0.003,
-    //     textureWidth: window.innerWidth * window.devicePixelRatio,
-    //     textureHeight: window.innerHeight * window.devicePixelRatio,
-    //     color: 0x777777
-    // });
-
-    // waterCamera.position.set(20,3,50);
-    // waterCamera.rotateX( -Math.PI / 2 );
-    // scene.add( waterCamera );
+    // dracoloader.setDecoderPath('./examples/js/libs/draco/');
+    //     gltfloader.setDRACOLoader(dracoloader);
 
 
+    //         gltfloader.load('./resources/img/avatar.glb',  function (gltf){
+    //             gltf.scene.scale.set(4,4,4); 
+    //             gltf.scene.position.set(59,1,0); 
+    //             console.log('yes');
+    //             world.add(gltf.scene); 
+    //         },(xhr) => xhr, ( err ) => console.error( err ));   
 
     // lights
 
@@ -119,8 +120,6 @@ function animate() {
 }
 
 function render() {
-
-    //renderer.render( scene, camera, renderTarget, true );
     
     renderer.render( scene, camera );
 
@@ -131,7 +130,7 @@ function World() {
 
     const underFloor = new THREE.Mesh(
         new THREE.PlaneBufferGeometry(2000,2000),
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide})
+        new THREE.MeshBasicMaterial({color: '#42662e', side: DoubleSide})
     );
     //underFloor.position.set(100,1,210);
     underFloor.rotation.set(Math.PI/2,0,0);
@@ -139,44 +138,50 @@ function World() {
     world.add(underFloor);
 
     const floor = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(100,210),
+        new THREE.PlaneBufferGeometry(200,210),
         new THREE.MeshBasicMaterial({color: '#A5682A', side: DoubleSide})
     );
-    floor.position.set(45,1,100);
+    floor.position.set(95,1,100);
     floor.rotation.set(Math.PI/2,0,0);
     world.add(floor);
 
     var filled = [
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
                     [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,0,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,2,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,0,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,1,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,0,0,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,1,0,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,0,0,1,1,1,2,1,1,1,1,1,1,1,1,1,1,1,1],
-                    [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
+                    [1,1,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
+                    [1,1,0,1,1,1,0,1,1,1,1,1,1,0,0,0,2,2,0,1],
+                    [1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,2,2,0,1],
+                    [1,0,2,0,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
+                    [1,0,0,0,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,1],
+                    [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+                    [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+                    [1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
+                    [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
+                    [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
+                    [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
+                    [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1],
+                    [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
+                    [1,1,1,1,0,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1],
+                    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1],
+                    [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,2,1,1,1],
+                    [1,1,0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1],
+                    [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
 
     for(let i=0;i<21;i++){
         for(let j=0;j<21;j++){
             if(filled[j][i] == 1){   
                 const mesh = floorTile(i*10,j*10)
-                var x = Math.floor((Math.random() * 5) + 1);
-                if (x >= 5){
+                var x = Math.floor((Math.random() * 50) + 1);
+                if (x >= 40){
                     const tree = Tree(i*10,j*10);   
                     world.add( tree );
+                } else if (x>= 20 && x<=25){
+                    const shrub = Shrub(i*10,j*10);   
+                    world.add( shrub );
+                } else if(x<=5){
+                    const spineGrass = SpineGrass(i*10,j*10);   
+                    world.add( spineGrass );
                 }
                 world.add( mesh );
             }
@@ -192,20 +197,20 @@ function World() {
 }
 
 function floorTile(x,z){
-    const geometry = new THREE.BoxGeometry(10, 2.5, 10);
-    const loader = new THREE.TextureLoader();
-    const cubeMaterials = [
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
-        new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
-    ];
-    const tile = new THREE.Mesh(geometry, cubeMaterials);
-    tile.position.set(x,2.5/2,z);
+    // const geometry = new THREE.BoxGeometry(10, 2.5, 10);
+    // const loader = new THREE.TextureLoader();
+    // const cubeMaterials = [
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
+    //     new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
+    // ];
+    // const tile = new THREE.Mesh(geometry, cubeMaterials);
+    // tile.position.set(x,2.5/2,z);
 
-    return tile;
+    // return tile;
 
     // const tile = new THREE.Mesh(
     //     new THREE.BoxBufferGeometry(10,2.5,10),
@@ -213,18 +218,25 @@ function floorTile(x,z){
     // );
     // tile.position.set(x,2.5/2,z);
     // return tile;
+    const tile = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(10,2.5,10),
+        cubeMaterials
+    );
+    tile.position.set(x,2.5/2,z);
+    return tile;
 }
 
 function Tree(x,z){
     const tree = new THREE.Group;
 
-    const model_loader = new GLTFLoader();
-        model_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(5,5,5); 
-            gltf.scene.position.set(x,0,z); 
-            //gltf.scene.rotation.set(-Math.PI/2,0,0);
-            tree.add(gltf.scene);  
-        },(xhr) => xhr, ( err ) => console.error( err ));
+    tree_loader = new GLTFLoader();
+    tree_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(5,5,5); 
+        gltf.scene.position.set(x,0,z); 
+        //gltf.scene.rotation.set(-Math.PI/2,0,0);
+        tree.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
     return tree;
 }
 
@@ -247,3 +259,53 @@ function Water(x,z) {
 
     return water;
 }
+
+function InitaliseGrass() {
+    const loader = new THREE.TextureLoader();
+    cubeMaterials = [
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
+            new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
+            new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
+        ];
+}
+
+function Shrub(x,z){
+    const shrub = new THREE.Group;
+
+    shrub_loader = new GLTFLoader();
+    shrub_loader.load('./resources/models/low_poly_shrub/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(10,10,10); 
+        gltf.scene.position.set(x,2,z); 
+        //gltf.scene.rotation.set(-Math.PI/2,0,0);
+        shrub.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    return shrub;
+}
+
+function SpineGrass(x,z){
+    const grass = new THREE.Group;
+
+    grass_loader = new GLTFLoader();
+    grass_loader.load('./resources/models/spine_grass/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(2,2,2); 
+        gltf.scene.position.set(x,2,z); 
+        //gltf.scene.rotation.set(-Math.PI/2,0,0);
+        grass.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    return grass;
+}
+
+// function InitaliseTree() {
+//     tree_loader = new GLTFLoader();
+//         tree_loader.load('./resources/models/tree_low_poly/scene.gltf',function (gltf) {
+//             gltf.scene.scale.set(5,5,5); 
+//             gltf.scene.position.set(x,0,z); 
+//             //gltf.scene.rotation.set(-Math.PI/2,0,0);
+//             tree.add(gltf.scene);  
+//         },(xhr) => xhr, ( err ) => console.error( err ));
+// }

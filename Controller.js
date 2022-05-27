@@ -1,4 +1,4 @@
-import {Object3D, Camera, Vector3, Quaternion, Raycaster} from "three";
+import { Object3D, Camera, Vector3, Quaternion, Raycaster } from '../../libs/three137/three.module.js';
 
 // The constructor
 class Controller{
@@ -38,7 +38,7 @@ class Controller{
         this.speed = 5;
 
 
-        this.initKeyControl();
+            this.initKeyControl();
     }
 
     initKeyControl(){
@@ -47,14 +47,14 @@ class Controller{
         document.addEventListener('mousedown', this.mouseDown.bind(this));
         document.addEventListener('mouseup', this.mouseUp.bind(this));
         document.addEventListener('mousemove', this.mouseMove.bind(this));
-        this.keys = {
-            w:false,
-            a:false,
-            d:false,
-            s:false,
-            mousedown:false,
-            mouseorigin:{x:0, y:0}
-        };
+        this.keys = {   
+                        w:false, 
+                        a:false, 
+                        d:false, 
+                        s:false, 
+                        mousedown:false, 
+                        mouseorigin:{x:0, y:0}
+                    };
     }
 
 
@@ -72,8 +72,7 @@ class Controller{
                 break;
             case 68:
                 this.keys.d = true;
-                break;
-
+                break;                                                   
         }
     }
 
@@ -94,7 +93,7 @@ class Controller{
             case 68:
                 this.keys.d = false;
                 if (!this.keys.a) this.move.right = 0;
-                break;
+                break;                             
         }
     }
 
@@ -134,7 +133,7 @@ class Controller{
         this.look.right = -right;
     }
 
-
+    
 
     keyHandler(){
         if (this.keys.w) this.move.up += 0.1;
@@ -147,33 +146,33 @@ class Controller{
         if (this.move.right<-1) this.move.right = -1;
     }
 
-    update(dt=0.0167){
+    update(dt=0.0167){   
         let playerMoved = false;
         let speed;
-
+        
         this.keyHandler();
+        
 
-
-        if (this.move.up!==0){
+        if (this.move.up!=0){
             const forward = this.forward.clone().applyQuaternion(this.target.quaternion);
             speed = this.move.up>0 ? this.speed * dt : this.speed * dt * 0.3;
             speed *= this.move.up;
             const pos = this.target.position.clone().add(forward.multiplyScalar(speed));
             pos.y += 2;
             //console.log(`Moving>> target rotation:${this.target.rotation} forward:${forward} pos:${pos}`);
-
+            
             this.raycaster.set( pos, this.down );
-
+            console.log('change');
             const intersects = this.raycaster.intersectObject( this.navmesh );
 
             if ( intersects.length>0 ){
                 this.target.position.copy(intersects[0].point);
                 playerMoved = true;
             }
-        }
-
+        } 
+        
         if (Math.abs(this.move.right)>0.1){
-            const theta = dt * (this.move.right - 0.1);
+            const theta = dt * (this.move.right-0.1) * 1;
             this.target.rotateY(theta);
             playerMoved = true;
         }
@@ -194,7 +193,7 @@ class Controller{
                 delete this.overRunSpeedTime;
             }
             if (run){
-                this.user.action = 'Run';
+                this.user.action = 'Run';    
             }else{
                 this.user.action = 'CrouchWalking';
             }
@@ -202,14 +201,14 @@ class Controller{
             if (this.user !== undefined) this.user.action = 'Idle';
         }
 
-        if (this.look.up===0 && this.look.right===0){
+        if (this.look.up==0 && this.look.right==0){
             let lerpSpeed = 0.7;
             this.cameraBase.getWorldPosition(this.tmpVec3);
             this.cameraBase.getWorldQuaternion(this.tmpQuat);
             this.camera.position.lerp(this.tmpVec3, lerpSpeed);
             this.camera.quaternion.slerp(this.tmpQuat, lerpSpeed);
         }else{
-            const delta = dt;
+            const delta = 1 * dt;
             this.camera.rotateOnWorldAxis(this.yAxis, this.look.right * delta);
             const cameraXAxis = this.xAxis.clone().applyQuaternion(this.camera.quaternion);
             this.camera.rotateOnWorldAxis(cameraXAxis, this.look.up * delta);
@@ -218,4 +217,3 @@ class Controller{
 }
 
 export { Controller };
-
