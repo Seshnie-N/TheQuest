@@ -196,12 +196,11 @@ export class Character {
         let angle = -this.Character.rotation.y + Math.PI * 0.5;
 
         //initialise
-        // let jumpInitialHeight = null;
          const _Q = new THREE.Quaternion();
 
         //Speed of movement.
-        let speed = 0.8;
-        let rSpeed = speed / 3;
+        let speed = 1;
+        let rSpeed = speed / 2;
 
         //Used to see if the model is standing on another object.
         // if (this.CharacterBody.position.y < 1) {
