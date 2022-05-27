@@ -1,0 +1,11 @@
+Model Information:
+* title:	Spine Grass
+* source:	https://sketchfab.com/3d-models/spine-grass-f354209291c04e2ea8a2714179bd7bae
+* author:	Xillute | Dev (https://sketchfab.com/janchristian)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Spine Grass" (https://sketchfab.com/3d-models/spine-grass-f354209291c04e2ea8a2714179bd7bae) by Xillute | Dev (https://sketchfab.com/janchristian) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
