@@ -28,18 +28,10 @@ export class Character {
         this.rBodies = params.rBodies;
         this.rMeshes = params.rMeshes;
 
-        //List of all Pokemon Available to be caught.
-        //Dictionary of three arrays: names, bodies and meshes.
-        // this.pokemon = params.pokemon;
-        // this.taskList = params.taskList;
-        // this.pokeballs = params.pokeballs;
-
         this.Stop=false;
 
         //used to store animations that are loaded.
         this.allAnimations = {};
-
-        // this.pokedex = new Pokedex()
 
         //Initialise
         let proxy = new ControllerProxy(this.allAnimations);
@@ -94,7 +86,7 @@ export class Character {
 
 
         const loader = new FBXLoader();
-        loader.setPath('./resources/models/');
+        loader.setPath('./resources/models/knight/');
         loader.load('Paladin.fbx', (fbx) => {
             fbx.scale.setScalar(0.2);
             fbx.traverse(c => {
@@ -142,7 +134,6 @@ export class Character {
                 this.stateMachine.SetState('idle');
             };
 
-
             //function to store the animations.
             const _OnLoad = (animName, anim) => {
                 let clip = anim.animations[0];
@@ -157,9 +148,10 @@ export class Character {
                 };
             };
 
+            //TODO: add side strafe and slash
             //Load all animations files.
             const loader = new FBXLoader(this.manager);
-            loader.setPath("./resources/models/");
+            loader.setPath("./resources/models/knight/");
             loader.load('Sword And Shield Walk.fbx', (a) => {
                 _OnLoad('walk', a);
             });

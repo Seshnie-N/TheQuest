@@ -10,7 +10,7 @@ export class ThirdPersonCamera {
     }
 
     calcOffset() {
-        const offset = new THREE.Vector3(-15, 20, -30);
+        const offset = new THREE.Vector3(-15, 25, -40);
         offset.applyQuaternion(this.params.target.Rotation);
         offset.add(this.params.target.Position);
         return offset;
@@ -39,9 +39,3 @@ export class ThirdPersonCamera {
         this.camera.lookAt(this.currentLookat);
     }
 }
-
-//wrapping a function call in parenthesise and ending with parenthesise make the function an IIFE
-//IIFE - Immediately Invoked Function Expression
-//IIFEs are functions that are executed immediately after being defined
-//IIFEs are very useful because they don’t pollute the global object,
-//and they are a simple way to isolate variables declarations

@@ -63,6 +63,7 @@ function init() {
     scene.add( world );
 
     // character
+
     
     // const dracoloader = new DRACOLoader();
     // const gltfloader = new GLTFLoader();
