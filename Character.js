@@ -113,8 +113,8 @@ export class Character {
             //Cylindrical Shape
             const characterShape = new CANNON.Cylinder(depth , depth, height, 8)
             this.CharacterBody = new CANNON.Body({
-                mass: 80,
-                position: this.startPos,
+                mass: 100,
+
                 material: heavyMaterial
             });
             this.CharacterBody.addShape(characterShape, new CANNON.Vec3(0, height / 2, ));

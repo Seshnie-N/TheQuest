@@ -26,6 +26,24 @@ class stage1{
 
         this.addGround();
 
+        //testing box
+        this.box = new THREE.Mesh(
+            new THREE.BoxGeometry(4, 4, 4),
+            new THREE.MeshLambertMaterial({
+                color: 0x000000,
+            }));
+        this.box.position.set(0, 10, 0);
+        this.box.castShadow = true;
+        this.box.receiveShadow = true;
+        this.scene.add(this.box);
+
+        //add box to physics worlds
+        this.boxBody = new CANNON.Body({
+            shape: new CANNON.Box(new CANNON.Vec3(2,2,2)),
+            mass: 20
+        });
+        this.world.addBody(this.boxBody);
+
         //load in character here
         this._LoadAnimatedModel();
 
@@ -89,25 +107,37 @@ class stage1{
     }
 
     _ConfigPhysics() {
-        this.world = new CANNON.World();
-        this.world.gravity.set(0, -200, 0);
-        this.world.broadphase = new CANNON.NaiveBroadphase();
-        this.world.broadphase.useBoundingBoxes = true;
-        this.world.solver.iterations = 10;
-        this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
-        this.world.defaultContactMaterial.contactEquationRegularizationTime = 4;
+        // this.world = new CANNON.World();
+        // this.world.gravity.set(0, -9.81, 0);
+        // this.timeStep =  1/60;
+        // this.world.broadphase = new CANNON.NaiveBroadphase();
+        // this.world.broadphase.useBoundingBoxes = true;
+        // this.world.solver.iterations = 10;
+        // this.world.defaultContactMaterial.contactEquationStiffness = 1e9;
+        // this.world.defaultContactMaterial.contactEquationRegularizationTime = 4;
+        this.world = new CANNON.World({
+            gravity: new CANNON.Vec3(0, -200, 0)
+        })
+        this.timeStep = 1/60;
     }
 
     addGround() {
-        const plane = new THREE.Mesh(
+        this.plane = new THREE.Mesh(
             new THREE.PlaneGeometry(100, 100, 10, 10),
             new THREE.MeshStandardMaterial({
                 color: 0x202020,
             }));
-        plane.castShadow = false;
-        plane.receiveShadow = true;
-        plane.rotation.x = -Math.PI / 2;
-        this.scene.add(plane);
+        this.plane.castShadow = false;
+        this.plane.receiveShadow = true;
+        this.scene.add(this.plane);
+
+        this.planeBody = new CANNON.Body({
+            shape: new CANNON.Plane(),
+            type: CANNON.Body.STATIC
+        })
+        this.world.addBody(this.planeBody);
+        this.planeBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+
     }
 
     OnWindowResize() {
@@ -122,8 +152,16 @@ class stage1{
             if (this.previousRAF === null){
                 this.previousRAF = t;
             }
-            this.animate();
+            //move forward physics world
+            this.world.step(this.timeStep);
 
+            //animate physics
+            this.box.position.copy(this.boxBody.position);
+            this.box.quaternion.copy(this.boxBody.quaternion);
+            this.plane.position.copy(this.planeBody.position);
+            this.plane.quaternion.copy(this.planeBody.quaternion);
+
+            this.animate();
             this.renderer.render(this.scene, this.camera);
             this.step(t - this.previousRAF);
             this.previousRAF = t;
