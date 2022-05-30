@@ -11,13 +11,14 @@ export class skybox {
 
     function
     makeSkybox() {
+
         const urls = [
-            './resources/images/nightsky/negZ.png',
-            './resources/images/nightsky/posZ.png',
-            './resources/images/nightsky/posY.png',
-            './resources/images/nightsky/negY.png',
-            './resources/images/nightsky/posX.png',
-            './resources/images/nightsky/negX.png',
+            './resources/img/skybox/side2.png', //right
+            './resources/img/skybox/side4.png', //left
+            './resources/img/skybox/top.png', //top
+            './resources/img/skybox/bottom.png', //bottom
+            './resources/img/skybox/side1.png', //front 
+            './resources/img/skybox/side3.png', //back
         ];
 
         var materials = [];
@@ -29,6 +30,7 @@ export class skybox {
         }
         var skyGeometry = new THREE.BoxGeometry(400, 400, 400);
         this.skybox = new THREE.Mesh(skyGeometry, materials);
+        this.skybox.position.set(100,100,100);
         this.scene.add(this.skybox);
         return this.skybox;
     }

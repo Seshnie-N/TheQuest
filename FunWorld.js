@@ -3,10 +3,11 @@ import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
 import { DRACOLoader} from './examples/jsm/loaders/DRACOLoader.js';
+import { skybox } from './skybox.js';
 
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
-let camera, controls, scene, renderer;
+let camera, controls, scene, renderer, Skybox, sb;
 
 var waterCamera, cubeMaterials, ground, tree_loader, shrub_loader, grass_loader;
 
@@ -18,16 +19,22 @@ function init() {
 
     scene = new THREE.Scene();
 
-    const loader = new THREE.CubeTextureLoader();
-        const texture = loader.load([
-            './resources/img/istockphoto-948602070-170667a.jpg',
-            './resources/img/istockphoto-948602070-170667a.jpg',
-            './resources/img/istockphoto-948602070-170667a.jpg',
-            './resources/img/istockphoto-948602070-170667a.jpg',
-            './resources/img/istockphoto-948602070-170667a.jpg',
-            './resources/img/istockphoto-948602070-170667a.jpg',
-        ]);
-        scene.background = texture;
+    // const loader = new THREE.CubeTextureLoader();
+    //     const texture = loader.load([
+    //         './resources/img/istockphoto-948602070-170667a.jpg',
+    //         './resources/img/istockphoto-948602070-170667a.jpg',
+    //         './resources/img/istockphoto-948602070-170667a.jpg',
+    //         './resources/img/istockphoto-948602070-170667a.jpg',
+    //         './resources/img/istockphoto-948602070-170667a.jpg',
+    //         './resources/img/istockphoto-948602070-170667a.jpg',
+    //     ]);
+    //     scene.background = texture;
+
+    const params = {
+        scene : scene,
+    }
+    Skybox = new skybox(params);
+    sb = Skybox.makeSkybox();
 
     //scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
@@ -108,23 +115,13 @@ function World() {
     const world = new THREE.Group();
 
     
-    const underFloor = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(2000,2000),
-        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}),
-    );
-
-    underFloor.rotation.set(Math.PI/2,0,0);
-    underFloor.position.set(100,0,210);
-    world.add(underFloor);
-
-    // const loader = new THREE.TextureLoader();
-    // const floor = new THREE.Mesh(
-    //     new THREE.PlaneBufferGeometry(200,210),
-    //     new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: DoubleSide})
+    // const underFloor = new THREE.Mesh(
+    //     new THREE.PlaneBufferGeometry(2000,2000),
+    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}),
     // );
-    // floor.position.set(95,1,100);
-    // floor.rotation.set(Math.PI/2,0,0);
-    // world.add(floor);
+    // underFloor.rotation.set(Math.PI/2,0,0);
+    // underFloor.position.set(100,0,210);
+    // world.add(underFloor);
 
     var filled = [
                     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
