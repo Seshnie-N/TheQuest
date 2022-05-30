@@ -1,0 +1,49 @@
+@font-face {
+  font-family: knight;
+  src: url("./resources/font/BLKCHCRY.TTF");
+}
+
+html, body {
+  background: url("resources/pictures/openscreen.jpg") no-repeat center center fixed;
+  height: 99%;
+  width: 99%;
+}
+
+.heading{
+  padding: 1rem;
+  font-family: knight;
+  font-size: 10rem;
+  text-align: center;
+  color: white;
+}
+
+.btn-group{
+  position: fixed;
+  top: 70%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+
+}
+.btn-group a{
+  -webkit-appearance: button;
+  -moz-appearance: button;
+  appearance: auto;
+  text-align: center;
+  background-color: #097969; /* Green background */
+  border: 1px solid #000000; /* Green border */
+  color: white; /* White text */
+  padding: 10px 24px 0 20px ; /* Some padding */
+  cursor: pointer; /* Pointer/hand icon */
+  width: 20vw; /* Set a width if needed */
+  display: block; /* Make the buttons appear below each other */
+  margin-bottom:15px;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 2.3rem;
+  font-family: knight;
+}
+
+.btn-group a:hover {
+  background-color: #50C878;
+}
