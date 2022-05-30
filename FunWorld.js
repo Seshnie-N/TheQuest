@@ -8,7 +8,7 @@ import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
 
-var waterCamera, cubeMaterials, tree_loader, shrub_loader, grass_loader;
+var waterCamera, cubeMaterials, ground, tree_loader, shrub_loader, grass_loader;
 
 init();
 
@@ -58,12 +58,12 @@ function init() {
 
     // world
 
-    InitaliseHedge();
+    InitaliseTexture();
     const world = World();
     scene.add( world );
 
     const dirLight1 = new THREE.DirectionalLight( 0xffffff );
-    dirLight1.position.set( 1, 1, 1 );
+    dirLight1.position.set( 20, 10, 20 );
     scene.add( dirLight1 );
 
     const dirLight2 = new THREE.DirectionalLight( 0x002288 );
@@ -107,22 +107,24 @@ function render() {
 function World() {
     const world = new THREE.Group();
 
+    
     const underFloor = new THREE.Mesh(
         new THREE.PlaneBufferGeometry(2000,2000),
-        new THREE.MeshBasicMaterial({color: '#42662e', side: DoubleSide})
+        new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}),
     );
-    //underFloor.position.set(100,1,210);
+
     underFloor.rotation.set(Math.PI/2,0,0);
     underFloor.position.set(100,0,210);
     world.add(underFloor);
 
-    const floor = new THREE.Mesh(
-        new THREE.PlaneBufferGeometry(200,210),
-        new THREE.MeshBasicMaterial({color: '#A5682A', side: DoubleSide})
-    );
-    floor.position.set(95,1,100);
-    floor.rotation.set(Math.PI/2,0,0);
-    world.add(floor);
+    // const loader = new THREE.TextureLoader();
+    // const floor = new THREE.Mesh(
+    //     new THREE.PlaneBufferGeometry(200,210),
+    //     new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: DoubleSide})
+    // );
+    // floor.position.set(95,1,100);
+    // floor.rotation.set(Math.PI/2,0,0);
+    // world.add(floor);
 
     var filled = [
                     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -147,10 +149,14 @@ function World() {
                     [1,1,0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1],
                     [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
 
-    for(let i=0;i<21;i++){
+    for(let i=0;i<20;i++){
         for(let j=0;j<21;j++){
+            if(filled[j][i] != 1){
+                const mesh = floorTile(i*10,j*10);
+                world.add( mesh );
+            }
             if(filled[j][i] == 1){   
-                const mesh = floorTile(i*10,j*10)
+                const mesh = hedgeWall(i*10,j*10);
                 world.add( mesh );
             }
             if (filled[j][i] == 2){
@@ -168,17 +174,27 @@ function World() {
         }
     }
 
-
     return world;
 }
 
 function floorTile(x,z){
-    const tile = new THREE.Mesh(
+    const floor = new THREE.Mesh(
+        new THREE.PlaneBufferGeometry(10,10),
+        ground
+    );
+    floor.rotation.set(Math.PI/2,0,0);
+    floor.position.set(x,1,z);
+    return floor;
+}
+
+function hedgeWall(x,z){
+    const wall = new THREE.Mesh(
         new THREE.BoxBufferGeometry(10,10,10),
         cubeMaterials
     );
-    tile.position.set(x,5,z);
-    return tile;
+    wall.castShadow = true;
+    wall.position.set(x,5,z);
+    return wall;
 }
 
 function Tree(x,z){
@@ -229,7 +245,7 @@ function Water(x,z) {
     return water;
 }
 
-function InitaliseHedge() {
+function InitaliseTexture() {
     const loader = new THREE.TextureLoader();
     cubeMaterials = [
             new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //right side
@@ -239,6 +255,8 @@ function InitaliseHedge() {
             new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //front side
             new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //back side
         ];
+    const loaderGround = new THREE.TextureLoader();
+    ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: DoubleSide});
 }
 
 function Shrub(x,z){
