@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {FBXLoader} from "./examples/jsm/loaders/FBXLoader.js";
-import * as CANNON from './resources/modules/cannon-es/dist/cannon-es.js';
+import * as CANNON from 'cannon-es';
 
 /*
 * FBX Model and animations downloaded from: Mixamo.com

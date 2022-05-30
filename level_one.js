@@ -1,12 +1,11 @@
 import * as THREE from 'three';
 import {skybox} from "./skybox.js";
-import * as CANNON from './node_modules/cannon-es/dist/cannon-es.js';
+import * as CANNON from 'cannon-es';
 import * as CHARACTER from "./Character.js";
 import  * as CAMERA from "./ThirdPersonCamera.js";
-import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
-import CannonDebugger from './node_modules/cannon-es-debugger/dist/cannon-es-debugger.js';
+import CannonDebugger from 'cannon-es-debugger';
 
 
 let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger ;
@@ -337,7 +336,6 @@ class level_one {
             textureWidth: window.innerWidth * window.devicePixelRatio,
             textureHeight: window.innerHeight * window.devicePixelRatio,
             color: 0x777777,
-            side: DoubleSide,
         });
     
         waterCamera.position.set(x-14,15,z-14);
@@ -379,12 +377,12 @@ class level_one {
                 new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //right side
                 new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //left side
                 new THREE.MeshBasicMaterial({ map: loader.load('./resources/img//Hedge_full_perms_texture_seamless.jpg')}), //top side
-                new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+                new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
                 new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //front side
                 new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: DoubleSide});
+        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide});
     }
 }
 
