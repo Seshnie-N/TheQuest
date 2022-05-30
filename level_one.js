@@ -3,7 +3,12 @@ import {skybox} from "./skybox.js";
 import * as CANNON from './resources/modules/cannon-es/dist/cannon-es.js';
 import * as CHARACTER from "./Character.js";
 import  * as CAMERA from "./ThirdPersonCamera.js";
+import { DoubleSide } from 'three';
+import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
+import { Reflector } from './examples/jsm/objects/Reflector.js';
 
+
+let waterCamera, cubeMaterials, ground, tree_loader, shrub_loader, grass_loader;
 
 class level_one {
     constructor() {
@@ -15,6 +20,9 @@ class level_one {
     init(){
         //declare variables
         this._mixers = [];
+
+        //Hedge walls
+        this.meshes2 = [];
 
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
@@ -46,7 +54,7 @@ class level_one {
         const near = 1.0;
         const far = 1000.0;
         this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-        this.camera.position.set(25,30,25);
+        this.camera.position.set(25,7,25);
 
         //create scene
         this.scene = new THREE.Scene();
@@ -96,6 +104,61 @@ class level_one {
 
     generateWorld() {
         //all of roberts world builder stuff
+        const Level = new THREE.Group();
+
+        this.InitaliseTexture();
+
+        var filled = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,4,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
+            [1,1,0,1,1,1,0,1,1,1,1,1,1,0,0,0,2,2,0,1],
+            [1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,2,2,0,1],
+            [1,0,2,0,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
+            [1,0,0,0,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,1],
+            [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [1,3,0,1,0,1,1,1,0,1,1,0,3,0,1,1,0,1,1,1],
+            [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
+            [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
+            [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
+            [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
+            [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1],
+            [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
+            [1,1,1,1,0,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1],
+            [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1],
+            [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,2,1,1,1],
+            [1,1,0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
+
+            for(let i=0;i<20;i++){
+                for(let j=0;j<21;j++){
+                    if(filled[j][i] != 1){
+                        const mesh = this.floorTile(i*10,j*10);
+                        Level.add( mesh );
+                    }
+                    if(filled[j][i] == 1){   
+                        const mesh = this.hedgeWall(i*10,j*10);
+                        Level.add( mesh );
+                    }
+                    if (filled[j][i] == 2){
+                        const water = this.Water(i*10,j*10);
+                        Level.add(water);
+                    }
+                    if (filled[j][i] == 3 ){
+                        const key = this.Key(i*10,j*10);
+                        Level.add(key);
+                    }
+                    // if (filled[j][i] == 4){
+                    //     const spineGrass = SpineGrass(i*10,j*10);   
+                    //     world.add( spineGrass );
+                    // }
+                }
+            }
+
+            Level.scale.set(3,3,3);
+
+            this.scene.add( Level )
     }
 
     addSkybox() {
@@ -162,7 +225,10 @@ class level_one {
             //move forward physics world
             this.world.step(this.timeStep);
 
-
+            this.box.position.copy(this.boxBody.position);
+            this.box.quaternion.copy(this.boxBody.quaternion);
+            this.plane.position.copy(this.planeBody.position);
+            this.plane.quaternion.copy(this.planeBody.quaternion);
 
             this.animate();
             this.renderer.render(this.scene, this.camera);
@@ -201,6 +267,82 @@ class level_one {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    floorTile(x,z){
+        const floor = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(10,10),
+            ground
+        );
+        floor.rotation.set(Math.PI/2,0,0);
+        floor.position.set(x,0,z);
+        return floor;
+    }
+
+    hedgeWall(x,z){
+        const wall = new THREE.Mesh(
+            new THREE.BoxBufferGeometry(10,10,10),
+            cubeMaterials
+        );
+        wall.castShadow = true;
+        wall.position.set(x,5,z);
+
+        this.wallBody = new CANNON.Body({
+            shape: new CANNON.Box(new CANNON.Vec3(5,5,5)),
+            type: CANNON.Body.STATIC
+        });
+        this.world.addBody(this.wallBody);
+        this.meshes2.push(this.wallBody);
+
+        return wall;
+    }
+
+    Key(x,z){
+        const key = new THREE.Group;
+    
+        tree_loader = new GLTFLoader();
+        tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(0.01,0.01,0.01); 
+            gltf.scene.position.set(x,5,z); 
+            gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
+            key.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        return key;
+    }
+
+    Water(x,z) {
+        let water = new THREE.Group;
+    
+        let geometry;
+    
+        geometry = new THREE.PlaneGeometry(10,10);
+        waterCamera = new Reflector( geometry, {
+            clipBias: 0.003,
+            textureWidth: window.innerWidth * window.devicePixelRatio,
+            textureHeight: window.innerHeight * window.devicePixelRatio,
+            color: 0x777777
+        });
+    
+        waterCamera.position.set(x,2,z);
+        waterCamera.rotateX( -Math.PI / 2 );
+        water.add( waterCamera );
+    
+        return water;
+    }
+
+    InitaliseTexture() {
+        const loader = new THREE.TextureLoader();
+        cubeMaterials = [
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //right side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //left side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img//Hedge_full_perms_texture_seamless.jpg')}), //top side
+                new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //front side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //back side
+            ];
+        const loaderGround = new THREE.TextureLoader();
+        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: DoubleSide});
     }
 }
 
