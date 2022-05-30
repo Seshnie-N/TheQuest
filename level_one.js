@@ -238,7 +238,7 @@ class level_one {
             //move forward physics world
             this.world.step(this.timeStep);
 
-            cannonDebugger.update();
+            //cannonDebugger.update();
 
             this.animate(); 
             this.renderer.render(this.scene, this.camera);

@@ -145,7 +145,7 @@ export class Character {
             const heavyMaterial = new CANNON.Material('heavy');
 
             //Cylindrical Shape
-            const characterShape = new CANNON.Cylinder(depth , depth, height, 8)
+            const characterShape = new CANNON.Cylinder(depth+5 , depth+5, height, 8)
             this.CharacterBody = new CANNON.Body({
                 mass: 100,
 
