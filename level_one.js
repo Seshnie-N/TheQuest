@@ -6,9 +6,10 @@ import  * as CAMERA from "./ThirdPersonCamera.js";
 import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
+import CannonDebugger from './resources/modules/cannon-es-debugger/dist/cannon-es-debugger.cjs';
 
 
-let waterCamera, cubeMaterials, ground, tree_loader, shrub_loader, grass_loader;
+let waterCamera, cubeMaterials, ground, tree_loader, shrub_loader, grass_loader, cannonDebugger ;
 
 class level_one {
     constructor() {
@@ -36,6 +37,8 @@ class level_one {
         this.addSkybox();
         this._LoadAnimatedModels();
 
+        cannonDebugger = new CannonDebugger(this.scene, this.world);
+
         //temp ground
         this.planeBody = new CANNON.Body({
             shape: new CANNON.Plane(),
@@ -45,7 +48,9 @@ class level_one {
         this.planeBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 
         this.previousRAF = null;
+
         this.animate();
+
     }
 
     configThree() {
@@ -109,8 +114,8 @@ class level_one {
         this.InitaliseTexture();
 
         var filled = [
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [1,1,4,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
             [1,1,0,1,1,1,0,1,1,1,1,1,1,0,0,0,2,2,0,1],
             [1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,2,2,0,1],
@@ -225,12 +230,9 @@ class level_one {
             //move forward physics world
             this.world.step(this.timeStep);
 
-            // this.box.position.copy(this.boxBody.position);
-            // this.box.quaternion.copy(this.boxBody.quaternion);
-            // this.plane.position.copy(this.planeBody.position);
-            // this.plane.quaternion.copy(this.planeBody.quaternion);
+            cannonDebugger.update();
 
-            this.animate();
+            this.animate(); 
             this.renderer.render(this.scene, this.camera);
             this.step(t - this.previousRAF);
             this.previousRAF = t;
@@ -285,16 +287,20 @@ class level_one {
             cubeMaterials
         );
         wall.castShadow = true;
-        wall.position.set(x,5,z);
+        //wall.position.set(x,5,z);
 
         this.wallBody = new CANNON.Body({
             shape: new CANNON.Box(new CANNON.Vec3(5,5,5)),
-            type: CANNON.Body.STATIC
+            type: CANNON.Body.STATIC,
+            position: new CANNON.Vec3(x,5,z),
         });
-        this.wallBody.position.set(x,5,z);
+        //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.wallBody);
         this.meshes2.push(this.wallBody);
 
+        wall.position.copy(this.wallBody.position);
+        wall.quaternion.copy(this.wallBody.quaternion);
+    
         return wall;
     }
 
