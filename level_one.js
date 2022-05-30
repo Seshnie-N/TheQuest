@@ -31,8 +31,8 @@ class level_one {
         this.raycaster = new THREE.Raycaster();
 
         this.configThree();
-        this.generateWorld();
         this.configPhysics();
+        this.generateWorld();        
         this.addSkybox();
         this._LoadAnimatedModels();
 
@@ -225,10 +225,10 @@ class level_one {
             //move forward physics world
             this.world.step(this.timeStep);
 
-            this.box.position.copy(this.boxBody.position);
-            this.box.quaternion.copy(this.boxBody.quaternion);
-            this.plane.position.copy(this.planeBody.position);
-            this.plane.quaternion.copy(this.planeBody.quaternion);
+            // this.box.position.copy(this.boxBody.position);
+            // this.box.quaternion.copy(this.boxBody.quaternion);
+            // this.plane.position.copy(this.planeBody.position);
+            // this.plane.quaternion.copy(this.planeBody.quaternion);
 
             this.animate();
             this.renderer.render(this.scene, this.camera);
@@ -291,6 +291,7 @@ class level_one {
             shape: new CANNON.Box(new CANNON.Vec3(5,5,5)),
             type: CANNON.Body.STATIC
         });
+        this.wallBody.position.set(x,5,z);
         this.world.addBody(this.wallBody);
         this.meshes2.push(this.wallBody);
 
