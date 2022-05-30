@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import {skybox} from "./skybox.js";
-import * as CANNON from './resources/modules/cannon-es/dist/cannon-es.js';
+import * as CANNON from './node_modules/cannon-es/dist/cannon-es.js';
 import * as CHARACTER from "./Character.js";
 import  * as CAMERA from "./ThirdPersonCamera.js";
 import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
-import CannonDebugger from './resources/modules/cannon-es-debugger/dist/cannon-es-debugger.cjs';
+import CannonDebugger from './node_modules/cannon-es-debugger/dist/cannon-es-debugger.js';
 
 
 let waterCamera, cubeMaterials, ground, tree_loader, shrub_loader, grass_loader, cannonDebugger ;
