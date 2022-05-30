@@ -161,7 +161,7 @@ class level_one {
                 }
             }
 
-            Level.scale.set(3,3,3);
+            //Level.scale.set(3,3,3);
 
             this.scene.add( Level )
     }
