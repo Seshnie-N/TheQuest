@@ -69,6 +69,24 @@ function init() {
     const world = World();
     scene.add( world );
 
+    // character
+
+    
+    // const dracoloader = new DRACOLoader();
+    // const gltfloader = new GLTFLoader();
+
+    // dracoloader.setDecoderPath('./examples/js/libs/draco/');
+    //     gltfloader.setDRACOLoader(dracoloader);
+    //         gltfloader.load('./resources/img/avatar.glb',  function (gltf){
+    //             gltf.scene.scale.set(4,4,4); 
+    //             gltf.scene.position.set(59,1,0); 
+    //             console.log('yes');
+    //             world.add(gltf.scene); 
+    //         },(xhr) => xhr, ( err ) => console.error( err ));   
+
+
+    // lights
+
     const dirLight1 = new THREE.DirectionalLight( 0xffffff );
     dirLight1.position.set( 20, 10, 20 );
     scene.add( dirLight1 );

@@ -18,6 +18,9 @@ export class Character {
         this.camera = params.camera;
         this.startPos = params.startPos;
 
+        this.meshes2 = params.meshes2;
+        this.bodies2 = params.bodies2;
+
         //used for bodies and meshes that need to be synced together
         this.meshes = params.meshes;
         this.bodies = params.bodies;
@@ -28,33 +31,56 @@ export class Character {
         this.rBodies = params.rBodies;
         this.rMeshes = params.rMeshes;
 
-        //List of all Pokemon Available to be caught.
-        //Dictionary of three arrays: names, bodies and meshes.
-        // this.pokemon = params.pokemon;
-        // this.taskList = params.taskList;
-        // this.pokeballs = params.pokeballs;
-
         this.Stop=false;
 
         //used to store animations that are loaded.
         this.allAnimations = {};
 
-        // this.pokedex = new Pokedex()
-
         //Initialise
         let proxy = new ControllerProxy(this.allAnimations);
         this.stateMachine = new CharacterFSM(proxy);
         this.position = new THREE.Vector3();
-        this.raycaster = new THREE.Raycaster();
+        // this.mouse = new THREE.Vector2();
+        // this.raycaster = new THREE.Raycaster();
 
-        //Mouse event listeners.
-        document.addEventListener("dblclick", (e)=> this._onDoubleClick(e), false)
-       //document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false)
+        // //Mouse event listeners.
+        // document.addEventListener("click", (e)=> this._onClick(e), false)
+        // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false)
 
         //Load Model.
         this._LoadModel();
         this.input = new CharacterController();
     }
+
+    // _onMouseMove(event){
+    //     this.mouse = {
+    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+    //     }
+    //     // this.raycaster.setFromCamera(this.mouse, this.camera);
+    //     // let intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    //     //
+    //     // for (let i = 0; i < intersects.length; i++) {
+    //     //     console.log(intersects[i]);
+    //     // }
+    //
+    // }
+
+    // //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
+    // _onClick(event){
+    //     this.mouse = {
+    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+    //     }
+    //     this.raycaster.setFromCamera(this.mouse, this.camera);
+    //     let intersects = this.raycaster.intersectObjects(this.meshes2, true);
+    //
+    //     for (let i = 0; i < intersects.length; i++) {
+    //         //console.log(intersects[i]);
+    //
+    //
+    //     }
+    // }
 
     //getter functions
     get Position() {
@@ -94,9 +120,9 @@ export class Character {
 
 
         const loader = new FBXLoader();
-        loader.setPath('./resources/models/');
+        loader.setPath('./resources/models/knight/');
         loader.load('Paladin.fbx', (fbx) => {
-            fbx.scale.setScalar(0.2);
+            fbx.scale.setScalar(0.1);
             fbx.traverse(c => {
                 //come here to add sword later
                 if (c.type === "Bone") {
@@ -121,8 +147,8 @@ export class Character {
             //Cylindrical Shape
             const characterShape = new CANNON.Cylinder(depth , depth, height, 8)
             this.CharacterBody = new CANNON.Body({
-                mass: 80,
-                position: this.startPos,
+                mass: 100,
+
                 material: heavyMaterial
             });
             this.CharacterBody.addShape(characterShape, new CANNON.Vec3(0, height / 2, ));
@@ -142,7 +168,6 @@ export class Character {
                 this.stateMachine.SetState('idle');
             };
 
-
             //function to store the animations.
             const _OnLoad = (animName, anim) => {
                 let clip = anim.animations[0];
@@ -157,9 +182,10 @@ export class Character {
                 };
             };
 
+            //TODO: add side strafe and slash
             //Load all animations files.
             const loader = new FBXLoader(this.manager);
-            loader.setPath("./resources/models/");
+            loader.setPath("./resources/models/knight/");
             loader.load('Sword And Shield Walk.fbx', (a) => {
                 _OnLoad('walk', a);
             });
@@ -189,6 +215,10 @@ export class Character {
             return
         }
 
+        // //update from mouse inputs
+        // this.meshes2[0].position.copy(this.bodies2[0].position);
+        // this.meshes2[0].quaternion.copy(this.bodies2[0].quaternion);
+
         //Update FSM based on key press.
         this.stateMachine.Update(timeInSeconds, this.input);
 
@@ -196,12 +226,11 @@ export class Character {
         let angle = -this.Character.rotation.y + Math.PI * 0.5;
 
         //initialise
-        // let jumpInitialHeight = null;
          const _Q = new THREE.Quaternion();
 
         //Speed of movement.
-        let speed = 0.8;
-        let rSpeed = speed / 3;
+        let speed = 1;
+        let rSpeed = speed / 2;
 
         //Used to see if the model is standing on another object.
         // if (this.CharacterBody.position.y < 1) {
@@ -251,7 +280,6 @@ export class Character {
         this.Character.position.copy(this.CharacterBody.position);
 
         this.position.copy(this.CharacterBody.position);
-
 
         //Update Animations.
         if (this.mixer) {
