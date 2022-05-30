@@ -3,7 +3,7 @@ import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 import {skybox} from "./skybox.js";
 import * as CANNON from './resources/modules/cannon-es/dist/cannon-es.js';
 import * as CHARACTER from "./Character.js";
-import * as CAMERA from "./ThirdPersonCamera.js";
+import  * as CAMERA from "./ThirdPersonCamera.js";
 
 class stage1{
     constructor(){
@@ -12,6 +12,8 @@ class stage1{
 
     init(){
         this._mixers = [];
+        this.meshes2 = [];
+        this.bodies2 = [];
 
         //adding models to scene
         this._ConfigStage()
@@ -29,13 +31,14 @@ class stage1{
         //testing box
         this.box = new THREE.Mesh(
             new THREE.BoxGeometry(4, 4, 4),
-            new THREE.MeshLambertMaterial({
-                color: 0x000000,
+            new THREE.MeshBasicMaterial({
+                color: 0xffffff,
             }));
         this.box.position.set(0, 10, 0);
         this.box.castShadow = true;
         this.box.receiveShadow = true;
         this.scene.add(this.box);
+        this.meshes2.push(this.box);
 
         //add box to physics worlds
         this.boxBody = new CANNON.Body({
@@ -43,12 +46,51 @@ class stage1{
             mass: 20
         });
         this.world.addBody(this.boxBody);
+        this.bodies2.push(this.boxBody);
+
+        this.mouse = new THREE.Vector2();
+        this.raycaster = new THREE.Raycaster();
+
+        //Mouse event listeners.
+        document.addEventListener("click", (e)=> this._onClick(e), false);
+        document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
 
         //load in character here
         this._LoadAnimatedModel();
 
         this.previousRAF = null;
         this.animate();
+    }
+
+    _onMouseMove(event){
+        this.mouse = {
+            x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+            y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+        }
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        let intersects = this.raycaster.intersectObjects(this.meshes2, true);
+
+        for (let i = 0; i < intersects.length; i++) {
+            console.log();
+            this.box.material.color.set(0x000000) ;
+        }
+
+    }
+
+    //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
+    _onClick(event){
+        this.mouse = {
+            x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+            y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+        }
+        this.raycaster.setFromCamera(this.mouse, this.camera);
+        let intersects = this.raycaster.intersectObjects(this.meshes2, true);
+
+        for (let i = 0; i < intersects.length; i++) {
+            console.log(intersects[i]);
+            this.boxBody.position.set(0, 20, 0);
+
+        }
     }
 
     _ConfigStage() {
@@ -203,6 +245,8 @@ class stage1{
             scene: this.scene,
             world: this.world,
             meshes: this.meshes,
+            meshes2: this.meshes2,
+            bodies2: this.bodies2,
             bodies: this.bodies,
             startPos: this.StartPos,
             rBodies: this.removeBodies,

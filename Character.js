@@ -18,6 +18,9 @@ export class Character {
         this.camera = params.camera;
         this.startPos = params.startPos;
 
+        this.meshes2 = params.meshes2;
+        this.bodies2 = params.bodies2;
+
         //used for bodies and meshes that need to be synced together
         this.meshes = params.meshes;
         this.bodies = params.bodies;
@@ -37,16 +40,47 @@ export class Character {
         let proxy = new ControllerProxy(this.allAnimations);
         this.stateMachine = new CharacterFSM(proxy);
         this.position = new THREE.Vector3();
-        this.raycaster = new THREE.Raycaster();
+        // this.mouse = new THREE.Vector2();
+        // this.raycaster = new THREE.Raycaster();
 
-        //Mouse event listeners.
-        document.addEventListener("dblclick", (e)=> this._onDoubleClick(e), false)
-       //document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false)
+        // //Mouse event listeners.
+        // document.addEventListener("click", (e)=> this._onClick(e), false)
+        // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false)
 
         //Load Model.
         this._LoadModel();
         this.input = new CharacterController();
     }
+
+    // _onMouseMove(event){
+    //     this.mouse = {
+    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+    //     }
+    //     // this.raycaster.setFromCamera(this.mouse, this.camera);
+    //     // let intersects = this.raycaster.intersectObjects(this.scene.children, true);
+    //     //
+    //     // for (let i = 0; i < intersects.length; i++) {
+    //     //     console.log(intersects[i]);
+    //     // }
+    //
+    // }
+
+    // //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
+    // _onClick(event){
+    //     this.mouse = {
+    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+    //     }
+    //     this.raycaster.setFromCamera(this.mouse, this.camera);
+    //     let intersects = this.raycaster.intersectObjects(this.meshes2, true);
+    //
+    //     for (let i = 0; i < intersects.length; i++) {
+    //         //console.log(intersects[i]);
+    //
+    //
+    //     }
+    // }
 
     //getter functions
     get Position() {
@@ -88,7 +122,7 @@ export class Character {
         const loader = new FBXLoader();
         loader.setPath('./resources/models/knight/');
         loader.load('Paladin.fbx', (fbx) => {
-            fbx.scale.setScalar(0.2);
+            fbx.scale.setScalar(0.1);
             fbx.traverse(c => {
                 //come here to add sword later
                 if (c.type === "Bone") {
@@ -181,6 +215,10 @@ export class Character {
             return
         }
 
+        // //update from mouse inputs
+        // this.meshes2[0].position.copy(this.bodies2[0].position);
+        // this.meshes2[0].quaternion.copy(this.bodies2[0].quaternion);
+
         //Update FSM based on key press.
         this.stateMachine.Update(timeInSeconds, this.input);
 
@@ -242,7 +280,6 @@ export class Character {
         this.Character.position.copy(this.CharacterBody.position);
 
         this.position.copy(this.CharacterBody.position);
-
 
         //Update Animations.
         if (this.mixer) {
