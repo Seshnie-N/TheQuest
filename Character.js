@@ -226,7 +226,7 @@ export class Character {
         let angle = -this.Character.rotation.y + Math.PI * 0.5;
 
         //initialise
-         const _Q = new THREE.Quaternion();
+        const _Q = new THREE.Quaternion();
 
         //Speed of movement.
         let speed = 1;

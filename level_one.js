@@ -9,7 +9,7 @@ import { Reflector } from './examples/jsm/objects/Reflector.js';
 import CannonDebugger from './node_modules/cannon-es-debugger/dist/cannon-es-debugger.js';
 
 
-let waterCamera, cubeMaterials, ground, tree_loader, shrub_loader, grass_loader, cannonDebugger ;
+let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger ;
 
 class level_one {
     constructor() {
@@ -115,14 +115,14 @@ class level_one {
 
         var filled = [
             [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [0,0,0,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,4,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
-            [1,1,0,1,1,1,0,1,1,1,1,1,1,0,0,0,2,2,0,1],
-            [1,0,0,0,1,1,0,0,0,1,1,1,1,0,1,0,2,2,0,1],
-            [1,0,2,0,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
-            [1,0,0,0,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,1],
-            [1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
-            [1,1,1,1,0,0,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [0,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
+            [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
+            [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
+            [1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
+            [1,0,4,0,1,1,4,0,0,4,0,0,0,0,1,1,0,1,1,1],
+            [1,2,1,1,1,1,4,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [1,1,1,1,0,4,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
             [1,3,0,1,0,1,1,1,0,1,1,0,3,0,1,1,0,1,1,1],
             [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
             [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
@@ -139,25 +139,33 @@ class level_one {
             for(let i=0;i<20;i++){
                 for(let j=0;j<21;j++){
                     if(filled[j][i] != 1){
-                        const mesh = this.floorTile(i*10,j*10);
+                        const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
                     }
                     if(filled[j][i] == 1){   
-                        const mesh = this.hedgeWall(i*10,j*10);
+                        const mesh = this.hedgeWall(i*30,j*30);
                         Level.add( mesh );
                     }
                     if (filled[j][i] == 2){
-                        const water = this.Water(i*10,j*10);
+                        const water = this.Water(i*30,j*30);
                         Level.add(water);
                     }
                     if (filled[j][i] == 3 ){
-                        const key = this.Key(i*10,j*10);
+                        const key = this.Key(i*30,j*30);
                         Level.add(key);
                     }
-                    // if (filled[j][i] == 4){
-                    //     const spineGrass = SpineGrass(i*10,j*10);   
-                    //     world.add( spineGrass );
-                    // }
+                    if (filled[j][i] == 4){
+                        const r = Math.floor(Math.random() * 30)+1
+                        const s = Math.floor(Math.random() * 30)+1
+                        const spineGrass = this.SpineGrass(i*30+r-15,j*30+s-15);   
+                        Level.add( spineGrass );
+                    }
+                    if (filled[j][i] == 5){
+                        const r = Math.floor(Math.random() * 30)+1
+                        const s = Math.floor(Math.random() * 30)+1
+                        const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
+                        Level.add( shrub );
+                    }
                 }
             }
 
@@ -273,7 +281,7 @@ class level_one {
 
     floorTile(x,z){
         const floor = new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(10,10),
+            new THREE.PlaneBufferGeometry(30,30),
             ground
         );
         floor.rotation.set(Math.PI/2,0,0);
@@ -283,16 +291,16 @@ class level_one {
 
     hedgeWall(x,z){
         const wall = new THREE.Mesh(
-            new THREE.BoxBufferGeometry(10,10,10),
+            new THREE.BoxBufferGeometry(30,30,30),
             cubeMaterials
         );
         wall.castShadow = true;
         //wall.position.set(x,5,z);
 
         this.wallBody = new CANNON.Body({
-            shape: new CANNON.Box(new CANNON.Vec3(5,5,5)),
+            shape: new CANNON.Box(new CANNON.Vec3(15,15,15)),
             type: CANNON.Body.STATIC,
-            position: new CANNON.Vec3(x,5,z),
+            position: new CANNON.Vec3(x,15,z),
         });
         //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.wallBody);
@@ -323,19 +331,46 @@ class level_one {
     
         let geometry;
     
-        geometry = new THREE.PlaneGeometry(10,10);
+        geometry = new THREE.PlaneGeometry(30,30);
         waterCamera = new Reflector( geometry, {
             clipBias: 0.003,
             textureWidth: window.innerWidth * window.devicePixelRatio,
             textureHeight: window.innerHeight * window.devicePixelRatio,
-            color: 0x777777
+            color: 0x777777,
+            side: DoubleSide,
         });
     
-        waterCamera.position.set(x,2,z);
-        waterCamera.rotateX( -Math.PI / 2 );
+        waterCamera.position.set(x-14,15,z-14);
+        waterCamera.rotateZ( -Math.PI / 2 );
         water.add( waterCamera );
     
         return water;
+    }
+
+    SpineGrass(x,z){
+        const grass = new THREE.Group;
+    
+        grass_loader = new GLTFLoader();
+        grass_loader.load('./resources/models/spine_grass/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(2,2,2); 
+            gltf.scene.position.set(x,0,z); 
+            grass.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        return grass;
+    }
+
+    Shrub(x,z){
+        const shrub = new THREE.Group;
+    
+        shrub_loader = new GLTFLoader();
+        shrub_loader.load('./resources/models/low_poly_shrub/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(25,3,25); 
+            gltf.scene.position.set(x,0,z); 
+            shrub.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        return shrub;
     }
 
     InitaliseTexture() {

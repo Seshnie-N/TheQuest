@@ -1,3 +1,4 @@
+import * as CANNON from './node_modules/cannon-es/dist/cannon-es.js';
 import * as THREE from 'three';
 
 export class ThirdPersonCamera {
@@ -7,17 +8,18 @@ export class ThirdPersonCamera {
 
         this.currentPosition = new THREE.Vector3();
         this.currentLookat = new THREE.Vector3();
+
     }
 
     calcOffset() {
-        const offset = new THREE.Vector3(-15, 25, -40);
+        const offset = new THREE.Vector3(-6, 16, -10);
         offset.applyQuaternion(this.params.target.Rotation);
         offset.add(this.params.target.Position);
         return offset;
     }
 
     calcLookat() {
-        const lookat = new THREE.Vector3(0, 10, 50);
+        const lookat = new THREE.Vector3(-2, 10, 35);
         lookat.applyQuaternion(this.params.target.Rotation);
         lookat.add(this.params.target.Position);
         return lookat;
@@ -37,5 +39,14 @@ export class ThirdPersonCamera {
 
         this.camera.position.copy(this.currentPosition);
         this.camera.lookAt(this.currentLookat);
+
+        //this.cameraBox.position.copy(this.currentPosition);
+    }
+
+    camaraPhysics(){
+        this.cameraBox = new CANNON.Body({
+            shape : new CANNON.Box(new CANNON.Vec3(3,3,3)),
+        });
+        this.world.addBody(this.cameraBox);
     }
 }
