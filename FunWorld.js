@@ -257,6 +257,22 @@ function Water(x,z) {
     water.add( waterCamera );
 
     return water;
+
+    // water
+
+    // const waterGeometry = new THREE.PlaneGeometry( 20, 20 );
+
+    // water = new Water( waterGeometry, {
+    //     color: params.color,
+    //     scale: params.scale,
+    //     flowDirection: new THREE.Vector2( params.flowX, params.flowY ),
+    //     textureWidth: 1024,
+    //     textureHeight: 1024
+    // } );
+
+    // water.position.y = 1;
+    // water.rotation.x = Math.PI * - 0.5;
+    // scene.add( water );
 }
 
 function InitaliseTexture() {

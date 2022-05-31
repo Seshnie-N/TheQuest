@@ -114,13 +114,13 @@ class level_one {
 
         var filled = [
             [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [0,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
-            [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
-            [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
-            [1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
-            [1,0,4,0,1,1,4,0,0,4,0,0,0,0,1,1,0,1,1,1],
-            [1,2,1,1,1,1,4,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [0,3,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
+            [1,0,0,0,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
+            [1,0,0,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
+            [1,0,2,0,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
+            [1,0,3,0,1,1,4,0,0,4,0,0,0,0,1,1,0,1,1,1],
+            [1,1,1,1,1,1,4,1,0,1,1,1,1,1,1,1,0,1,1,1],
             [1,1,1,1,0,4,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
             [1,3,0,1,0,1,1,1,0,1,1,0,3,0,1,1,0,1,1,1],
             [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
@@ -237,7 +237,7 @@ class level_one {
             //move forward physics world
             this.world.step(this.timeStep);
 
-            //cannonDebugger.update();
+            cannonDebugger.update();
 
             this.animate(); 
             this.renderer.render(this.scene, this.camera);
@@ -283,7 +283,7 @@ class level_one {
             new THREE.PlaneBufferGeometry(30,30),
             ground
         );
-        floor.rotation.set(Math.PI/2,0,0);
+        floor.rotation.set(-Math.PI/2,0,0);
         floor.position.set(x,0,z);
         return floor;
     }
@@ -318,10 +318,13 @@ class level_one {
         tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
             gltf.scene.scale.set(0.01,0.01,0.01); 
             gltf.scene.position.set(x,5,z); 
-            gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
+            gltf.scene.rotation.set(Math.PI,Math.PI/6,0, 'ZYX' );
             key.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
     
+        const tile = this.floorTile(x,z);
+        tile.position.y = 30;
+        key.add(tile);
         return key;
     }
 
@@ -339,7 +342,7 @@ class level_one {
         });
     
         waterCamera.position.set(x-14,15,z-14);
-        waterCamera.rotateZ( -Math.PI / 2 );
+        waterCamera.rotateX( -Math.PI );
         water.add( waterCamera );
     
         return water;
@@ -382,7 +385,7 @@ class level_one {
                 new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide});
+        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')});
     }
 }
 
