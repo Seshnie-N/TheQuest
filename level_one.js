@@ -8,7 +8,7 @@ import { Reflector } from './examples/jsm/objects/Reflector.js';
 import CannonDebugger from 'cannon-es-debugger';
 
 
-let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger ;
+let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, collectedKeys;
 
 class level_one {
     constructor() {
@@ -20,13 +20,11 @@ class level_one {
     init(){
         //declare variables
         this._mixers = [];
-
-        //Hedge walls
-        this.meshes2 = [];
+        collectedKeys = 0;
 
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
-        document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
+       // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
 
@@ -37,14 +35,6 @@ class level_one {
         this._LoadAnimatedModels();
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
-
-        //temp ground
-        this.planeBody = new CANNON.Body({
-            shape: new CANNON.Plane(),
-            type: CANNON.Body.STATIC
-        })
-        this.world.addBody(this.planeBody);
-        this.planeBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 
         this.previousRAF = null;
 
@@ -107,14 +97,23 @@ class level_one {
     }
 
     generateWorld() {
+
+        //plane in physics world
+        this.planeBody = new CANNON.Body({
+            shape: new CANNON.Plane(),
+            type: CANNON.Body.STATIC
+        })
+        this.world.addBody(this.planeBody);
+        this.planeBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+
         //all of roberts world builder stuff
         const Level = new THREE.Group();
 
         this.InitaliseTexture();
 
         var filled = [
-            [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [0,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [0,3,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [3,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
             [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
             [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
@@ -183,12 +182,17 @@ class level_one {
     }
 
     _LoadAnimatedModels(){
+
+        //set character location in scene
+        this.startPos = new CANNON.Vec3(20,0,10);
+
         //Params to be passed to the character class.
         const CharParams = {
             renderer: this.renderer,
             camera: this.camera,
             scene: this.scene,
             world: this.world,
+            startPos : this.startPos,
         }
         this.Character = new CHARACTER.Character(CharParams)
 
@@ -202,30 +206,52 @@ class level_one {
         }
     }
 
-    //affect objects when hovering over
-    _onMouseMove(event){
+    // affect objects when hovering over
+    // _onMouseMove(event){
+    //     this.mouse = {
+    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+    //     }
+    //     this.raycaster.setFromCamera(this.mouse, this.camera);
+    //     let intersects = this.raycaster.intersectObjects(this.keys, true);
+    //
+    //     for (let i = 0; i < intersects.length; i++) {
+    //         if(intersects[i]){
+    //             console.log("clicked" + i);
+    //         }
+    //     }
+    //
+    // }
+
+    //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
+    _onClick(event){
         this.mouse = {
             x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
             y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
         }
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        let intersects = this.raycaster.intersectObjects(this.scene.children, true);
+        let intersects = this.raycaster.intersectObjects(key.children, true);
 
-        for (let i = 0; i < intersects.length; i++) {
-            console.log();
-
+        if (intersects.length > 0){
+            let target = intersects[0];
+            //target.object.visible = false;
+            target.object.position.z -= 20;
+            collectedKeys += 1;
+            console.log( collectedKeys);
         }
-
     }
 
-    //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
-    _onClick(event){
-        let intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-        for (let i = 0; i < intersects.length; i++) {
-            console.log(intersects[i]);
-
-        }
+    // check if player won - check if player has all keys to open gate at end of maze
+    checkKeys(){
+        // console.log(this.caught, this.taskList)
+        // if(this.taskList.every(elem =>this.caught.includes(elem))){
+        //     console.log("yes")
+        //     return true
+        // }
+        // else{
+        //     console.log("nope")
+        //     return false
+        // }
     }
 
     //continuous rendering to create animation
@@ -303,7 +329,6 @@ class level_one {
         });
         //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.wallBody);
-        this.meshes2.push(this.wallBody);
 
         wall.position.copy(this.wallBody.position);
         wall.quaternion.copy(this.wallBody.quaternion);
@@ -312,16 +337,17 @@ class level_one {
     }
 
     Key(x,z){
-        const key = new THREE.Group;
-    
+        key = new THREE.Group;
+
         tree_loader = new GLTFLoader();
         tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
             gltf.scene.scale.set(0.01,0.01,0.01); 
             gltf.scene.position.set(x,5,z); 
             gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
-            key.add(gltf.scene);  
+            let model = gltf.scene;
+            key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
-    
+
         return key;
     }
 

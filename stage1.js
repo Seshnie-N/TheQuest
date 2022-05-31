@@ -30,7 +30,7 @@ class stage1{
 
         //testing box
         this.box = new THREE.Mesh(
-            new THREE.BoxGeometry(4, 4, 4),
+            new THREE.BoxGeometry(40, 40, 40),
             new THREE.MeshBasicMaterial({
                 color: 0xffffff,
             }));
@@ -42,8 +42,9 @@ class stage1{
 
         //add box to physics worlds
         this.boxBody = new CANNON.Body({
-            shape: new CANNON.Box(new CANNON.Vec3(2,2,2)),
-            mass: 20
+            shape: new CANNON.Box(new CANNON.Vec3(20,20,20)),
+            mass: 0,
+            position: this.box.position,
         });
         this.world.addBody(this.boxBody);
         this.bodies2.push(this.boxBody);
