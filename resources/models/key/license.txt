@@ -1,0 +1,11 @@
+Model Information:
+* title:	key
+* source:	https://sketchfab.com/3d-models/key-7a0f6aaffe604d65bb560955990ce68b
+* author:	yomans (https://sketchfab.com/yomans)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "key" (https://sketchfab.com/3d-models/key-7a0f6aaffe604d65bb560955990ce68b) by yomans (https://sketchfab.com/yomans) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
