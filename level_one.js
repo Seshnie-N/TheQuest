@@ -34,6 +34,9 @@ class level_one {
         this.addSkybox();
         this._LoadAnimatedModels();
 
+
+    const axesHelper = new THREE.AxesHelper( 100);
+        this.scene.add( axesHelper );
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
         this.previousRAF = null;

@@ -86,11 +86,11 @@ export class Character {
             fbx.scale.setScalar(0.1);
             fbx.traverse(c => {
                 //come here to add sword later
-                if (c.type === "Bone") {
-                    if (c.name === "RightHand") {
-                        this.RightHand = c;
-                    }
-                }
+                // if (c.type === "Bone") {
+                //     if (c.name === "RightHand") {
+                //         this.RightHand = c;
+                //     }
+                // }
                 c.castShadow = true;
             });
             this.Character = fbx;
@@ -108,7 +108,7 @@ export class Character {
             //Cylindrical Shape
             const characterShape = new CANNON.Cylinder(depth+5 , depth+5, height, 8)
             this.CharacterBody = new CANNON.Body({
-                mass: 150,
+                mass: 125,
                 position:  this.startPos,
                 material: heavyMaterial
             });
@@ -143,22 +143,21 @@ export class Character {
                 };
             };
 
-            //TODO: add side strafe
             //Load all animations files.
             const loader = new FBXLoader(this.manager);
             loader.setPath("./resources/models/knight/");
-            loader.load('Sword And Shield Walk.fbx', (a) => {
+            loader.load('Walking.fbx', (a) => {
                 _OnLoad('walk', a);
             });
-            // loader.load('Run.fbx', (a) => {
-            //     _OnLoad('run', a);
-            // });
-            loader.load('Sword And Shield Idle.fbx', (a) => {
+            loader.load('Running.fbx', (a) => {
+                _OnLoad('run', a);
+            });
+            loader.load('Idle.fbx', (a) => {
                 _OnLoad('idle', a);
             });
-            // loader.load('Jump.fbx', (a) => {
-            //     _OnLoad('jump', a);
-            // });
+            loader.load('Jumping Up.fbx', (a) => {
+                _OnLoad('jump', a);
+            });
             // loader.load('RunJump.fbx', (a) => {
             //     _OnLoad('run_jump', a);
             // });
@@ -187,12 +186,12 @@ export class Character {
 
         //Speed of movement.
         let speed = 1;
-        let rSpeed = speed / 2;
+        let rSpeed = 1;
 
         //Used to see if the model is standing on another object.
-        // if (this.CharacterBody.position.y < 1) {
-        //     jumpInitialHeight = this.CharacterBody.position.y
-        // }
+        if (this.CharacterBody.position.y < 1) {
+            this.jumpInitialHeight = this.CharacterBody.position.y
+        }
 
         // if (this.input.CharacterMovement.throw) {
         //     this.input.CharacterMotions.throw = false;
@@ -201,8 +200,26 @@ export class Character {
 
         //Increase Speed if the run key is pressed.
         if (this.input.CharacterMotions.run) {
-            speed *= 4;
-            rSpeed *= 2;
+            speed *= 2;
+        }
+
+        if (this.input.CharacterMotions.jump) {
+            const listener = new THREE.AudioListener();
+            this.camera.add(listener);
+            // const sound = new THREE.Audio(listener);
+            // const audioLoader = new THREE.AudioLoader();
+            // audioLoader.load('resources/sounds/jumpSound.wav', function (buffer) {
+            //     sound.setBuffer(buffer);
+            //     sound.setVolume(0.3);
+            //     sound.play();
+            // });
+
+            if (this.CharacterBody.position.y <= this.jumpInitialHeight + 2.5) {
+                if (this.stateMachine._currentState.Name === 'jump') {
+                    this.CharacterBody.position.y += 10;
+                }
+            }
+            this.input.CharacterMotions.jump = false;
         }
 
         //Move forward in relation to current direction
@@ -269,6 +286,7 @@ class CharacterController {
             left: false,
             right: false,
             run: false,
+            jump: false,
         };
 
         document.addEventListener('keydown', (e) => this._onKeyDown(e), false);
@@ -291,6 +309,9 @@ class CharacterController {
                 break;
             case "ShiftLeft": // SHIFT
                 this.CharacterMotions.run = true;
+                break;
+            case "Space": // SPACE
+                this.CharacterMotions.jump = true;
                 break;
             case 38: // up
             case 37: // left
@@ -316,6 +337,9 @@ class CharacterController {
                 break;
             case "ShiftLeft": // SHIFT
                 this.CharacterMotions.run = false;
+                break;
+            case "Space": // SPACE
+                this.CharacterMotions.jump = false;
                 break;
             case 38: // up
             case 37: // left
@@ -373,8 +397,8 @@ class CharacterFSM extends FiniteStateMachine {
     _Init() {
         this.AddState('idle', IdleState);
         this.AddState('walk', WalkState);
-        // this.AddState('run', RunState);
-        // this.AddState('jump', JumpState);
+        this.AddState('run', RunState);
+        this.AddState('jump', JumpState);
         // this.AddState('run_jump', RunningJumpState);
         // this.AddState('walk_jump', WalkingJumpState);
         // this.AddState('throw', ThrowState);
@@ -399,68 +423,68 @@ class State {
 
 //States that inherit from State Class.
 //Most of these classes will work in the same manner.See RunState for comments.
-// class RunState extends State {
-//     constructor(parent) {
-//         super(parent);
-//     }
-//
-//     //return name
-//     get Name() {
-//         return 'run';
-//     }
-//     // what happens when state is entered
-//     Enter(prevState) {
-//         //get the animation for the state
-//         const curAction = this._parent._proxy._animations['run'].action;
-//
-//         //if it came from a previous state, smoothly transition to the current stare.
-//         if (prevState) {
-//             //get previous animation
-//             const prevAction = this._parent._proxy._animations[prevState.Name].action;
-//             //enable current animation
-//             curAction.enabled = true;
-//             //adjust animation based on ratios. Changes according to prevState
-//             if (prevState.Name === 'walk') {
-//                 const ratio = curAction.getClip().duration / prevAction.getClip().duration;
-//                 curAction.time = prevAction.time * ratio;
-//             } else if (prevState.Name === 'run_jump') {
-//                 const ratio = curAction.getClip().duration / prevAction.getClip().duration + 2;
-//                 curAction.time = prevAction.time * ratio;
-//             } else {
-//                 curAction.time = 0.0;
-//                 curAction.setEffectiveTimeScale(1.0);
-//                 curAction.setEffectiveWeight(1.0);
-//             }
-//             //Actually transition
-//             curAction.crossFadeFrom(prevAction, 0.5, true);
-//             curAction.play();
-//         } else {
-//             //if first state. play the animation
-//             curAction.play();
-//         }
-//     }
-//
-//     Exit() {
-//     }
-//
-//     //check what was the button pressed while in this state and transition to the that state.
-//     Update(timeElapsed, input) {
-//         if (input.CharacterMotions.forward || input.CharacterMotions.backward) {
-//             if (!input.CharacterMotions.run) {
-//                 this._parent.SetState('walk');
-//             }
-//
-//             if (input.CharacterMotions.jump) {
-//                 this._parent.SetState('run_jump');
-//             }
-//
-//             return;
-//         }
-//
-//
-//         this._parent.SetState('idle');
-//     }
-// }
+class RunState extends State {
+    constructor(parent) {
+        super(parent);
+    }
+
+    //return name
+    get Name() {
+        return 'run';
+    }
+    // what happens when state is entered
+    Enter(prevState) {
+        //get the animation for the state
+        const curAction = this._parent._proxy._animations['run'].action;
+
+        //if it came from a previous state, smoothly transition to the current stare.
+        if (prevState) {
+            //get previous animation
+            const prevAction = this._parent._proxy._animations[prevState.Name].action;
+            //enable current animation
+            curAction.enabled = true;
+            //adjust animation based on ratios. Changes according to prevState
+            if (prevState.Name === 'walk') {
+                const ratio = curAction.getClip().duration / prevAction.getClip().duration;
+                curAction.time = prevAction.time * ratio;
+            } else if (prevState.Name === 'run_jump') {
+                const ratio = curAction.getClip().duration / prevAction.getClip().duration + 2;
+                curAction.time = prevAction.time * ratio;
+            } else {
+                curAction.time = 0.0;
+                curAction.setEffectiveTimeScale(1.0);
+                curAction.setEffectiveWeight(1.0);
+            }
+            //Actually transition
+            curAction.crossFadeFrom(prevAction, 0.5, true);
+            curAction.play();
+        } else {
+            //if first state. play the animation
+            curAction.play();
+        }
+    }
+
+    Exit() {
+    }
+
+    //check what was the button pressed while in this state and transition to the that state.
+    Update(timeElapsed, input) {
+        if (input.CharacterMotions.forward || input.CharacterMotions.backward) {
+            if (!input.CharacterMotions.run) {
+                this._parent.SetState('walk');
+            }
+
+            if (input.CharacterMotions.jump) {
+                this._parent.SetState('run_jump');
+            }
+
+            return;
+        }
+
+
+        this._parent.SetState('idle');
+    }
+}
 
 class IdleState extends State {
     constructor(parent) {
@@ -492,9 +516,9 @@ class IdleState extends State {
     Update(_, input) {
         if (input.CharacterMotions.forward || input.CharacterMotions.backward) {
             this._parent.SetState('walk');
-         } //else if (input.CharacterMotions.jump) {
-        //     this._parent.SetState('jump');
-        // } else if(input.CharacterMotions.throw){
+         } else if (input.CharacterMotions.jump) {
+             this._parent.SetState('jump');
+         }// else if(input.CharacterMotions.throw){
         //     this._parent.SetState('throw');
         // }
     }
@@ -542,10 +566,10 @@ class WalkState extends State {
                 this._parent.SetState('run');
             }
 
-            if (input.CharacterMotions.jump) {
-                this._parent.SetState('walk_jump');
-
-            }
+            // if (input.CharacterMotions.jump) {
+            //     this._parent.SetState('walk_jump');
+            //
+            // }
 
             return;
         }
@@ -555,4 +579,53 @@ class WalkState extends State {
     }
 }
 
+class JumpState extends State {
+    constructor(parent) {
+        super(parent);
 
+        this._FinishedCallback = () => {
+            this._Finished();
+        }
+    }
+
+    get Name() {
+        return 'jump';
+    }
+
+    Enter(prevState) {
+        const curAction = this._parent._proxy._animations['jump'].action;
+        const mixer = curAction.getMixer();
+        mixer.addEventListener('finished', this._FinishedCallback);
+
+        if (prevState) {
+            const prevAction = this._parent._proxy._animations[prevState.Name].action;
+
+            curAction.reset();
+            curAction.setLoop(THREE.LoopOnce, 1);
+            curAction.clampWhenFinished = true;
+            curAction.crossFadeFrom(prevAction, 0.1, true);
+            curAction.play();
+        } else {
+            curAction.play();
+        }
+    }
+
+    //
+    _Finished() {
+        this._Cleanup();
+        this._parent.SetState('idle');
+    }
+
+    //remove event listener
+    _Cleanup() {
+        const action = this._parent._proxy._animations['jump'].action;
+        action.getMixer().removeEventListener('finished', this._FinishedCallback);
+    }
+
+    Exit() {
+        this._Cleanup();
+    }
+
+    Update(_) {
+    }
+}
