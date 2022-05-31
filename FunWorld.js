@@ -181,10 +181,7 @@ function World() {
                 // }
                 world.add( mesh );
             }
-            if (filled[j][i] == 3){
-                const spineGrass = SpineGrass(i*10,j*10);   
-                world.add( spineGrass );
-            }
+            
             if (filled[j][i] == 2){
                 const water = Water(i*10,j*10);
                 world.add(water);
@@ -249,8 +246,8 @@ function Key(x,z){
     const key = new THREE.Group;
 
     tree_loader = new GLTFLoader();
-    tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
-        gltf.scene.scale.set(0.01,0.01,0.01); 
+    tree_loader.load('./resources/models/oldKey/unlock.glb',function (gltf) {
+        gltf.scene.scale.set(1,1,1); 
         gltf.scene.position.set(x,5,z); 
         gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
         key.add(gltf.scene);  
