@@ -228,12 +228,12 @@ function Key(x,z){
     tree_loader = new GLTFLoader();
     tree_loader.load('./resources/models/oldKey/unlock.glb',function (gltf) {
         gltf.scene.scale.set(1,1,1); 
-        gltf.scene.position.set(x,1,z); 
+        gltf.scene.position.set(x,6,z); 
 
-        gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0);
+        gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
         //gsap.to(gltf.scene.position, {duration: 1, delay:1, y:50 })
         //gsap.to(gltf.scene.position, {duration: 1, delay:2, y:1 })
-        gsap.to(gltf.scene.position, {y:'+=10', duration:2, ease:'none', repeat:-1, yoyo:true
+        gsap.to(gltf.scene.position, {y:'+=5', duration:1, delay: 0, ease:'none', repeat:-1, yoyo:true
           })
         key.add(gltf.scene);  
     },(xhr) => xhr, ( err ) => console.error( err ));
