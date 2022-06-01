@@ -8,7 +8,7 @@ import { Reflector } from './examples/jsm/objects/Reflector.js';
 import CannonDebugger from 'cannon-es-debugger';
 
 
-let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, collectedKeys;
+let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, door,  collectedKeys, door_loader, doormixer, opendoor;
 
 class level_one {
     constructor() {
@@ -19,8 +19,8 @@ class level_one {
     //create level
     init(){
         //declare variables
-        this._mixers = [];
         collectedKeys = 0;
+        opendoor = false;
 
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
@@ -116,15 +116,15 @@ class level_one {
 
         var filled = [
             [0,3,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [3,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
+            [7,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
             [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
             [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
             [1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
             [1,0,4,0,1,1,4,0,0,4,0,0,0,0,1,1,0,1,1,1],
             [1,2,1,1,1,1,4,1,0,1,1,1,1,1,1,1,0,1,1,1],
             [1,1,1,1,0,4,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
-            [1,3,0,1,0,1,1,1,0,1,1,0,3,0,1,1,0,1,1,1],
+            [1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
             [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
             [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
             [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
@@ -143,7 +143,7 @@ class level_one {
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
                     }
-                    if(filled[j][i] == 1){   
+                    if(filled[j][i] == 1){
                         const mesh = this.hedgeWall(i*30,j*30);
                         Level.add( mesh );
                     }
@@ -168,14 +168,11 @@ class level_one {
                         Level.add( shrub );
                     }
                     if (filled[j][i] == 7){
-                        //load door
-                        const door = this.hedgeWall(i*30,j*30);
-                        //Level.add( shrub );
+                        const door = this.door(i*30,j*30);
+                        Level.add( door );
                     }
                 }
             }
-
-            //Level.scale.set(3,3,3);
 
             this.scene.add( Level )
     }
@@ -192,7 +189,7 @@ class level_one {
     _LoadAnimatedModels(){
 
         //set character location in scene
-        this.startPos = new CANNON.Vec3(20,0,10);
+        this.startPos = new CANNON.Vec3(0,0,0);
 
         //Params to be passed to the character class.
         const CharParams = {
@@ -238,28 +235,28 @@ class level_one {
             y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
         }
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        let intersects = this.raycaster.intersectObjects(key.children, true);
+        let intersects_key = this.raycaster.intersectObjects(key.children, true);
 
-        if (intersects.length > 0){
-            let target = intersects[0];
+        if (intersects_key.length > 0){
+            let target = intersects_key[0];
             //target.object.visible = false;
             target.object.position.z -= 20;
             collectedKeys += 1;
             console.log( collectedKeys);
         }
-    }
 
-    // check if player won - check if player has all keys to open gate at end of maze
-    checkKeys(){
-        // console.log(this.caught, this.taskList)
-        // if(this.taskList.every(elem =>this.caught.includes(elem))){
-        //     console.log("yes")
-        //     return true
-        // }
-        // else{
-        //     console.log("nope")
-        //     return false
-        // }
+        let intersects_door = this.raycaster.intersectObjects(door.children, true);
+
+        if (intersects_door.length > 0){
+            //check if all keys collected
+            if (collectedKeys >= key.children.length){
+                opendoor = true;
+                console.log("you win");
+            }else{
+                console.log("you have not found all the keys");
+            }
+        }
+
     }
 
     //continuous rendering to create animation
@@ -284,8 +281,15 @@ class level_one {
     step(timeElapsed){
         //update to enable animations
         const timeElapsedS = timeElapsed * 0.001;
-        if (this._mixers) {
-            this._mixers.map(m => m.update(timeElapsedS));
+
+        //animate door to open
+        if (opendoor) {
+            if (doormixer) doormixer.update(timeElapsedS);
+            setTimeout(function()
+            {
+                opendoor = false;
+            },1500);
+
         }
 
         //update rotation of skybox for dynamic skybox
@@ -319,6 +323,7 @@ class level_one {
         );
         floor.rotation.set(Math.PI/2,0,0);
         floor.position.set(x,0,z);
+        floor.receiveShadow = true;
         return floor;
     }
 
@@ -345,23 +350,40 @@ class level_one {
     }
 
     door(x,z){
-        const door_loader = new GLTFLoader();
+        door = new THREE.Group;
+
+        const doorBack = new THREE.Mesh(
+            new THREE.PlaneGeometry(10,40.7),
+            new THREE.MeshBasicMaterial({color: 0x000000})
+        );
+        doorBack.position.set(x, 0, z+14.5);
+        doorBack.rotation.y = Math.PI;
+        this.scene.add(doorBack);
+
+        door_loader = new GLTFLoader();
         door_loader.load('./resources/models/door/scene.gltf',function (gltf) {
-            //gltf.scene.scale.set(0.01,0.01,0.01);
-            gltf.scene.position.set(x,5,z);
-            let door = gltf.scene;
+            gltf.scene.scale.set(0.025,0.025,0.025);
+            gltf.scene.position.set(x,0,z+14);
+
+            doormixer = new THREE.AnimationMixer(gltf.scene);
+            gltf.animations.forEach((clip) => {
+                doormixer.clipAction(clip).play();
+            });
+
+            let model = gltf.scene;
+            door.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
 
-        return wall;
+        return door;
     }
 
     Key(x,z){
         key = new THREE.Group;
 
         tree_loader = new GLTFLoader();
-        tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
+        tree_loader.load('./resources/models/key/scene.gltf',function (gltf) {
             gltf.scene.scale.set(0.01,0.01,0.01); 
-            gltf.scene.position.set(x,5,z); 
+            gltf.scene.position.set(x,5,z);
             gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
             let model = gltf.scene;
             key.add(model);
