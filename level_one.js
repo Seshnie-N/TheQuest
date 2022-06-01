@@ -34,6 +34,7 @@ class level_one {
         this.generateWorld();        
         this.addSkybox();
         this._LoadAnimatedModels();
+        this.addSound()
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
@@ -104,6 +105,26 @@ class level_one {
         })
         this.timeStep = 1/60;
     }
+
+    addSound(){
+        // create an AudioListener and add it to the camera
+    const listener = new THREE.AudioListener();
+    this.camera.add( listener );
+
+    // create a global audio source
+    const sound = new THREE.Audio( listener );
+
+    // load a sound and set it as the Audio object's buffer
+    const audioLoader = new THREE.AudioLoader();
+    audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) {
+        sound.setBuffer( buffer );
+        sound.setLoop( true );
+        sound.setVolume( 5 );
+        sound.play();
+        });
+    }
+
+    
 
     generateWorld() {
         //all of roberts world builder stuff
@@ -399,6 +420,17 @@ class level_one {
         const loaderGround = new THREE.TextureLoader();
         ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide});
     }
+
+    initSounds(){
+		this.listener = new THREE.AudioListener();
+        this.camera.add( this.listener );
+		this.sfx = new SFX(this.camera, `${this.assetsPath}factory/sfx/`, this.listener);
+		this.sfx.load('atmos', true, 0.1);
+		this.user.initSounds();
+		this.npcHandler.npcs.forEach( npc => npc.initSounds() );
+	}
+	
+
 }
 
 let APP_ = null;
