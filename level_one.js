@@ -240,7 +240,7 @@ class level_one {
         if (intersects_key.length > 0){
             let target = intersects_key[0];
             //target.object.visible = false;
-            target.object.position.z -= 20;
+            target.object.position.y -= 50;
             collectedKeys += 1;
             console.log( collectedKeys);
         }
@@ -379,13 +379,12 @@ class level_one {
 
     Key(x,z){
         key = new THREE.Group;
-
+        let model;
         tree_loader = new GLTFLoader();
         tree_loader.load('./resources/models/key/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(0.01,0.01,0.01); 
+            gltf.scene.scale.set(0.3,0.3,0.3);
             gltf.scene.position.set(x,5,z);
-            gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
-            let model = gltf.scene;
+            model = gltf.scene;
             key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
 
