@@ -108,7 +108,7 @@ export class Character {
             //Cylindrical Shape
             const characterShape = new CANNON.Cylinder(depth+5 , depth+5, height, 8)
             this.CharacterBody = new CANNON.Body({
-                mass: 125,
+                mass: 1000,
                 position:  this.startPos,
                 material: heavyMaterial
             });
@@ -399,8 +399,6 @@ class CharacterFSM extends FiniteStateMachine {
         this.AddState('walk', WalkState);
         this.AddState('run', RunState);
         this.AddState('jump', JumpState);
-        // this.AddState('run_jump', RunningJumpState);
-        // this.AddState('walk_jump', WalkingJumpState);
         // this.AddState('throw', ThrowState);
     }
 }

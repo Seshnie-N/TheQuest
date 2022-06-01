@@ -167,6 +167,11 @@ class level_one {
                         const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
                         Level.add( shrub );
                     }
+                    if (filled[j][i] == 7){
+                        //load door
+                        const door = this.hedgeWall(i*30,j*30);
+                        //Level.add( shrub );
+                    }
                 }
             }
 
@@ -336,6 +341,17 @@ class level_one {
         wall.position.copy(this.wallBody.position);
         wall.quaternion.copy(this.wallBody.quaternion);
     
+        return wall;
+    }
+
+    door(x,z){
+        const door_loader = new GLTFLoader();
+        door_loader.load('./resources/models/door/scene.gltf',function (gltf) {
+            //gltf.scene.scale.set(0.01,0.01,0.01);
+            gltf.scene.position.set(x,5,z);
+            let door = gltf.scene;
+        },(xhr) => xhr, ( err ) => console.error( err ));
+
         return wall;
     }
 
