@@ -3,7 +3,7 @@ import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
 import { DRACOLoader} from './examples/jsm/loaders/DRACOLoader.js';
-
+import gsap from './node_modules/gsap/index.js';
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
 let camera, controls, scene, renderer;
@@ -198,33 +198,13 @@ function World() {
 }
 
 function floorTile(x,z){
-    // const geometry = new THREE.BoxGeometry(10, 2.5, 10);
-    // const loader = new THREE.TextureLoader();
-    // const cubeMaterials = [
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //right side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //left side
-    //     new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/grass.jpg')}), //top side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //bottom side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //front side
-    //     new THREE.MeshBasicMaterial({color: 'green', side: DoubleSide}), //back side
-    // ];
-    // const tile = new THREE.Mesh(geometry, cubeMaterials);
-    // tile.position.set(x,2.5/2,z);
-
-    // return tile;
-
-    // const tile = new THREE.Mesh(
-    //     new THREE.BoxBufferGeometry(10,2.5,10),
-    //     new THREE.MeshLambertMaterial({color: 'green', side: DoubleSide})
-    // );
-    // tile.position.set(x,2.5/2,z);
-    // return tile;
+  
     const tile = new THREE.Mesh(
         // new THREE.BoxBufferGeometry(10,2.5,10),
-        new THREE.BoxBufferGeometry(10,10,10),
+        new THREE.BoxBufferGeometry(10,4,10),
         cubeMaterials
     );
-    tile.position.set(x,5,z);
+    tile.position.set(x,0.5,z);
     return tile;
 }
 
@@ -248,10 +228,17 @@ function Key(x,z){
     tree_loader = new GLTFLoader();
     tree_loader.load('./resources/models/oldKey/unlock.glb',function (gltf) {
         gltf.scene.scale.set(1,1,1); 
-        gltf.scene.position.set(x,5,z); 
-        gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
+        gltf.scene.position.set(x,1,z); 
+
+        gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0);
+        //gsap.to(gltf.scene.position, {duration: 1, delay:1, y:50 })
+        //gsap.to(gltf.scene.position, {duration: 1, delay:2, y:1 })
+        gsap.to(gltf.scene.position, {y:'+=10', duration:2, ease:'none', repeat:-1, yoyo:true
+          })
         key.add(gltf.scene);  
     },(xhr) => xhr, ( err ) => console.error( err ));
+
+    
 
     return key;
 
