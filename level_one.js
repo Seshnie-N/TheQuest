@@ -6,8 +6,7 @@ import  * as CAMERA from "./ThirdPersonCamera.js";
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
 import CannonDebugger from 'cannon-es-debugger';
-
-
+import gsap from './node_modules/gsap/index.js';
 let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger ;
 
 class level_one {
@@ -114,7 +113,7 @@ class level_one {
 
         var filled = [
             [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [0,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [3,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
             [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
             [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
@@ -316,9 +315,25 @@ class level_one {
     
         tree_loader = new GLTFLoader();
         tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(0.01,0.01,0.01); 
+            gltf.scene.scale.set(0.02,0.02,0.02); 
             gltf.scene.position.set(x,5,z); 
-            gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
+            gltf.scene.rotation.set(Math.PI/2,0,0 );
+            
+            gsap.to(gltf.scene.position, {y:'+=10',
+             duration:2, //The speed of the key 
+             ease:'none',
+             repeat:-1, // Reversing the action 
+             yoyo:true // The yoyo effect
+            })
+
+            gsap.to(gltf.scene.rotation, {z:'+=10',
+             duration:2, //The speed of the key 
+             ease:'none',
+             repeat:-1, // Reversing the action 
+             yoyo:true // The yoyo effect
+        })
+
+
             key.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
     
