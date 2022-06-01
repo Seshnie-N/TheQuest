@@ -30,13 +30,14 @@ class level_one {
 
         this.configThree();
         this.configPhysics();
+        this.addMapCamera();
         this.generateWorld();        
         this.addSkybox();
         this._LoadAnimatedModels();
 
-
-    const axesHelper = new THREE.AxesHelper( 100);
+        const axesHelper = new THREE.AxesHelper( 600 );
         this.scene.add( axesHelper );
+
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
         this.previousRAF = null;
@@ -74,6 +75,11 @@ class level_one {
         light.shadow.camera.bottom = -100;
         this.scene.add(light);
 
+        //add hemisphere light to scene.
+        const intensity = 0.8;
+        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
+        this.scene.add(hemi_light);
+
         light = new THREE.AmbientLight(0xFFFFFF, 5.0);
         this.scene.add(light);
 
@@ -99,6 +105,22 @@ class level_one {
         this.timeStep = 1/60;
     }
 
+    addMapCamera(){
+        this.mapWidth = 250;
+        this.mapHeight = 260;
+        this.mapCamera = new THREE.OrthographicCamera(
+            this.mapWidth ,		// Left
+            -this.mapWidth,		// Right
+            -this.mapHeight,		// Top
+            this.mapHeight ,	// Bottom
+            1,         // Near
+            1000);
+
+        this.mapCamera.up = new THREE.Vector3(0, 0, -1);
+        this.mapCamera.lookAt(new THREE.Vector3(0, -1, 0));
+
+    }
+
     generateWorld() {
 
         //plane in physics world
@@ -109,12 +131,12 @@ class level_one {
         this.world.addBody(this.planeBody);
         this.planeBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
 
-        //all of roberts world builder stuff
+        //world builder code
         const Level = new THREE.Group();
 
         this.InitaliseTexture();
 
-        var filled = [
+        let filled = [
             [0,3,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [7,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
@@ -139,35 +161,35 @@ class level_one {
 
             for(let i=0;i<20;i++){
                 for(let j=0;j<21;j++){
-                    if(filled[j][i] != 1){
+                    if(filled[j][i] !== 1){
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
                     }
-                    if(filled[j][i] == 1){
+                    if(filled[j][i] === 1){
                         const mesh = this.hedgeWall(i*30,j*30);
                         Level.add( mesh );
                     }
-                    if (filled[j][i] == 2){
+                    if (filled[j][i] === 2){
                         const water = this.Water(i*30,j*30);
                         Level.add(water);
                     }
-                    if (filled[j][i] == 3 ){
+                    if (filled[j][i] === 3 ){
                         const key = this.Key(i*30,j*30);
                         Level.add(key);
                     }
-                    if (filled[j][i] == 4){
+                    if (filled[j][i] === 4){
                         const r = Math.floor(Math.random() * 30)+1
                         const s = Math.floor(Math.random() * 30)+1
                         const spineGrass = this.SpineGrass(i*30+r-15,j*30+s-15);   
                         Level.add( spineGrass );
                     }
-                    if (filled[j][i] == 5){
+                    if (filled[j][i] === 5){
                         const r = Math.floor(Math.random() * 30)+1
                         const s = Math.floor(Math.random() * 30)+1
                         const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
                         Level.add( shrub );
                     }
-                    if (filled[j][i] == 7){
+                    if (filled[j][i] === 7){
                         const door = this.door(i*30,j*30);
                         Level.add( door );
                     }
@@ -268,10 +290,28 @@ class level_one {
             //move forward physics world
             this.world.step(this.timeStep);
 
+            this.animate();
+
+            let w = window.innerWidth, h = window.innerHeight;
+
+            // full display
+            this.renderer.setViewport(0, 0, w, h);
+            this.renderer.setScissor(0, 0, w, h);
+            this.renderer.setScissorTest(true);
+            this.renderer.render(this.scene, this.camera);
+
+            // minimap (overhead orthogonal camera)
+            if (this.Character && this.mapCamera) {
+                this.renderer.setViewport(100, 100, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(100, 100, this.mapWidth, this.mapHeight);
+                this.renderer.setScissorTest(true);
+                this.mapCamera.position.y = 200;
+                this.renderer.render(this.scene, this.mapCamera);
+            }
+
             //cannonDebugger.update();
 
-            this.animate(); 
-            this.renderer.render(this.scene, this.camera);
+            //this.renderer.render(this.scene, this.camera);
             this.step(t - this.previousRAF);
             this.previousRAF = t;
         });
@@ -293,7 +333,7 @@ class level_one {
         }
 
         //update rotation of skybox for dynamic skybox
-        this.sb.rotation.y += timeElapsedS*0.1;
+        //this.sb.rotation.y += timeElapsedS*0.1;
 
         //update character
         if (this.Character) {
@@ -313,6 +353,7 @@ class level_one {
     OnWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
+        this.mapCamera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 

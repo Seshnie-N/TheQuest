@@ -32,7 +32,7 @@ export class skybox {
                 side: THREE.DoubleSide
             }));
         }
-        let skyGeometry = new THREE.BoxGeometry(900, 500, 900);
+        let skyGeometry = new THREE.BoxGeometry(900, 900, 900);
         this.skybox = new THREE.Mesh(skyGeometry, materials);
         this.skybox.position.set(300,100,300);
         this.scene.add(this.skybox);
