@@ -66,12 +66,11 @@ export class Character {
     _LoadModel() {
         this.manager = new THREE.LoadingManager();
         this.manager.onLoad = () => {
-            // const loadingScreen = document.getElementById( 'loading-screen' );
-            // loadingScreen.classList.add( 'fade-out' );
-            //
-            // // optional: remove loader from DOM via event listener
-            // loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
-            // console.log(this.taskList)
+            const loadingScreen = document.getElementById( 'loading-screen' );
+            loadingScreen.classList.add( 'fade-out' );
+
+            // optional: remove loader from DOM via event listener
+            loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
         };
 
         function onTransitionEnd( event ) {
@@ -80,17 +79,11 @@ export class Character {
         }
 
 
-        const loader = new FBXLoader();
+        const loader = new FBXLoader(this.manager);
         loader.setPath('./resources/models/knight/');
         loader.load('Paladin.fbx', (fbx) => {
             fbx.scale.setScalar(0.1);
             fbx.traverse(c => {
-                //come here to add sword later
-                // if (c.type === "Bone") {
-                //     if (c.name === "RightHand") {
-                //         this.RightHand = c;
-                //     }
-                // }
                 c.castShadow = true;
             });
             this.Character = fbx;
@@ -470,10 +463,6 @@ class RunState extends State {
         if (input.CharacterMotions.forward || input.CharacterMotions.backward) {
             if (!input.CharacterMotions.run) {
                 this._parent.SetState('walk');
-            }
-
-            if (input.CharacterMotions.jump) {
-                this._parent.SetState('run_jump');
             }
 
             return;
