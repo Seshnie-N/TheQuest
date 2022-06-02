@@ -186,10 +186,6 @@ export class Character {
             this.jumpInitialHeight = this.CharacterBody.position.y
         }
 
-        // if (this.input.CharacterMovement.throw) {
-        //     this.input.CharacterMotions.throw = false;
-        // }
-
 
         //Increase Speed if the run key is pressed.
         if (this.input.CharacterMotions.run) {

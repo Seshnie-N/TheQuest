@@ -35,9 +35,6 @@ class level_one {
         //this.addSkybox();
         this._LoadAnimatedModels();
 
-        const axesHelper = new THREE.AxesHelper( 600 );
-        this.scene.add( axesHelper );
-
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
         this.previousRAF = null;
@@ -106,8 +103,8 @@ class level_one {
     }
 
     addMapCamera(){
-        this.mapWidth =400;
-        this.mapHeight = 400;
+        this.mapWidth =320;
+        this.mapHeight = 320;
         this.mapCamera = new THREE.OrthographicCamera(
             this.mapWidth ,		// Left
             -this.mapWidth ,		// Right
@@ -116,11 +113,8 @@ class level_one {
             1,         // Near
             1000);
 
-        this.mapCamera.position.set(300,300,300);
-        this.mapCamera.lookAt(new THREE.Vector3(300, 1, 300));
-
-        const helper = new THREE.CameraHelper( this.mapCamera );
-        this.scene.add( helper );
+        this.mapCamera.position.set(285,300,285);
+        this.mapCamera.lookAt(new THREE.Vector3(285, 1, 285));
 
     }
 
@@ -159,7 +153,8 @@ class level_one {
             [1,1,1,1,0,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1],
             [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1],
             [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,2,1,1,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
 
             for(let i=0;i<20;i++){
                 for(let j=0;j<20;j++){
@@ -303,8 +298,8 @@ class level_one {
 
             // minimap (overhead orthogonal camera)
             if (this.Character && this.mapCamera) {
-                this.renderer.setViewport(100, 100, this.mapWidth, this.mapHeight);
-                this.renderer.setScissor(100, 100, this.mapWidth, this.mapHeight);
+                this.renderer.setViewport(50, 50, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(50, 50, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.mapCamera);
             }
@@ -328,7 +323,7 @@ class level_one {
             setTimeout(function()
             {
                 opendoor = false;
-            },1500);
+            },1300);
         }
 
         //update rotation of skybox for dynamic skybox
