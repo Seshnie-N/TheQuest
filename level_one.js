@@ -108,20 +108,56 @@ class level_one {
 
     addSound(){
         // create an AudioListener and add it to the camera
-    const listener = new THREE.AudioListener();
-    this.camera.add( listener );
+        const listener = new THREE.AudioListener();
+        this.camera.add( listener );
 
-    // create a global audio source
-    const sound = new THREE.Audio( listener );
+        // create a global audio source
+        const sound = new THREE.Audio( listener );
 
-    // load a sound and set it as the Audio object's buffer
-    const audioLoader = new THREE.AudioLoader();
-    audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) {
-        sound.setBuffer( buffer );
-        sound.setLoop( true );
-        sound.setVolume( 5 );
-        sound.play();
-        });
+        // creating an audio loader
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) {
+            sound.setBuffer( buffer );
+            sound.setLoop( true );
+            sound.setVolume( 1 );
+            sound.play();
+            });
+        
+        document.addEventListener("keyup",   onDocumentKeyUp, false);
+        document.addEventListener("keydown", onDocumentKeyDown, false);
+
+        function onDocumentKeyDown(event) {
+            var keyCode = event.which;
+            // W
+            if (keyCode == 87) {
+                sound.stop()
+                // load a sound and set it as the Audio object's buffer
+                const audioLoader = new THREE.AudioLoader();
+                audioLoader.load( './resources/img/woodsteps.mp3', function( buffer ) { // the audio for the footsteps
+                    sound.setBuffer( buffer );
+                    sound.setLoop( true );
+                    sound.setVolume( 1 );
+                    sound.play();
+                     });  
+                }
+                
+               }
+
+
+        function onDocumentKeyUp(event) { // The ambient sound
+            var keyCode = event.which;
+            
+            if (keyCode == 87) {
+                sound.stop()
+                const audioLoader = new THREE.AudioLoader();
+                audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) { // Uploading files from resources
+                    sound.setBuffer( buffer );
+                    sound.setLoop( true );
+                    sound.setVolume( 1);
+                    sound.play();
+                    });
+            }
+        }
     }
 
     
