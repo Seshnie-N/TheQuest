@@ -106,8 +106,8 @@ class level_one {
     }
 
     addMapCamera(){
-        this.mapWidth = 300;
-        this.mapHeight = 300;
+        this.mapWidth =400;
+        this.mapHeight = 400;
         this.mapCamera = new THREE.OrthographicCamera(
             this.mapWidth ,		// Left
             -this.mapWidth ,		// Right
@@ -116,9 +116,8 @@ class level_one {
             1,         // Near
             1000);
 
-        this.mapCamera.position.set(0,0,0);
-        this.mapCamera.up = new THREE.Vector3(0, -1, 0);
-        this.mapCamera.lookAt(new THREE.Vector3(300, 0, 0));
+        this.mapCamera.position.set(300,300,300);
+        this.mapCamera.lookAt(new THREE.Vector3(300, 1, 300));
 
         const helper = new THREE.CameraHelper( this.mapCamera );
         this.scene.add( helper );
@@ -142,8 +141,8 @@ class level_one {
         
         var filled = [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,4,5,3,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
+            [1,7,5,3,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
             [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
             [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
             [1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
@@ -265,7 +264,6 @@ class level_one {
 
         if (intersects_key.length > 0){
             let target = intersects_key[0];
-            //target.object.visible = false;
             target.object.position.y -= 50;
             collectedKeys += 1;
             console.log( collectedKeys);
@@ -332,7 +330,6 @@ class level_one {
             {
                 opendoor = false;
             },1500);
-
         }
 
         //update rotation of skybox for dynamic skybox
