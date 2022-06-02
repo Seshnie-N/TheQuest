@@ -113,6 +113,13 @@ export class Character {
             this.world.addBody(this.CharacterBody);
             this.scene.add(this.Character);
 
+            this.charMarker = new THREE.Mesh(
+                new THREE.SphereGeometry(5),
+                new THREE.MeshBasicMaterial({color: 0xff0000})
+            );
+            this.charMarker.position.set(this.CharacterBody.position.x, 100, this.CharacterBody.position.z);
+            this.scene.add(this.charMarker);
+
             //Animations
             this.mixer = new THREE.AnimationMixer(this.Character);
             this.manager = new THREE.LoadingManager();
@@ -243,6 +250,9 @@ export class Character {
         this.Character.position.copy(this.CharacterBody.position);
 
         this.position.copy(this.CharacterBody.position);
+
+        //update marker position
+        this.charMarker.position.set(this.CharacterBody.position.x, 100, this.CharacterBody.position.z);
 
         //Update Animations.
         if (this.mixer) {
