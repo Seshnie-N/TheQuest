@@ -109,52 +109,51 @@ class level_one {
     addSound(){
         // create an AudioListener and add it to the camera
         const listener = new THREE.AudioListener();
-        this.camera.add( listener );
+        this.camera.add( listener ); // attaching the sound to the camera
 
         // create a global audio source
         const sound = new THREE.Audio( listener );
 
         // creating an audio loader
         const audioLoader = new THREE.AudioLoader();
-        audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) {
+        audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) { // uploading .mp3 file
             sound.setBuffer( buffer );
             sound.setLoop( true );
-            sound.setVolume( 1 );
-            sound.play();
+            sound.setVolume( 1 ); // adjusting the volume
+            sound.play(); // playing the sound
             });
         
-        document.addEventListener("keyup",   onDocumentKeyUp, false);
-        document.addEventListener("keydown", onDocumentKeyDown, false);
+        document.addEventListener("keyup",   onDocumentKeyUp, false);    //on click handler for releasing W
+        document.addEventListener("keydown", onDocumentKeyDown, false); // on click handler for pressing W
 
-        function onDocumentKeyDown(event) {
-            var keyCode = event.which;
-            // W
+        function onDocumentKeyDown(event) { // when you press W
+            var keyCode = event.which;  
+            
             if (keyCode == 87) {
-                sound.stop()
+                sound.stop() // ambient sound stops playing
                 // load a sound and set it as the Audio object's buffer
                 const audioLoader = new THREE.AudioLoader();
                 audioLoader.load( './resources/img/woodsteps.mp3', function( buffer ) { // the audio for the footsteps
                     sound.setBuffer( buffer );
-                    sound.setLoop( true );
+                    sound.setLoop( true ); // sound continues to play until infinite
                     sound.setVolume( 1 );
-                    sound.play();
+                    sound.play();// footstep sound start playing
                      });  
                 }
                 
                }
 
-
-        function onDocumentKeyUp(event) { // The ambient sound
+        function onDocumentKeyUp(event) { // when you release W
             var keyCode = event.which;
             
             if (keyCode == 87) {
-                sound.stop()
+                sound.stop() // footstep sound stops playing
                 const audioLoader = new THREE.AudioLoader();
-                audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) { // Uploading files from resources
+                audioLoader.load( './resources/img/birdsound.mp3', function( buffer ) { // Uploading ambient files from resources
                     sound.setBuffer( buffer );
                     sound.setLoop( true );
-                    sound.setVolume( 1);
-                    sound.play();
+                    sound.setVolume( 1);// setting the volume
+                    sound.play(); // playing the ambient sound
                     });
             }
         }
@@ -477,16 +476,6 @@ class level_one {
         const loaderGround = new THREE.TextureLoader();
         ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide});
     }
-
-    initSounds(){
-		this.listener = new THREE.AudioListener();
-        this.camera.add( this.listener );
-		this.sfx = new SFX(this.camera, `${this.assetsPath}factory/sfx/`, this.listener);
-		this.sfx.load('atmos', true, 0.1);
-		this.user.initSounds();
-		this.npcHandler.npcs.forEach( npc => npc.initSounds() );
-	}
-	
 
 }
 
