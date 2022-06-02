@@ -182,6 +182,10 @@ function World() {
                 const key = Key(i*10,j*10);
                 world.add(key);
             }
+            if (filled[j][i] == 3 ){
+                const triangle = Triangle(i*10,j*10);
+                world.add(triangle);
+            }
             if (filled[j][i] == 4){
                 const spineGrass = SpineGrass(i*10,j*10);   
                 world.add( spineGrass );
@@ -237,6 +241,23 @@ function Key(x,z){
     },(xhr) => xhr, ( err ) => console.error( err ));
 
     return key;
+}
+
+function Triangle(x,z){
+    const triangle = new THREE.Group;
+    tree_loader = new GLTFLoader();
+    tree_loader.load('./resources/models/triangle/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(5,10,5); 
+        gltf.scene.position.set(x,15,z); 
+
+        gltf.scene.rotation.x = (Math.PI );
+        gsap.to(gltf.scene.position, {y:'+=3', duration:1, delay: 0, ease:'none', repeat:-1, yoyo:true
+          })
+        triangle.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    
+    return triangle;
 }
 
 function Water(x,z) {

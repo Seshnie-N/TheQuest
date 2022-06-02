@@ -209,6 +209,10 @@ class level_one {
                         const key = this.Key(i*30,j*30);
                         Level.add(key);
                     }
+                    if (filled[j][i] == 3 ){
+                        const triangle = this.Triangle(i*30,j*30);
+                        Level.add(triangle);
+                    }
                     if (filled[j][i] == 4){
                         const r = Math.floor(Math.random() * 30)+1
                         const s = Math.floor(Math.random() * 30)+1
@@ -373,10 +377,10 @@ class level_one {
         tree_loader = new GLTFLoader();
         tree_loader.load('./resources/models/oldKey/scene.gltf',function (gltf) {
             gltf.scene.scale.set(0.02,0.02,0.02); 
-            gltf.scene.position.set(x,5,z); 
+            gltf.scene.position.set(x,2,z); 
             gltf.scene.rotation.set(Math.PI/2,0,0 );
             
-            gsap.to(gltf.scene.position, {y:'+=10',
+            gsap.to(gltf.scene.position, {y:'+=5',
              duration:2, //The speed of the key 
              ease:'none',
              repeat:-1, // Reversing the action 
@@ -395,6 +399,23 @@ class level_one {
         },(xhr) => xhr, ( err ) => console.error( err ));
     
         return key;
+    }
+
+    Triangle(x,z){
+        const triangle = new THREE.Group;
+        tree_loader = new GLTFLoader();
+        tree_loader.load('./resources/models/triangle/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(5,15,5); 
+            gltf.scene.position.set(x,15,z); 
+    
+            gltf.scene.rotation.x = (Math.PI );
+            gsap.to(gltf.scene.position, {y:'+=3', duration:1, delay: 0, ease:'none', repeat:-1, yoyo:true
+              })
+            triangle.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        
+        return triangle;
     }
 
     Water(x,z) {
