@@ -5,10 +5,11 @@ import * as CHARACTER from "./Character.js";
 import  * as CAMERA from "./ThirdPersonCamera.js";
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
+import { Water} from './examples/jsm/objects/Water2.js';
 import CannonDebugger from 'cannon-es-debugger';
 
 
-let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, door,  collectedKeys, door_loader, doormixer, opendoor;
+let mirrorCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, door,  collectedKeys, door_loader, doormixer, opendoor,water,waterBoxMaterials;
 
 class level_one {
     constructor() {
@@ -143,7 +144,7 @@ class level_one {
         var filled = [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [1,4,5,3,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
+            [1,1,4,6,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
             [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
             [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
             [1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
@@ -174,8 +175,8 @@ class level_one {
                         Level.add( mesh );
                     }
                     if (filled[j][i] === 2){
-                        const water = this.Water(i*30,j*30);
-                        Level.add(water);
+                        const mirror = this.Mirror(i*30,j*30,-Math.PI/2);
+                        Level.add(mirror);
                     }
                     if (filled[j][i] === 3 ){
                         const key = this.Key(i*30,j*30);
@@ -192,6 +193,10 @@ class level_one {
                         const s = Math.floor(Math.random() * 30)+1
                         const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
                         Level.add( shrub );
+                    }
+                    if (filled[j][i] === 6){
+                        const water = this.Water(i*30,j*30);
+                        Level.add(water);
                     }
                     if (filled[j][i] === 7){
                         const door = this.door(i*30,j*30);
@@ -215,7 +220,7 @@ class level_one {
     _LoadAnimatedModels(){
 
         //set character location in scene
-        this.startPos = new CANNON.Vec3(40,0,10);
+        this.startPos = new CANNON.Vec3(40,0,30);
 
         //Params to be passed to the character class.
         const CharParams = {
@@ -435,25 +440,61 @@ class level_one {
         return key;
     }
 
-    Water(x,z) {
-        let water = new THREE.Group;
+    Mirror(x,z,p) {
+        let mirror = new THREE.Group;
     
         let geometry;
     
         geometry = new THREE.PlaneGeometry(30,30);
-        waterCamera = new Reflector( geometry, {
+        mirrorCamera = new Reflector( geometry, {
             clipBias: 0.003,
             textureWidth: window.innerWidth * window.devicePixelRatio,
             textureHeight: window.innerHeight * window.devicePixelRatio,
             color: 0x777777,
         });
     
-        waterCamera.position.set(x-14,15,z-14);
-        waterCamera.rotateX( -Math.PI );
-        water.add( waterCamera );
+        mirrorCamera.position.set(x-14,15,z-14);
+        mirrorCamera.rotateX( p );
+        mirror.add( mirrorCamera );
     
-        return water;
+        return mirror;
     }
+
+    // Water(x,z){
+
+    // const waterTile = new THREE.Group;
+
+    // const waterGeometry = new THREE.PlaneGeometry( 20, 20 );
+
+    // const params = {
+    //     color: '#ffffff',
+    //     scale: 4,
+    //     flowX: 1,
+    //     flowY: 1
+    // };
+
+
+    // water = new Water( waterGeometry,
+    // {
+    //     color: params.color,
+    //     scale: params.scale,
+    //     flowDirection: new THREE.Vector2( params.flowX, params.flowY ),
+    //     textureWidth: 30,
+    //     textureHeight: 30,
+    // } );
+    // water.rotation.x = -Math.PI/2;
+    // water.position.set(x,2,z);
+
+    // const waterBox = new THREE.Mesh(
+    //     new THREE.BoxBufferGeometry(30,10,30),
+    //     cubeMaterials
+    // );
+    // waterBox.position.y = -5
+    // waterBox.castShadow = true;
+
+    // waterTile.add( water );
+    // waterTile.add( waterBox )
+    // }
 
     SpineGrass(x,z){
         const grass = new THREE.Group;
@@ -493,6 +534,15 @@ class level_one {
             ];
         const loaderGround = new THREE.TextureLoader();
         ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')});
+        const loaderWater = new THREE.TextureLoader();
+        waterBoxMaterials = [
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')}), //right side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')}), //left side
+                new THREE.MeshBasicMaterial({  map: loader.load('./resources/img/transparent.png')}), //top side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')}), //bottom side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')}), //front side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')}), //back side
+            ];
     }
 }
 
