@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { DoubleSide } from 'three';
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
-import { DRACOLoader} from './examples/jsm/loaders/DRACOLoader.js';
 import gsap from './node_modules/gsap/index.js';
 import { OrbitControls } from './examples/jsm/controls/OrbitControls.js';
 
@@ -62,23 +61,8 @@ function init() {
     const world = World();
     scene.add( world );
 
-    // character
     
-    // const dracoloader = new DRACOLoader();
-    // const gltfloader = new GLTFLoader();
-
-    // dracoloader.setDecoderPath('./examples/js/libs/draco/');
-    //     gltfloader.setDRACOLoader(dracoloader);
-    //         gltfloader.load('./resources/img/avatar.glb',  function (gltf){
-    //             gltf.scene.scale.set(4,4,4); 
-    //             gltf.scene.position.set(59,1,0); 
-    //             console.log('yes');
-    //             world.add(gltf.scene); 
-    //         },(xhr) => xhr, ( err ) => console.error( err ));   
-
-
     // lights
-
     const dirLight1 = new THREE.DirectionalLight( 0xffffff );
     dirLight1.position.set( 1, 1, 1 );
     scene.add( dirLight1 );
@@ -168,17 +152,6 @@ function World() {
         for(let j=0;j<21;j++){
             if(filled[j][i] == 1){   
                 const mesh = floorTile(i*10,j*10)
-                // var x = Math.floor((Math.random() * 50) + 1);
-                // if (x >= 40){
-                //     const tree = Tree(i*10,j*10);   
-                //     world.add( tree );
-                // } else if (x>= 20 && x<=25){
-                //     const shrub = Shrub(i*10,j*10);   
-                //     world.add( shrub );
-                // } else if(x<=5){
-                //     const spineGrass = SpineGrass(i*10,j*10);   
-                //     world.add( spineGrass );
-                // }
                 world.add( mesh );
             }
             
@@ -189,6 +162,10 @@ function World() {
             if (filled[j][i] == 3 ){
                 const key = Key(i*10,j*10);
                 world.add(key);
+            }
+            if (filled[j][i] == 3 ){
+                const triangle = Triangle(i*10,j*10);
+                world.add(triangle);
             }
         }
     }
@@ -228,20 +205,32 @@ function Key(x,z){
     tree_loader = new GLTFLoader();
     tree_loader.load('./resources/models/oldKey/unlock.glb',function (gltf) {
         gltf.scene.scale.set(1,1,1); 
-        gltf.scene.position.set(x,6,z); 
+        gltf.scene.position.set(x,3,z); 
 
         gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
-        //gsap.to(gltf.scene.position, {duration: 1, delay:1, y:50 })
-        //gsap.to(gltf.scene.position, {duration: 1, delay:2, y:1 })
-        gsap.to(gltf.scene.position, {y:'+=5', duration:1, delay: 0, ease:'none', repeat:-1, yoyo:true
+        gsap.to(gltf.scene.position, {y:'+=3', duration:1, delay: 0, ease:'none', repeat:-1, yoyo:true
           })
         key.add(gltf.scene);  
     },(xhr) => xhr, ( err ) => console.error( err ));
 
     
-
     return key;
+}
+function Triangle(x,z){
+    const triangle = new THREE.Group;
+    tree_loader = new GLTFLoader();
+    tree_loader.load('./resources/models/triangle/scene.gltf',function (gltf) {
+        gltf.scene.scale.set(5,10,5); 
+        gltf.scene.position.set(x,15,z); 
 
+        gltf.scene.rotation.x = (Math.PI );
+        gsap.to(gltf.scene.position, {y:'+=3', duration:1, delay: 0, ease:'none', repeat:-1, yoyo:true
+          })
+        triangle.add(gltf.scene);  
+    },(xhr) => xhr, ( err ) => console.error( err ));
+
+    
+    return triangle;
 }
 
 function Water(x,z) {
