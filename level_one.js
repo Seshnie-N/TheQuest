@@ -6,7 +6,7 @@ import  * as CAMERA from "./ThirdPersonCamera.js";
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
 import CannonDebugger from 'cannon-es-debugger';
-
+import gsap from './node_modules/gsap/index.js';
 
 let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, door,  collectedKeys, door_loader, doormixer, opendoor;
 
@@ -417,9 +417,25 @@ class level_one {
         let model;
         tree_loader = new GLTFLoader();
         tree_loader.load('./resources/models/key/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(0.3,0.3,0.3);
-            gltf.scene.position.set(x,5,z);
+            gltf.scene.scale.set(1,1,1);
+            gltf.scene.position.set(x,3,z);
             model = gltf.scene;
+
+            gsap.to(gltf.scene.position, {y:'+=5',
+            duration:2, //The speed of the key 
+            ease:'none',
+            repeat:-1, // Reversing the action 
+            yoyo:true // The yoyo effect
+           })
+
+           gsap.to(gltf.scene.rotation, {y:'+=10',
+            duration:4, //The speed of the key 
+            ease:'none',
+            repeat:-1, // Reversing the action 
+            yoyo:true // The yoyo effect
+       })
+
+
             key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
 
