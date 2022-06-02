@@ -32,7 +32,7 @@ class level_one {
         this.configPhysics();
         this.addMapCamera();
         this.generateWorld();        
-        this.addSkybox();
+        //this.addSkybox();
         this._LoadAnimatedModels();
 
         const axesHelper = new THREE.AxesHelper( 600 );
@@ -106,18 +106,22 @@ class level_one {
     }
 
     addMapCamera(){
-        this.mapWidth = 250;
-        this.mapHeight = 260;
+        this.mapWidth = 300;
+        this.mapHeight = 300;
         this.mapCamera = new THREE.OrthographicCamera(
             this.mapWidth ,		// Left
-            -this.mapWidth,		// Right
-            -this.mapHeight,		// Top
+            -this.mapWidth ,		// Right
+            -this.mapHeight ,		// Top
             this.mapHeight ,	// Bottom
             1,         // Near
             1000);
 
-        this.mapCamera.up = new THREE.Vector3(0, 0, -1);
-        this.mapCamera.lookAt(new THREE.Vector3(0, -1, 0));
+        this.mapCamera.position.set(0,0,0);
+        this.mapCamera.up = new THREE.Vector3(0, -1, 0);
+        this.mapCamera.lookAt(new THREE.Vector3(300, 0, 0));
+
+        const helper = new THREE.CameraHelper( this.mapCamera );
+        this.scene.add( helper );
 
     }
 
@@ -305,7 +309,6 @@ class level_one {
                 this.renderer.setViewport(100, 100, this.mapWidth, this.mapHeight);
                 this.renderer.setScissor(100, 100, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
-                this.mapCamera.position.y = 200;
                 this.renderer.render(this.scene, this.mapCamera);
             }
 
