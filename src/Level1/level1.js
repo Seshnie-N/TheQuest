@@ -3,12 +3,13 @@ import {skybox} from "../skybox.js";
 import * as CANNON from 'cannon-es'
 import * as CHARACTER from "../Character.js";
 import  * as CAMERA from "../ThirdPersonCamera.js";
-import GLTFLoader from 'three-gltf-loader';
-import  Reflector  from '../../resources/objects/Reflector.js';
-import CannonDebugger from 'cannon-es-debugger'
+import {GLTFLoader} from '../../resources/loaders/GLTFLoader.js';
+import  {Reflector}  from '../../resources/objects/Reflector.js';
+import CannonDebugger from 'cannon-es-debugger';
+import gsap from "gsap";
 
 
-let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger ;
+let waterCamera, cubeMaterials, ground, tree_loader,key_loader,triangle_loader, grass_loader,shrub_loader, cannonDebugger, key, door, collectedKeys, door_loader, doormixer, opendoor;
 
 class level_one {
     constructor() {
@@ -18,79 +19,48 @@ class level_one {
 
     //create level
     init(){
-        
         //declare variables
-        this._mixers = [];
-        this.Keys = 0;
+        collectedKeys = 0;
+        
+        opendoor = false;
         this.Pause = false;
-        this.previousRAF = null;
-        clock = new THREE.Clock();
-        //Hedge walls
-        this.meshes2 = [];
-
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
-        document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
-        document.getElementById("explore").onclick = () => {
-            if (this.Character) {
-                this.Character.setStop();
-                document.getElementById("Win").style.width = "0%"
-                this.Pause = false;
-                this.animate();
-            }
+       // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
+       document.getElementById("explore").onclick = () => {
+        if (this.Character) {
+            this.Character.setStop();
+            document.getElementById("Win").style.width = "0%"
+            this.Pause = false;
+            this.animate();
         }
+    }
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
-
+        this.addTimer(60*5); //60*5
         this.configThree();
         this.configPhysics();
+        this.addMapCamera();
         this.generateWorld();        
-        this.addSkybox();
+        //this.addSkybox();
         this._LoadAnimatedModels();
         this.addKeyCount();
         this.addPauseButton();
         this.music();
 
+        const axesHelper = new THREE.AxesHelper( 600 );
+        this.scene.add( axesHelper );
+
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
-        //temp ground
-        this.planeBody = new CANNON.Body({
-            shape: new CANNON.Plane(),
-            type: CANNON.Body.STATIC
-        })
-        this.world.addBody(this.planeBody);
-        this.planeBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+        this.previousRAF = null;
 
-        // const loadingManager = new THREE.LoadingManager( () => {
-	
-        //     const loadingScreen = document.getElementById( 'loading-screen' );
-        //     loadingScreen.classList.add( 'fade-out' );
-            
-        //     // optional: remove loader from DOM via event listener
-        //     loadingScreen.addEventListener( 'transitionend', onTransitionEnd );
-            
-        // } );
         this.animate();
-        
-    }
-    music() {
-        const listener = new THREE.AudioListener();
-        this.camera.add(listener);
 
-        const sound = new THREE.Audio(listener);
-
-        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('../../resources/audio/menu.mp3', function (buffer) {
-            sound.setBuffer(buffer);
-            sound.setLoop(true);
-            sound.setVolume(0.5);
-            sound.play();
-        });
     }
 
     configThree() {
-
-        this.canvas = document.querySelector('#c'); 
+       
 
         const fov = 60;
         const aspect = 1920 / 1080;
@@ -101,8 +71,6 @@ class level_one {
 
         //create scene
         this.scene = new THREE.Scene();
-       // const loader = new THREE.TextureLoader();
-       // this.scene.background = loader.load('../../resources/pictures/tutorial.jpg');
 
         //configure light source
         let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
@@ -122,14 +90,18 @@ class level_one {
         light.shadow.camera.bottom = -100;
         this.scene.add(light);
 
+        //add hemisphere light to scene.
+        const intensity = 0.8;
+        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
+        this.scene.add(hemi_light);
+
         light = new THREE.AmbientLight(0xFFFFFF, 5.0);
         this.scene.add(light);
-
+        this.canvas = document.querySelector('#c');
         this.renderer = new THREE.WebGLRenderer({
+            canvas: this.canvas,
             antialias: true,
         });
-
-        this.renderer.autoClear = false;
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.BasicShadowMap;
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -149,69 +121,105 @@ class level_one {
         this.timeStep = 1/60;
     }
 
+    addMapCamera(){
+        this.mapWidth =window.innerHeight/4;
+        this.mapHeight = window.innerHeight/4;
+        this.mapCamera = new THREE.OrthographicCamera(
+            this.mapHeight*1.6 ,		// Left
+            -this.mapHeight*1.75,		// Right
+            -this.mapHeight *1.75,		// Top
+            this.mapHeight*1.75 ,	// Bottom
+            1,         // Near
+            1000);
+
+        this.mapCamera.position.set(300,300,300);
+        this.mapCamera.lookAt(new THREE.Vector3(300, 1, 300));
+
+        const helper = new THREE.CameraHelper( this.mapCamera );
+        this.scene.add( helper );
+
+    }
+
+
     generateWorld() {
-        //all of roberts world builder stuff
+
+        //plane in physics world
+        this.planeBody = new CANNON.Body({
+            shape: new CANNON.Plane(),
+            type: CANNON.Body.STATIC
+        })
+        this.world.addBody(this.planeBody);
+        this.planeBody.quaternion.setFromEuler(-Math.PI / 2, 0, 0);
+
+        //world builder code
         const Level = new THREE.Group();
 
         this.InitaliseTexture();
 
-        var filled = [
-            [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [0,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
-            [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
-            [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
-            [1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
-            [1,0,4,0,1,1,4,0,0,4,0,0,0,0,1,1,0,1,1,1],
-            [1,2,1,1,1,1,4,1,0,1,1,1,1,1,1,1,0,1,1,1],
-            [1,1,1,1,0,4,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
-            [1,3,0,1,0,1,1,1,0,1,1,0,3,0,1,1,0,1,1,1],
-            [1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
-            [1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
-            [1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
-            [1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
-            [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1],
-            [1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
-            [1,1,1,1,0,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1],
-            [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1],
-            [1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,2,1,1,1],
-            [1,1,0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
+        let filled = [
+            [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [0,0,3,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,7,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
+            [1,1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
+            [1,1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
+            [1,1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
+            [1,1,0,4,0,1,1,4,0,0,4,0,0,0,0,1,1,0,1,1,1],
+            [1,1,2,1,1,1,1,4,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [1,1,1,1,1,0,4,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
+            [1,1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
+            [1,1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
+            [1,1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
+            [1,1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
+            [1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
+            [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1],
+            [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
+            [1,1,1,1,1,0,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1],
+            [1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1],
+            [1,1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,2,1,1,1],
+            [1,1,1,0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
 
             for(let i=0;i<20;i++){
                 for(let j=0;j<21;j++){
-                    if(filled[j][i] != 1){
+                    if(filled[j][i] !== 1){
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
                     }
-                    if(filled[j][i] == 1){   
+                    if(filled[j][i] === 1){
                         const mesh = this.hedgeWall(i*30,j*30);
                         Level.add( mesh );
                     }
-                    if (filled[j][i] == 2){
+                    if (filled[j][i] === 2){
                         const water = this.Water(i*30,j*30);
                         Level.add(water);
                     }
-                    if (filled[j][i] == 3 ){
+                    if (filled[j][i] === 3 ){
                         const key = this.Key(i*30,j*30);
                         Level.add(key);
                     }
-                    if (filled[j][i] == 4){
+                    if (filled[j][i] === 3 ){
+                        const triangle = this.Triangle(i*30,j*30);
+                        Level.add(triangle);
+                    }
+                    if (filled[j][i] === 4){
                         const r = Math.floor(Math.random() * 30)+1
                         const s = Math.floor(Math.random() * 30)+1
                         const spineGrass = this.SpineGrass(i*30+r-15,j*30+s-15);   
                         Level.add( spineGrass );
                     }
-                    if (filled[j][i] == 5){
+                    if (filled[j][i] === 5){
                         const r = Math.floor(Math.random() * 30)+1
                         const s = Math.floor(Math.random() * 30)+1
                         const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
                         Level.add( shrub );
                     }
+                    if (filled[j][i] === 7){
+                        const door = this.door(i*30,j*30);
+                        Level.add( door );
+                    }
                 }
             }
-
-            //Level.scale.set(3,3,3);
 
             this.scene.add( Level )
     }
@@ -226,12 +234,17 @@ class level_one {
     }
 
     _LoadAnimatedModels(){
+
+        //set character location in scene
+        this.startPos = new CANNON.Vec3(0,0,0);
+
         //Params to be passed to the character class.
         const CharParams = {
             renderer: this.renderer,
             camera: this.camera,
             scene: this.scene,
             world: this.world,
+            startPos : this.startPos,
         }
         this.Character = new CHARACTER.Character(CharParams)
 
@@ -245,37 +258,88 @@ class level_one {
         }
     }
 
-    //affect objects when hovering over
-    _onMouseMove(event){
+    // affect objects when hovering over
+    // _onMouseMove(event){
+    //     this.mouse = {
+    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
+    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
+    //     }
+    //     this.raycaster.setFromCamera(this.mouse, this.camera);
+    //     let intersects = this.raycaster.intersectObjects(this.keys, true);
+    //
+    //     for (let i = 0; i < intersects.length; i++) {
+    //         if(intersects[i]){
+    //             console.log("clicked" + i);
+    //         }
+    //     }
+    //
+    // }
+
+    //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
+    _onClick(event){
         this.mouse = {
             x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
             y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
         }
         this.raycaster.setFromCamera(this.mouse, this.camera);
-        let intersects = this.raycaster.intersectObjects(this.scene.children, true);
+        let intersects_key = this.raycaster.intersectObjects(key.children, true);
 
-        for (let i = 0; i < intersects.length; i++) {
-            console.log();
-
+        if (intersects_key.length > 0){
+            let target = intersects_key[0];
+            //target.object.visible = false;
+            target.object.position.y -= 50;
+            collectedKeys += 1;
+            this.updateKeyText();
+            console.log( collectedKeys);
         }
 
-    }
+        let intersects_door = this.raycaster.intersectObjects(door.children, true);
 
-    //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
-    _onClick(event){
-        let intersects = this.raycaster.intersectObjects(this.scene.children, true);
-
-        for (let i = 0; i < intersects.length; i++) {
-            console.log(intersects[i]);
-
+        if (intersects_door.length > 0){
+            //check if all keys collected
+            if (collectedKeys >= key.children.length){
+                opendoor = true;
+                this.Pause=true;
+                let WinOverlay = document.getElementById("Win")
+                WinOverlay.style.width = "100%";
+            }else{
+                let width = 140
+                this.ObjtextSpan = document.createElement("span")
+                this.ObjtextSpan.id = "objText"
+                this.ObjtextSpan.style.padding = "20px"
+                this.ObjtextSpan.style.fontFamily = "sans-serif"
+                this.ObjtextSpan.style.color = '#ffffff'
+                this.ObjtextSpan.style.fontSize = 45 + 'px'
+                this.ObjtextSpan.textContent = "Find the Key"
+        
+                this.objText = document.createElement('div')
+                this.objText.id = "objDiv"
+                this.objText.style.position = 'absolute';
+                this.objText.style.display = "flex";
+                this.objText.style.alignItems = "center";
+                this.objText.append(this.ObjtextSpan)
+                this.objText.style.top = "10%";
+                this.objText.style.left= "50%";
+                this.objText.style.marginLeft= "-"+width+"px"
+                this.objText.unselectable = "on"
+                this.objText.style.transform="scale(0.5)";
+                document.body.appendChild(this.objText);
+                setTimeout(() => {
+                    const elem = document.getElementById("objDiv");
+                    if(elem != null){
+                        elem.parentNode.removeChild(elem);
+                    }
+                }, 5000);
+            }
         }
+
     }
 
     //continuous rendering to create animation
     animate() {
-        //if game is pause break loop.
-        if (this.Pause === true) {
-         return
+         //if game is pause break loop.
+         if (this.Pause === true) {
+            return
         }
         requestAnimationFrame((t) => {
             if (this.previousRAF === null){
@@ -284,10 +348,27 @@ class level_one {
             //move forward physics world
             this.world.step(this.timeStep);
 
-            //cannonDebugger.update();
-            
-            this.animate(); 
+            this.animate();
+
+            let w = window.innerWidth, h = window.innerHeight;
+
+            // full display
+            this.renderer.setViewport(0, 0, w, h);
+            this.renderer.setScissor(0, 0, w, h);
+            this.renderer.setScissorTest(true);
             this.renderer.render(this.scene, this.camera);
+
+            // minimap (overhead orthogonal camera)
+            if (this.Character && this.mapCamera) {
+                this.renderer.setViewport(16, h-(h/4)-16, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(16, h-(h/4)-16, this.mapWidth, this.mapHeight);
+                this.renderer.setScissorTest(true);
+                this.renderer.render(this.scene, this.mapCamera);
+            }
+
+            //cannonDebugger.update();
+
+            //this.renderer.render(this.scene, this.camera);
             this.step(t - this.previousRAF);
             this.previousRAF = t;
         });
@@ -297,12 +378,19 @@ class level_one {
     step(timeElapsed){
         //update to enable animations
         const timeElapsedS = timeElapsed * 0.001;
-        if (this._mixers) {
-            this._mixers.map(m => m.update(timeElapsedS));
-        }
+
+        //animate door to open
+        if (opendoor) {
+            if (doormixer) doormixer.update(timeElapsedS);
+            setTimeout(function()
+            {
+                opendoor = false;
+            },1500);
+
+        }s
 
         //update rotation of skybox for dynamic skybox
-        this.sb.rotation.y += timeElapsedS*0.1;
+        //this.sb.rotation.y += timeElapsedS*0.1;
 
         //update character
         if (this.Character) {
@@ -322,6 +410,7 @@ class level_one {
     OnWindowResize() {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
+        this.mapCamera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
@@ -332,6 +421,7 @@ class level_one {
         );
         floor.rotation.set(Math.PI/2,0,0);
         floor.position.set(x,0,z);
+        floor.receiveShadow = true;
         return floor;
     }
 
@@ -350,7 +440,6 @@ class level_one {
         });
         //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.wallBody);
-        this.meshes2.push(this.wallBody);
 
         wall.position.copy(this.wallBody.position);
         wall.quaternion.copy(this.wallBody.quaternion);
@@ -358,24 +447,85 @@ class level_one {
         return wall;
     }
 
-    Key(x,z){
-        const key = new THREE.Group;
-    
-        tree_loader = new GLTFLoader();
-        tree_loader.load('../../resources/models/oldKey/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(0.01,0.01,0.01); 
-            gltf.scene.position.set(x,5,z); 
-            gltf.scene.rotation.set(-Math.PI/2,Math.PI/6,0, 'YXZ' );
-            key.add(gltf.scene);  
+    door(x,z){
+        door = new THREE.Group;
+
+        const doorBack = new THREE.Mesh(
+            new THREE.PlaneGeometry(10,40.7),
+            new THREE.MeshBasicMaterial({color: 0x000000})
+        );
+        doorBack.position.set(x, 0, z+14.5);
+        doorBack.rotation.y = Math.PI;
+        this.scene.add(doorBack);
+
+        door_loader = new GLTFLoader();
+        door_loader.load('../../resources/models/door/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(0.025,0.025,0.025);
+            gltf.scene.position.set(x,0,z+14);
+
+            doormixer = new THREE.AnimationMixer(gltf.scene);
+            gltf.animations.forEach((clip) => {
+                doormixer.clipAction(clip).play();
+            });
+
+            let model = gltf.scene;
+            door.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
-    
-        return key;
+
+        return door;
     }
 
+    Key(x,z){
+        key = new THREE.Group;
+        let model;
+        key_loader = new GLTFLoader();
+        key_loader.load('../../resources/models/Key/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(0.3,0.3,0.3);
+            gltf.scene.position.set(x,3,z);
+            model = gltf.scene;
+
+            gsap.to(gltf.scene.position, {
+            y:'+=5',
+            duration:2, //The speed of the key 
+            ease:'none',
+            repeat:-1, // Reversing the action 
+            yoyo:true // The yoyo effect
+           })
+
+           gsap.to(gltf.scene.rotation, {
+            y:'+=10',
+            duration:4, //The speed of the key 
+            ease:'none',
+            repeat:-1, // Reversing the action 
+            yoyo:true // The yoyo effect
+       })
 
 
+            key.add(model);
+        },(xhr) => xhr, ( err ) => console.error( err ));
 
-
+        return key;
+    }
+    Triangle(x,z){
+        const triangle = new THREE.Group;
+        triangle_loader = new GLTFLoader();
+        triangle_loader.load('../../resources/models/triangle/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(5,10,5); 
+            gltf.scene.position.set(x,15,z); 
+    
+            gltf.scene.rotation.x = (Math.PI );
+            gsap.to(gltf.scene.position, {
+                y:'+=3', 
+                duration:2, 
+                ease:'none', 
+                repeat:-1, 
+                yoyo:true
+              })
+            triangle.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+        return triangle;
+    }
+    
     Water(x,z) {
         let water = new THREE.Group;
     
@@ -387,7 +537,6 @@ class level_one {
             textureWidth: window.innerWidth * window.devicePixelRatio,
             textureHeight: window.innerHeight * window.devicePixelRatio,
             color: 0x777777,
-            side: THREE.DoubleSide,
         });
     
         waterCamera.position.set(x-14,15,z-14);
@@ -436,11 +585,76 @@ class level_one {
         const loaderGround = new THREE.TextureLoader();
         ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide});
     }
-    
-//UI Element
+    music() {
+        const listener = new THREE.AudioListener();
+        this.camera.add(listener);
+
+        const sound = new THREE.Audio(listener);
+
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load('../../resources/audio/menu.mp3', function (buffer) {
+            sound.setBuffer(buffer);
+            sound.setLoop(true);
+            sound.setVolume(0.5);
+            sound.play();
+        });
+    }
+    addSound(){
+        // create an AudioListener and add it to the camera
+        const listener = new THREE.AudioListener();
+        this.camera.add( listener ); // attaching the sound to the camera
+
+        // create a global audio source
+        const sound = new THREE.Audio( listener );
+
+        // creating an audio loader
+        const audioLoader = new THREE.AudioLoader();
+        audioLoader.load( '../../resources/audio/birdsound.mp3', function( buffer ) { // uploading .mp3 file
+            sound.setBuffer( buffer );
+            sound.setLoop( true );
+            sound.setVolume( 1 ); // adjusting the volume
+            sound.play(); // playing the sound
+            });
+        
+        document.addEventListener("keyup",   onDocumentKeyUp, false);    //on click handler for releasing W
+        document.addEventListener("keydown", onDocumentKeyDown, false); // on click handler for pressing W
+
+        function onDocumentKeyDown(event) { // when you press W
+            var keyCode = event.which;  
+            
+            if (keyCode == 87) {
+                sound.stop() // ambient sound stops playing
+                // load a sound and set it as the Audio object's buffer
+                const audioLoader = new THREE.AudioLoader();
+                audioLoader.load( '../../resources/audio/woodsteps.mp3', function( buffer ) { // the audio for the footsteps
+                    sound.setBuffer( buffer );
+                    sound.setLoop( true ); // sound continues to play until infinite
+                    sound.setVolume( 1 );
+                    sound.play();// footstep sound start playing
+                     });  
+                }
+                
+               }
+
+        function onDocumentKeyUp(event) { // when you release W
+            var keyCode = event.which;
+            
+            if (keyCode == 87) {
+                sound.stop() // footstep sound stops playing
+                const audioLoader = new THREE.AudioLoader();
+                audioLoader.load( '../../resources/audio/birdsound.mp3', function( buffer ) { // Uploading ambient files from resources
+                    sound.setBuffer( buffer );
+                    sound.setLoop( true );
+                    sound.setVolume( 1);// setting the volume
+                    sound.play(); // playing the ambient sound
+                    });
+            }
+        }
+    }
+    //UI Element
     addKeyCount(){
         let img = document.createElement("img");
-        img.src = "../../resources/pictures/key";
+        img.src = "../../resources/pictures/key.png";
         img.id = "KeyIcon";
 
         img.setAttribute("height", "90");
@@ -449,11 +663,11 @@ class level_one {
         let width = 140
         this.textSpan = document.createElement("span")
         this.textSpan.id = "keyCount"
-        this.textSpan.style.padding = "10px"
+        this.textSpan.style.padding = "20px"
         this.textSpan.style.fontFamily = "sans-serif"
         this.textSpan.style.color = '#ffffff'
         this.textSpan.style.fontSize = 45 + 'px'
-        this.textSpan.textContent = "x" + this.Keys.toString()
+        this.textSpan.textContent = "x" + collectedKeys.toString()
 
         this.keyCount = document.createElement('div')
         this.keyCount.id = "KeyDiv"
@@ -475,8 +689,8 @@ class level_one {
 
         let x = this.textSpan.textContent;
         let oldCount = x.replace(/\D/g, '');
-        if (this.Keys.toString() !== oldCount) {
-            this.textSpan.textContent = "x" + this.Keys.toString()
+        if (collectedKeys.toString() !== oldCount) {
+            this.textSpan.textContent = "x" + collectedKeys.toString()
         }
 
     }
@@ -499,7 +713,7 @@ class level_one {
             .setAttribute("width", "100");
 
         this.pauseIcon
-            .style.top = "0";
+            .style.top = "0%";
         this.pauseIcon
             .style.left = "100%";
         this.pauseIcon.style.marginLeft= "-"+width+"px"
@@ -512,7 +726,7 @@ class level_one {
 
     //What Happens when the pause icon is clicked
     onPause() {
-        this.Pause = true
+        this.Pause = true;
         let overlay = document.getElementById("myNav")
         overlay.style.width = "100%";
         let close = document.createElement('a')
@@ -531,16 +745,70 @@ class level_one {
     //What Happens when the pause menu is closed
     //Continue rendering game.
     onPauseExit() {
-        this.Pause = false
-        console.log("Exit", this.Pause)
-
+        this.Pause = false;
         document.getElementById("myNav").style.width = "0%";
         this.animate()
     }
+
+    addTimer(duration){
+        //var duration = 60 * 5;
+        
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            if(this.Pause){
+                return
+            }else{
+                const elem = document.getElementById("TimeDiv");
+                if(elem != null){
+                    elem.parentNode.removeChild(elem);
+                }
+
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                let width = 140
+                this.TimertextSpan = document.createElement("span")
+                this.TimertextSpan.id = "timer"
+                this.TimertextSpan.style.padding = "20px"
+                this.TimertextSpan.style.fontFamily = "sans-serif"
+                this.TimertextSpan.style.color = '#ffffff'
+                this.TimertextSpan.style.fontSize = 45 + 'px'
+                this.TimertextSpan.textContent = minutes + ":" + seconds;
+
+                this.timer = document.createElement('div')
+                this.timer.id = "TimeDiv"
+                this.timer.style.position = 'absolute';
+                this.timer.style.display = "flex";
+                this.timer.style.alignItems = "center";
+                this.timer.append(this.TimertextSpan)
+                this.timer.style.top = "20%";
+                this.timer.style.left= "100%";
+                this.timer.style.marginLeft= "-"+width+"px"
+                this.timer.unselectable = "on"
+                this.timer.style.transform="scale(0.5)";
+                document.body.appendChild(this.timer);
+
+                if (--timer < 0) {
+                    timer=0;
+                    this.Pause=true;
+                    let LoseOverlay = document.getElementById("Lose")
+                    LoseOverlay.style.width = "100%";
+                    
+                }
+            }
+        }, 1000);
+
+        
+    }
 }
 
-let _APP = null;
 
-window.addEventListener('load', async () => {
-    _APP = new level_one();
+
+let APP_ = null;
+
+window.addEventListener('DOMContentLoaded', async () => {
+    APP_ = new level_one();
 });
