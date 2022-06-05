@@ -87,7 +87,6 @@ export class Character {
                 c.castShadow = true;
             });
             this.Character = fbx;
-            //this.Character.add(this.mapCamera);
 
             //Add Physics
             let box = new THREE.Box3().setFromObject(fbx);
@@ -112,6 +111,14 @@ export class Character {
             //Add it to the scene and world.
             this.world.addBody(this.CharacterBody);
             this.scene.add(this.Character);
+
+            //Add character marker for minimap
+            this.charMarker = new THREE.Mesh(
+                new THREE.SphereGeometry(5),
+                new THREE.MeshBasicMaterial({color: 0xff0000})
+            );
+            this.charMarker.position.set(this.CharacterBody.position.x, 100, this.CharacterBody.position.z);
+            this.scene.add(this.charMarker);
 
             //Animations
             this.mixer = new THREE.AnimationMixer(this.Character);
@@ -151,13 +158,6 @@ export class Character {
             loader.load('Jumping Up.fbx', (a) => {
                 _OnLoad('jump', a);
             });
-            // loader.load('RunJump.fbx', (a) => {
-            //     _OnLoad('run_jump', a);
-            // });
-            // loader.load('Throw.fbx', (a) => {
-            //     _OnLoad('throw', a);
-            // });
-
         });
 
     }
@@ -185,11 +185,6 @@ export class Character {
         if (this.CharacterBody.position.y < 1) {
             this.jumpInitialHeight = this.CharacterBody.position.y
         }
-
-        // if (this.input.CharacterMovement.throw) {
-        //     this.input.CharacterMotions.throw = false;
-        // }
-
 
         //Increase Speed if the run key is pressed.
         if (this.input.CharacterMotions.run) {
@@ -247,6 +242,9 @@ export class Character {
         this.Character.position.copy(this.CharacterBody.position);
 
         this.position.copy(this.CharacterBody.position);
+
+        //update marker position
+        this.charMarker.position.set(this.CharacterBody.position.x, 100, this.CharacterBody.position.z);
 
         //Update Animations.
         if (this.mixer) {

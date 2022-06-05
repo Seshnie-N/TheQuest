@@ -7,7 +7,7 @@ import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
 import { Water} from './examples/jsm/objects/Water2.js';
 import CannonDebugger from 'cannon-es-debugger';
-
+import gsap from './node_modules/gsap/index.js';
 
 let mirrorCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, door,  collectedKeys, door_loader, doormixer, opendoor,water,waterBoxMaterials;
 
@@ -35,9 +35,6 @@ class level_one {
         this.generateWorld();        
         //this.addSkybox();
         this._LoadAnimatedModels();
-
-        const axesHelper = new THREE.AxesHelper( 600 );
-        this.scene.add( axesHelper );
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
@@ -107,8 +104,8 @@ class level_one {
     }
 
     addMapCamera(){
-        this.mapWidth = 300;
-        this.mapHeight = 300;
+        this.mapWidth =320;
+        this.mapHeight = 320;
         this.mapCamera = new THREE.OrthographicCamera(
             this.mapWidth ,		// Left
             -this.mapWidth ,		// Right
@@ -117,12 +114,8 @@ class level_one {
             1,         // Near
             1000);
 
-        this.mapCamera.position.set(0,0,0);
-        this.mapCamera.up = new THREE.Vector3(0, -1, 0);
-        this.mapCamera.lookAt(new THREE.Vector3(300, 0, 0));
-
-        const helper = new THREE.CameraHelper( this.mapCamera );
-        this.scene.add( helper );
+        this.mapCamera.position.set(285,300,285);
+        this.mapCamera.lookAt(new THREE.Vector3(285, 1, 285));
 
     }
 
@@ -165,7 +158,7 @@ class level_one {
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]];
 
             for(let i=0;i<20;i++){
-                for(let j=0;j<21;j++){
+                for(let j=0;j<20;j++){
                     if(filled[j][i] !== 1){
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
@@ -281,7 +274,6 @@ class level_one {
 
         if (intersects_key.length > 0){
             let target = intersects_key[0];
-            //target.object.visible = false;
             target.object.position.y -= 50;
             collectedKeys += 1;
             console.log( collectedKeys);
@@ -322,8 +314,8 @@ class level_one {
 
             // minimap (overhead orthogonal camera)
             if (this.Character && this.mapCamera) {
-                this.renderer.setViewport(100, 100, this.mapWidth, this.mapHeight);
-                this.renderer.setScissor(100, 100, this.mapWidth, this.mapHeight);
+                this.renderer.setViewport(50, 50, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(50, 50, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.mapCamera);
             }
@@ -347,8 +339,7 @@ class level_one {
             setTimeout(function()
             {
                 opendoor = false;
-            },1500);
-
+            },1300);
         }
 
         //update rotation of skybox for dynamic skybox
@@ -442,9 +433,25 @@ class level_one {
         let model;
         tree_loader = new GLTFLoader();
         tree_loader.load('./resources/models/key/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(0.3,0.3,0.3);
-            gltf.scene.position.set(x,5,z);
+            gltf.scene.scale.set(1,1,1);
+            gltf.scene.position.set(x,3,z);
             model = gltf.scene;
+
+            gsap.to(gltf.scene.position, {y:'+=5',
+            duration:2, //The speed of the key 
+            ease:'none',
+            repeat:-1, // Reversing the action 
+            yoyo:true // The yoyo effect
+            })
+
+            gsap.to(gltf.scene.rotation, {y:'+=10',
+            duration:4, //The speed of the key 
+            ease:'none',
+            repeat:-1, // Reversing the action 
+            yoyo:true // The yoyo effect
+        })
+
+
             key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
 
