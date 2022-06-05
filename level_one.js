@@ -144,7 +144,7 @@ class level_one {
         var filled = [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
             [1,4,5,3,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,4,6,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
+            [1,9,6,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,3,1],
             [1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
             [1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
             [1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
@@ -195,16 +195,27 @@ class level_one {
                         Level.add( shrub );
                     }
                     if (filled[j][i] === 6){
-                        const water = this.Water(i*30,j*30);
-                        Level.add(water);
+                        const r = Math.floor(Math.random() * 30)+1
+                        const s = Math.floor(Math.random() * 30)+1
+                        const crystal = this.Crystal(i*30+r-15,j*30+s-15);   
+                        Level.add( crystal );
                     }
                     if (filled[j][i] === 7){
                         const door = this.door(i*30,j*30);
                         Level.add( door );
                     }
+                    if (filled[j][i] === 8){
+                        const pond = this.Pond(i*30,j*30);   
+                        Level.add( pond );
+                    }
+                    if (filled[j][i] === 9){
+                        const r = Math.floor(Math.random() * 30)+1
+                        const s = Math.floor(Math.random() * 30)+1
+                        const rock = this.Rock(i*30+r-15,j*30+s-15);   
+                        Level.add( rock );
+                    }
                 }
             }
-
             this.scene.add( Level )
     }
 
@@ -460,41 +471,45 @@ class level_one {
         return mirror;
     }
 
-    // Water(x,z){
+    Pond(x,z){
+        const pond = new THREE.Group;
+    
+        const pond_loader = new GLTFLoader();
+        pond_loader.load('./resources/models/Pond/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(2,2,2); 
+            gltf.scene.position.set(x,0,z); 
+            pond.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        return pond;        
+    }
 
-    // const waterTile = new THREE.Group;
+    Rock(x,z){
+        const rock = new THREE.Group;
+    
+        const rock_loader = new GLTFLoader();
+        rock_loader.load('./resources/models/Rock/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(2,2,2); 
+            //agltf.scene.scale.set(0.1,0.1,0.1); 
+            gltf.scene.position.set(x,0,z); 
+            rock.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        return rock;        
+    }
 
-    // const waterGeometry = new THREE.PlaneGeometry( 20, 20 );
-
-    // const params = {
-    //     color: '#ffffff',
-    //     scale: 4,
-    //     flowX: 1,
-    //     flowY: 1
-    // };
-
-
-    // water = new Water( waterGeometry,
-    // {
-    //     color: params.color,
-    //     scale: params.scale,
-    //     flowDirection: new THREE.Vector2( params.flowX, params.flowY ),
-    //     textureWidth: 30,
-    //     textureHeight: 30,
-    // } );
-    // water.rotation.x = -Math.PI/2;
-    // water.position.set(x,2,z);
-
-    // const waterBox = new THREE.Mesh(
-    //     new THREE.BoxBufferGeometry(30,10,30),
-    //     cubeMaterials
-    // );
-    // waterBox.position.y = -5
-    // waterBox.castShadow = true;
-
-    // waterTile.add( water );
-    // waterTile.add( waterBox )
-    // }
+    Crystal(x,z){
+        const crystal = new THREE.Group;
+    
+        const crystal_loader = new GLTFLoader();
+        crystal_loader.load('./resources/models/Crystal/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(2,2,2); 
+            gltf.scene.position.set(x,0,z); 
+            crystal.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        return crystal;        
+    }
 
     SpineGrass(x,z){
         const grass = new THREE.Group;
