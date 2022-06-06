@@ -137,19 +137,29 @@ class level_one {
         //stage 20x20 keys 5
         
         var filled = [
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
-            [1 ,0 ,4 ,4 ,5 ,4 ,4 ,5 ,4 ,1 ],
-            [1 ,1 ,4 ,1 ,1 ,5 ,1 ,1 ,4 ,1 ],
-            [1 ,1 ,5 ,1 ,0 ,0 ,0 ,1 ,3 ,1 ],
-            [1 ,1 ,0 ,1 ,0 ,8 ,0 ,1 ,1 ,1 ],
-            [1 ,1 ,5 ,1 ,0 ,0 ,0 ,1 ,11,1 ],
-            [1 ,1 ,0 ,1 ,1 ,5 ,1 ,1 ,10,1 ],
-            [1 ,9 ,5 ,1 ,4 ,0 ,4 ,1 ,10,1 ],
-            [1 ,7 ,4 ,0 ,3 ,1 ,4 ,4 ,0 ,1 ],
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ]];
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,0 ,4 ,0 ,1 ,1 ,5 ,1 ,1 ,1 ,3 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,5 ,5 ,4 ,0 ,1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,0 ,0 ,0 ,3 ,1 ],
+            [1 ,1 ,1 ,0 ,1 ,1 ,4 ,1 ,0 ,1 ,0 ,9 ,1 ,0 ,0 ,0 ,0 ,8 ,0 ,1 ],
+            [1 ,0 ,0 ,5 ,0 ,1 ,0 ,0 ,0 ,1 ,4 ,0 ,1 ,0 ,1 ,0 ,4 ,0 ,0 ,1 ],
+            [1 ,5 ,9 ,4 ,4 ,1 ,4 ,1 ,0 ,1 ,1 ,1 ,1 ,4 ,1 ,5 ,4 ,0 ,5 ,1 ],
+            [1 ,0 ,4 ,0 ,0 ,1 ,0 ,0 ,0 ,0 ,0 ,5 ,4 ,4 ,1 ,1 ,0 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,1 ,4 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,5 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,0 ,4 ,5 ,1 ,4 ,1 ,11,10,10,10,10,1 ,0 ,1 ,1 ,1 ],
+            [1 ,3 ,4 ,1 ,5 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,10,1 ,1 ,1 ,5 ,1 ,1 ,1 ],
+            [1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,5 ,1 ,1 ,0 ,0 ,9 ,1 ,1 ,4 ,5 ,0 ,1 ],
+            [1 ,0 ,5 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,5 ,4 ,1 ,1 ,1 ,1 ,4 ,1 ],
+            [1 ,10,1 ,1 ,1 ,1 ,1 ,4 ,0 ,1 ,1 ,1 ,4 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ],
+            [1 ,10,1 ,1 ,0 ,5 ,0 ,0 ,4 ,5 ,0 ,4 ,4 ,5 ,4 ,1 ,1 ,1 ,4 ,1 ],
+            [1 ,10,1 ,1 ,4 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,4 ,0 ,5 ,0 ,4 ,1 ],
+            [1 ,10,10,10,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,9 ,1 ,1 ,1 ,1 ,1 ,5 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,1 ,4 ,0 ,5 ,0 ,5 ,4 ,4 ,0 ,5 ,0 ,5 ,0 ,0 ,4 ,0 ,1 ,1 ,1 ],
+            [1 ,1 ,7 ,1 ,1 ,1 ,1 ,5 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,3 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ]];
 
-            for(let i=0;i<10;i++){
-                for(let j=0;j<10;j++){
+            for(let i=0;i<20;i++){
+                for(let j=0;j<20;j++){
                     if(filled[j][i] !== 1){
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
@@ -434,20 +444,21 @@ class level_one {
         return wall;
     }
 
+    //this is 4 tiles big
     Pond(x,z){
         const pond = new THREE.Group;
     
         const pond_loader = new GLTFLoader();
         pond_loader.load('./resources/models/Pond/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(1,1,1); 
+            gltf.scene.scale.set(1.2,1.2,1.2); 
             //gltf.scene.position.set(x-15,0,z+15); 
             pond.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
 
         this.pondBody = new CANNON.Body({
-            shape: new CANNON.Cylinder(20,20,100,10),
+            shape: new CANNON.Cylinder(30,30,100,10),
             type: CANNON.Body.STATIC,
-            position: new CANNON.Vec3(x,1,z),
+            position: new CANNON.Vec3(x-15,1,z+15),
         });
         // //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.pondBody);
@@ -550,7 +561,7 @@ class level_one {
         this.rockBody = new CANNON.Body({
             shape: new CANNON.Cylinder(10,10,100,10),
             type: CANNON.Body.STATIC,
-            position: new CANNON.Vec3(x-0.6,1,z),
+            position: new CANNON.Vec3(x-3,1,z+1),
         });
         //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.rockBody);
