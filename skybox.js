@@ -24,6 +24,16 @@ export class skybox {
                 './resources/images/nightsky/negX.png',
             ];
         }
+        if(this.type === 'DaylightBox'){
+            urls = [
+                './resources/img/DaylightBox/Daylight Box_Right.bmp', //right
+                './resources/img/DaylightBox/Daylight Box_Left.bmp', //left
+                './resources/img/DaylightBox/Daylight Box_Top.bmp', //top
+                './resources/img/DaylightBox/Daylight Box_Bottom.bmp', //bottom
+                './resources/img/DaylightBox/Daylight Box_Front.bmp', //front
+                './resources/img/DaylightBox/Daylight Box_Back.bmp', //back
+            ];
+        }
 
         let materials = [];
         for (let i = 0; i < 6; i++) {

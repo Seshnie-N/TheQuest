@@ -33,7 +33,7 @@ class level_one {
         this.configPhysics();
         this.addMapCamera();
         this.generateWorld();        
-        //this.addSkybox();
+        this.addSkybox();
         this._LoadAnimatedModels();
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
@@ -104,8 +104,8 @@ class level_one {
     }
 
     addMapCamera(){
-        this.mapWidth =320;
-        this.mapHeight = 320;
+        this.mapWidth =150;
+        this.mapHeight = 150;
         this.mapCamera = new THREE.OrthographicCamera(
             this.mapWidth ,		// Left
             -this.mapWidth ,		// Right
@@ -114,8 +114,8 @@ class level_one {
             1,         // Near
             1000);
 
-        this.mapCamera.position.set(285,300,285);
-        this.mapCamera.lookAt(new THREE.Vector3(285, 1, 285));
+        this.mapCamera.position.set(135,300,135);
+        this.mapCamera.lookAt(new THREE.Vector3(135, 1, 135));
 
     }
 
@@ -214,7 +214,7 @@ class level_one {
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'night',
+            type: 'DaylightBox',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
@@ -295,8 +295,8 @@ class level_one {
 
             // minimap (overhead orthogonal camera)
             if (this.Character && this.mapCamera) {
-                this.renderer.setViewport(50, 50, this.mapWidth, this.mapHeight);
-                this.renderer.setScissor(50, 50, this.mapWidth, this.mapHeight);
+                this.renderer.setViewport(25, 25, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(25, 25, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.mapCamera);
             }
