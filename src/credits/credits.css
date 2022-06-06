@@ -1,0 +1,41 @@
+@font-face {
+  font-family: knight;
+  src: url("../../resources/font/BLKCHCRY.TTF");
+}
+html, body {
+  background:linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url("../../resources/pictures/tutorial.jpg") no-repeat center center fixed;
+  height: 99%;
+  width: 99%;
+}
+.txt{
+position: fixed;
+top: 50%;
+left: 50%;
+-webkit-transform: translate(-50%, -50%);
+transform: translate(-50%, -50%);
+margin-top: 0.5vh;
+text-align:center;
+
+}
+.closebtn {
+padding: 8px 8px 8px 32px;
+text-decoration: none;
+color: #818181;
+display: block;
+transition: 0.3s;
+
+position: absolute;
+top: 0;
+right: 25px;
+font-size: 60px;
+margin-left: 50px;
+}
+p{
+color: #ffffff;
+ font-size: 2rem;
+}
+h2 {
+color: darkorange;
+font-size: 4rem;
+font-family: knight;
+}

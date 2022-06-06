@@ -230,23 +230,6 @@ class level_one {
         }
     }
 
-    // affect objects when hovering over
-    // _onMouseMove(event){
-    //     this.mouse = {
-    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
-    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
-    //     }
-    //     this.raycaster.setFromCamera(this.mouse, this.camera);
-    //     let intersects = this.raycaster.intersectObjects(this.keys, true);
-    //
-    //     for (let i = 0; i < intersects.length; i++) {
-    //         if(intersects[i]){
-    //             console.log("clicked" + i);
-    //         }
-    //     }
-    //
-    // }
-
     //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
     _onClick(event){
         this.mouse = {
@@ -368,14 +351,12 @@ class level_one {
             cubeMaterials
         );
         wall.castShadow = true;
-        //wall.position.set(x,5,z);
 
         this.wallBody = new CANNON.Body({
             shape: new CANNON.Box(new CANNON.Vec3(15,15,15)),
             type: CANNON.Body.STATIC,
             position: new CANNON.Vec3(x,15,z),
         });
-        //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.wallBody);
 
         wall.position.copy(this.wallBody.position);

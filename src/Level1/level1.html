@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>The Quest-Level 1</title>
+  <link rel="icon" type="image/png" sizes="96x96" href="../../resources/pictures/knight.png">
+  <link rel="stylesheet" href="level1.css">
+</head>
+
+<body>
+
+<script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>
+<script type="importmap">
+                {
+                    "imports": {
+                        "three": "../build/three.module.js",
+                        "cannon-es": "./node_modules/cannon-es/dist/cannon-es.js",
+                        "cannon-es-debugger": "./node_modules/cannon-es-debugger/dist/cannon-es-debugger.js"
+                    }
+                }
+        </script>
+
+<div id="myNav" class="overlay">
+  <img id="logo" src="../../resources/pictures/tutorial.jpg" alt="">
+  <h3> Paused </h3>
+  <!-- Overlay content -->
+  <div class="overlay-content">
+    <a href="level1.html">Restart</a>
+    <a href="../../index.html">Exit</a>
+  </div>
+</div>
+
+
+<div id="Win" class="overlay">
+  <img src="../../resources/pictures/tutorial.jpg" alt="">
+  <h3> Congratulations! </h3>
+  <!-- Overlay content -->
+  <div class="overlay-content">
+    <a id="explore" href=#>Keep Exploring</a>
+    <a href="../Level2/level2.html">Proceed to Level 2</a>
+    <a href="level1.html">Restart Level</a>
+    <a href="../../index.html">Exit</a>
+  </div>
+</div>
+
+
+<div id="Lose" class="overlay">
+  <img src="../../resources/pictures/tutorial.jpg" alt="">
+  <h3> You Lose! </h3>
+  <!-- Overlay content -->
+  <div class="overlay-content">
+    <a href="level1.html">Restart Level</a>
+    <a href="index.html">Exit</a>
+  </div>
+</div>
+
+<section id="loading-screen">
+  <div id="loader"></div>
+</section>
+<canvas id="c"></canvas>
+
+
+
+
+
+
+</body>
+<script src="level1.js" type="module" ></script>
+</html>
