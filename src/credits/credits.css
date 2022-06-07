@@ -4,8 +4,12 @@
 }
 html, body {
   background:linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url("../../resources/pictures/tutorial.jpg") no-repeat center center fixed;
-  height: 99%;
-  width: 99%;
+  height: 100%;
+  overflow-y: hidden;
+  width: 100%;
+  overflow-x: hidden;
+  background-size: cover;
+
 }
 .txt{
 position: fixed;

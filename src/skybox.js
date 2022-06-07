@@ -36,12 +36,12 @@ export class skybox {
         }
         if(this.type === 'MountainBox'){
             urls = [
-                '../../resources/pictures/MountainBox/rainbow_rt.png', //right
-                '../../resources/pictures/MountainBox/rainbow_lf.png', //left
-                '../../resources/pictures/MountainBox/rainbow_up.png', //top
-                '../../resources/pictures/MountainBox/rainbow_dn.png', //bottom
-                '../../resources/pictures/MountainBox/rainbow_ft.png', //front
-                '../../resources/pictures/MountainBox/rainbow_bk.png', //back
+                '../../resources/pictures/MountainBox/sh_rt.png', //right
+                '../../resources/pictures/MountainBox/sh_lf.png', //left
+                '../../resources/pictures/MountainBox/sh_up.png', //top
+                '../../resources/pictures/MountainBox/sh_dn.png', //bottom
+                '../../resources/pictures/MountainBox/sh_ft.png', //front
+                '../../resources/pictures/MountainBox/sh_bk.png', //back
             ];
         }
 

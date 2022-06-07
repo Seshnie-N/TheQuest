@@ -46,7 +46,6 @@ class level_one {
         this._LoadAnimatedModels();
         this.addKeyCount();
         this.addPauseButton();
-        this.music();
         this.addSound();
 
         const axesHelper = new THREE.AxesHelper( 600 );
@@ -245,7 +244,7 @@ class level_one {
     _LoadAnimatedModels(){
 
         //set character location in scene
-        this.startPos = new CANNON.Vec3(40,0,10);
+        this.startPos = new CANNON.Vec3(40,0,30);
 
         //Params to be passed to the character class.
         const CharParams = {
@@ -696,21 +695,6 @@ class level_one {
         ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
         const hiddenLoader = new THREE.TextureLoader();
         hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
-    }
-
-    music() {
-        const listener = new THREE.AudioListener();
-        this.camera.add(listener);
-
-        const sound = new THREE.Audio(listener);
-
-        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('../../resources/audio/menu.mp3', function (buffer) {
-            sound.setBuffer(buffer);
-            sound.setLoop(true);
-            sound.setVolume(0.5);
-            sound.play();
-        });
     }
     addSound(){
         // create an AudioListener and add it to the camera

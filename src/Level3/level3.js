@@ -46,7 +46,6 @@ class level_one {
         this._LoadAnimatedModels();
         this.addKeyCount();
         this.addPauseButton();
-        this.music();
         this.addSound();
 
         const axesHelper = new THREE.AxesHelper( 600 );
@@ -124,8 +123,8 @@ class level_one {
 
     addMapCamera(){
         
-        this.mapWidth =300;
-        this.mapHeight = 300;
+        this.mapWidth =375;
+        this.mapHeight = 375;
         this.mapCamera = new THREE.OrthographicCamera(
             this.mapHeight,		// Left
             -this.mapHeight,		// Right
@@ -133,8 +132,8 @@ class level_one {
             this.mapHeight,	// Bottom
             1,         // Near
             1000);
-        this.mapCamera.position.set(285,300,285);
-        this.mapCamera.lookAt(new THREE.Vector3(285, 1, 285));
+        this.mapCamera.position.set(360,300,360);
+        this.mapCamera.lookAt(new THREE.Vector3(360, 1, 360));
 
     }
 
@@ -262,7 +261,7 @@ class level_one {
     _LoadAnimatedModels(){
 
         //set character location in scene
-        this.startPos = new CANNON.Vec3(40,0,10);
+        this.startPos = new CANNON.Vec3(40,0,30);
 
         //Params to be passed to the character class.
         const CharParams = {
@@ -371,13 +370,13 @@ class level_one {
 
             // minimap (overhead orthogonal camera)
             if (this.Character && this.mapCamera) {
-                this.renderer.setViewport(16, h-(300)-16, this.mapWidth, this.mapHeight);
-                this.renderer.setScissor(16, h-(300)-16, this.mapWidth, this.mapHeight);
+                this.renderer.setViewport(16, h-(375)-16, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(16, h-(375)-16, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.mapCamera);
             }
 
-            //cannonDebugger.update();
+           // cannonDebugger.update();
 
             //this.renderer.render(this.scene, this.camera);
             this.step(t - this.previousRAF);
@@ -398,10 +397,10 @@ class level_one {
                 opendoor = false;
             },1500);
 
-        }s
+        }
 
         //update rotation of skybox for dynamic skybox
-        //this.sb.rotation.y += timeElapsedS*0.1;
+        this.sb.rotation.y += timeElapsedS*0.1;
 
         //update character
         if (this.Character) {
@@ -687,7 +686,7 @@ class level_one {
         },(xhr) => xhr, ( err ) => console.error( err ));
 
         this.crystalBody = new CANNON.Body({
-            shape: new CANNON.Cylinder(35,35,100,10),
+            shape: new CANNON.Cylinder(10,10,100,10),
             type: CANNON.Body.STATIC,
             position: new CANNON.Vec3(x,1,z),
         });
@@ -733,7 +732,7 @@ class level_one {
                 new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //left side
                 new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
                 new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/picures/Hedge_full_perms_texture_seamless.jpg')}), //front side
+                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //front side
                 new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
@@ -742,20 +741,6 @@ class level_one {
         hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
     }
 
-    music() {
-        const listener = new THREE.AudioListener();
-        this.camera.add(listener);
-
-        const sound = new THREE.Audio(listener);
-
-        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('../../resources/audio/menu.mp3', function (buffer) {
-            sound.setBuffer(buffer);
-            sound.setLoop(true);
-            sound.setVolume(0.5);
-            sound.play();
-        });
-    }
     addSound(){
         // create an AudioListener and add it to the camera
         const listener = new THREE.AudioListener();
@@ -824,7 +809,7 @@ class level_one {
         this.textSpan.style.fontFamily = "sans-serif"
         this.textSpan.style.color = '#ffffff'
         this.textSpan.style.fontSize = 45 + 'px'
-        this.textSpan.textContent = "x" + collectedKeys.toString()+"/5"
+        this.textSpan.textContent = "x" + collectedKeys.toString()+"/15"
 
         this.keyCount = document.createElement('div')
         this.keyCount.id = "KeyDiv"
@@ -851,7 +836,7 @@ class level_one {
         let x = this.textSpan.textContent;
         let oldCount = x.replace(/\D/g, '');
         if (collectedKeys.toString() !== oldCount) {
-            this.textSpan.textContent = "x" + collectedKeys.toString() +"/5"
+            this.textSpan.textContent = "x" + collectedKeys.toString() +"/15"
         }
 
     }
@@ -912,7 +897,7 @@ class level_one {
     }
 
     addTimer(){
-        var duration = 60 * 3;
+        var duration = 60 * 7;
         
         var timer = duration, minutes, seconds;
         

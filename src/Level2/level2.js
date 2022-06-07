@@ -26,15 +26,6 @@ class level_one {
         Pause = false;
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
-       // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
-    //    document.getElementById("explore").onclick = () => {
-    //     if (this.Character) {
-    //         this.Character.setStop();
-    //         document.getElementById("Win").style.width = "0%"
-    //         Pause = false;
-    //         this.animate();
-    //     }
-   // }
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
         this.addTimer();
@@ -210,12 +201,7 @@ class level_one {
                         const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
                         Level.add( shrub );
                     }
-                    if (filled[j][i] === 6){
-                        const r = Math.floor(Math.random() * 30)+1
-                        const s = Math.floor(Math.random() * 30)+1
-                        const crystal = this.Crystal(i*30+r-15,j*30+s-15);   
-                        Level.add( crystal );
-                    }
+                   
                     if (filled[j][i] === 7){
                         const door = this.door(i*30,j*30);
                         Level.add( door );
@@ -246,7 +232,7 @@ class level_one {
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'DaylightBox',
+            type: 'MountainBox',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
@@ -255,7 +241,7 @@ class level_one {
     _LoadAnimatedModels(){
 
         //set character location in scene
-        this.startPos = new CANNON.Vec3(40,0,10);
+        this.startPos = new CANNON.Vec3(40,0,30);
 
         //Params to be passed to the character class.
         const CharParams = {
@@ -652,18 +638,7 @@ class level_one {
         return rock;        
     }
 
-    Crystal(x,z){
-        const crystal = new THREE.Group;
     
-        const crystal_loader = new GLTFLoader();
-        crystal_loader.load('../../resources/models/Crystal/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(2,2,2); 
-            gltf.scene.position.set(x,0,z); 
-            crystal.add(gltf.scene);  
-        },(xhr) => xhr, ( err ) => console.error( err ));
-    
-        return crystal;        
-    }
 
     SpineGrass(x,z){
         const grass = new THREE.Group;
@@ -708,20 +683,7 @@ class level_one {
         hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
     }
 
-    music() {
-        const listener = new THREE.AudioListener();
-        this.camera.add(listener);
-
-        const sound = new THREE.Audio(listener);
-
-        const audioLoader = new THREE.AudioLoader();
-        audioLoader.load('../../resources/audio/menu.mp3', function (buffer) {
-            sound.setBuffer(buffer);
-            sound.setLoop(true);
-            sound.setVolume(0.5);
-            sound.play();
-        });
-    }
+   
     addSound(){
         // create an AudioListener and add it to the camera
         const listener = new THREE.AudioListener();
@@ -751,7 +713,7 @@ class level_one {
                 const audioLoader = new THREE.AudioLoader();
                 audioLoader.load( '../../resources/audio/woodsteps.mp3', function( buffer ) { // the audio for the footsteps
                     sound.setBuffer( buffer );
-                    sound.setLoop( true ); // sound continues to play until infinite
+                  //  sound.setLoop( true ); // sound continues to play until infinite
                     sound.setVolume( 1 );
                     sound.play();// footstep sound start playing
                      });  

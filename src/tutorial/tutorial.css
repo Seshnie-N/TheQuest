@@ -4,9 +4,10 @@
 }
 
 html, body {
-    background:linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url("../../resources/pictures/tutorial.jpg") no-repeat center center fixed;
-    height: 99%;
-    width: 99%;
+    background-image:linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url("../../resources/pictures/tutorial.jpg");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    
 }
 .txt{
 top: 50%;
