@@ -137,9 +137,9 @@ class level_one {
         //stage 20x20 keys 5
 
         var filled = [
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,12,12,12,1 ],
             [1 ,0 ,0 ,0 ,0 ,1 ,9 ,0 ,0 ,0 ,0 ,0 ,1 ,9 ,0 ,0 ,0 ,0 ,0 ,1 ,10,11,11,11,1 ],
-            [1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,1 ,1 ,1 ,0 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,1 ,10,1 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,1 ,1 ,1 ,0 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,1 ,10,13,13,13,1 ],
             [1 ,0 ,0 ,1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,1 ],
             [1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,6 ,1 ,0 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ],
             [1 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,10,10,11,1 ,0 ,1 ],
@@ -174,7 +174,7 @@ class level_one {
                         Level.add( mesh );
                     }
                     if (filled[j][i] === 2){
-                        const mirror = this.Mirror(i*30,j*30,-Math.PI/2);
+                        const mirror = this.Mirror(i*30,j*30,Math.PI);
                         Level.add(mirror);
                     }
                     if (filled[j][i] === 3 ){
@@ -216,6 +216,14 @@ class level_one {
                     if(filled[j][i] === 11){
                         const key = this.HiddenKey(i*30,j*30);
                         Level.add(key);
+                    }
+                    if(filled[j][i] === 12){
+                        const mh = this.MirrorHedge(i*30,j*30,0,16);
+                        Level.add(mh);
+                    }
+                    if(filled[j][i] === 13){
+                        const mh = this.MirrorHedge(i*30,j*30,Math.PI,-16);
+                        Level.add(mh);
                     }
                 }
             }
@@ -541,11 +549,26 @@ class level_one {
             color: 0x777777,
         });
     
-        mirrorCamera.position.set(x-14,15,z-14);
-        mirrorCamera.rotateX( p );
+        mirrorCamera.position.set(x,15,z);
+        //mirrorCamera.rotation.y = -Math.PI/2;
+        mirrorCamera.rotation.x = p;
         mirror.add( mirrorCamera );
     
         return mirror;
+    }
+
+    MirrorHedge(x,z,r,p){
+        const mirrorHedge = new THREE.Group();
+
+        const hedge = this.hedgeWall(x,z);
+
+        mirrorHedge.add( hedge );
+
+        const mirror = this.Mirror(x,z+p,r);
+
+        mirrorHedge.add( mirror );
+
+        return mirrorHedge
     }
 
     Rock(x,z){
