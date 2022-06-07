@@ -154,10 +154,10 @@ class level_one {
 
         this.InitaliseTexture();
 
-        //stage 20x20 keys 5
+        //stage 25x25 keys 15
 
         var filled = [
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,12,12,12,1 ],
             [1 ,0 ,4 ,5 ,4 ,1 ,9 ,5 ,0 ,4 ,5 ,4 ,1 ,9 ,5 ,5 ,4 ,4 ,5 ,1 ,10,11,11,11,1 ],
             [1 ,1 ,1 ,1 ,5 ,1 ,1 ,0 ,1 ,1 ,1 ,5 ,1 ,0 ,4 ,0 ,1 ,1 ,4 ,1 ,10,1 ,1 ,1 ,1 ],
             [1 ,0 ,4 ,1 ,4 ,0 ,4 ,5 ,1 ,1 ,1 ,4 ,1 ,1 ,4 ,1 ,1 ,1 ,0 ,5 ,4 ,4 ,0 ,5 ,1 ],
@@ -349,7 +349,7 @@ class level_one {
     //continuous rendering to create animation
     animate() {
          //if game is pause break loop.
-         if (Pause === true) {
+        if (Pause === true) {
             return
         }
         requestAnimationFrame((t) => {
@@ -516,7 +516,7 @@ class level_one {
         const pond = new THREE.Group;
     
         const pond_loader = new GLTFLoader();
-        pond_loader.load('./resources/models/Pond/scene.gltf',function (gltf) {
+        pond_loader.load('../../resources/models/Pond/scene.gltf',function (gltf) {
             gltf.scene.scale.set(1.5,1.5,1.5); 
             //gltf.scene.position.set(x-15,0,z+15); 
             pond.add(gltf.scene);  
@@ -548,7 +548,7 @@ class level_one {
         this.scene.add(doorBack);
 
         door_loader = new GLTFLoader();
-        door_loader.load('./resources/models/door/scene.gltf',function (gltf) {
+        door_loader.load('../../resources/models/door/scene.gltf',function (gltf) {
             gltf.scene.scale.set(0.025,0.025,0.025);
             gltf.scene.position.set(x,0,z+14);
 
@@ -655,7 +655,7 @@ class level_one {
         const rock = new THREE.Group;
     
         const rock_loader = new GLTFLoader();
-        rock_loader.load('./resources/models/Rock/scene.gltf',function (gltf) {
+        rock_loader.load('../../resources/models/Rock/scene.gltf',function (gltf) {
             gltf.scene.scale.set(40,40,40); 
             //agltf.scene.scale.set(0.1,0.1,0.1); 
             //gltf.scene.position.set(x-5,0,z+2); 
@@ -680,7 +680,7 @@ class level_one {
         const crystal = new THREE.Group;
     
         const crystal_loader = new GLTFLoader();
-        crystal_loader.load('./resources/models/Crystal/scene.gltf',function (gltf) {
+        crystal_loader.load('../../resources/models/Crystal/scene.gltf',function (gltf) {
             gltf.scene.scale.set(50,50,50); 
             //gltf.scene.position.set(x,0,z); 
             crystal.add(gltf.scene);  
@@ -704,7 +704,7 @@ class level_one {
         const grass = new THREE.Group;
     
         grass_loader = new GLTFLoader();
-        grass_loader.load('./resources/models/spine_grass/scene.gltf',function (gltf) {
+        grass_loader.load('../../resources/models/spine_grass/scene.gltf',function (gltf) {
             gltf.scene.scale.set(2,2,2); 
             gltf.scene.position.set(x,0,z); 
             grass.add(gltf.scene);  
@@ -717,7 +717,7 @@ class level_one {
         const shrub = new THREE.Group;
     
         shrub_loader = new GLTFLoader();
-        shrub_loader.load('./resources/models/low_poly_shrub/scene.gltf',function (gltf) {
+        shrub_loader.load('../../resources/models/low_poly_shrub/scene.gltf',function (gltf) {
             gltf.scene.scale.set(25,3,25); 
             gltf.scene.position.set(x,0,z); 
             shrub.add(gltf.scene);  
@@ -729,17 +729,17 @@ class level_one {
     InitaliseTexture() {
         const loader = new THREE.TextureLoader();
         cubeMaterials = [
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //right side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //left side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img//Hedge_full_perms_texture_seamless.jpg')}), //top side
+                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //right side
+                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //left side
+                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
                 new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //front side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //back side
+                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/picures/Hedge_full_perms_texture_seamless.jpg')}), //front side
+                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')});
+        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
         const hiddenLoader = new THREE.TextureLoader();
-        hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('./resources/img//Hedge_full_perms_texture_seamless.jpg')});
+        hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
     }
 
     music() {
