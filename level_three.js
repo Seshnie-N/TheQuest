@@ -33,7 +33,7 @@ class level_one {
         this.configPhysics();
         this.addMapCamera();
         this.generateWorld();        
-        this.addSkybox();
+        //this.addSkybox();
         this._LoadAnimatedModels();
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
@@ -104,8 +104,8 @@ class level_one {
     }
 
     addMapCamera(){
-        this.mapWidth =150;
-        this.mapHeight = 150;
+        this.mapWidth = 375;
+        this.mapHeight = 375;
         this.mapCamera = new THREE.OrthographicCamera(
             this.mapWidth ,		// Left
             -this.mapWidth ,		// Right
@@ -114,8 +114,8 @@ class level_one {
             1,         // Near
             1000);
 
-        this.mapCamera.position.set(135,300,135);
-        this.mapCamera.lookAt(new THREE.Vector3(135, 1, 135));
+        this.mapCamera.position.set(360,300,360);
+        this.mapCamera.lookAt(new THREE.Vector3(360, 1, 360));
 
     }
 
@@ -135,21 +135,36 @@ class level_one {
         this.InitaliseTexture();
 
         //stage 20x20 keys 5
-        
-        var filled = [
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
-            [1 ,0 ,4 ,4 ,5 ,4 ,4 ,5 ,4 ,1 ],
-            [1 ,1 ,4 ,1 ,1 ,5 ,1 ,1 ,4 ,1 ],
-            [1 ,1 ,5 ,1 ,0 ,0 ,0 ,1 ,3 ,1 ],
-            [1 ,1 ,0 ,1 ,0 ,8 ,0 ,1 ,1 ,1 ],
-            [1 ,1 ,5 ,1 ,0 ,0 ,0 ,1 ,11,1 ],
-            [1 ,1 ,0 ,1 ,1 ,5 ,1 ,1 ,10,1 ],
-            [1 ,9 ,5 ,1 ,4 ,0 ,4 ,1 ,10,1 ],
-            [1 ,7 ,4 ,0 ,3 ,1 ,4 ,4 ,5 ,1 ],
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ]];
 
-            for(let i=0;i<10;i++){
-                for(let j=0;j<10;j++){
+        var filled = [
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,0 ,0 ,0 ,0 ,1 ,9 ,0 ,0 ,0 ,0 ,0 ,1 ,9 ,0 ,0 ,0 ,0 ,0 ,1 ,10,11,11,11,1 ],
+            [1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,1 ,1 ,1 ,0 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,1 ,10,1 ,1 ,1 ,1 ],
+            [1 ,0 ,0 ,1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,1 ],
+            [1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,6 ,1 ,0 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ],
+            [1 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,0 ,0 ,0 ,1 ,10,10,11,1 ,0 ,1 ],
+            [1 ,9 ,0 ,10,1 ,1 ,0 ,0 ,0 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,10,1 ,1 ,1 ,0 ,1 ],
+            [1 ,1 ,1 ,10,1 ,1 ,0 ,1 ,1 ,1 ,0 ,0 ,1 ,9 ,0 ,0 ,1 ,0 ,1 ,10,1 ,0 ,0 ,0 ,1 ],
+            [1 ,10,10,10,1 ,1 ,0 ,10,10,1 ,0 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,1 ,0 ,0 ,0 ,1 ,0 ,1 ],
+            [1 ,10,1 ,1 ,0 ,0 ,0 ,1 ,11,1 ,0 ,1 ,1 ,3 ,0 ,9 ,1 ,0 ,1 ,0 ,6 ,0 ,1 ,0 ,1 ],
+            [1 ,11,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,0 ,0 ,0 ,1 ,0 ,1 ],
+            [1 ,1 ,0 ,0 ,0 ,1 ,1 ,1 ,9 ,0 ,0 ,0 ,9 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,1 ,1 ,0 ,1 ],
+            [1 ,1 ,0 ,6 ,0 ,0 ,0 ,1 ,0 ,0 ,0 ,0 ,0 ,1 ,3 ,0 ,1 ,0 ,0 ,0 ,0 ,1 ,1 ,0 ,1 ],
+            [1 ,0 ,0 ,0 ,0 ,1 ,0 ,0 ,0 ,0 ,8 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ],
+            [1 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,1 ,0 ,9 ,1 ,1 ,1 ,11,1 ,0 ,0 ,0 ,1 ],
+            [1 ,0 ,1 ,0 ,0 ,0 ,1 ,1 ,9 ,0 ,0 ,0 ,9 ,1 ,1 ,1 ,1 ,10,10,10,1 ,0 ,1 ,1 ,1 ],
+            [1 ,0 ,0 ,0 ,6 ,0 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,10,10,10,1 ,1 ,1 ,0 ,1 ,11,1 ],
+            [1 ,0 ,1 ,0 ,0 ,3 ,1 ,10,11,1 ,0 ,1 ,0 ,0 ,1 ,10,1 ,1 ,1 ,1 ,0 ,0 ,9 ,10,1 ],
+            [1 ,0 ,1 ,1 ,1 ,1 ,1 ,10,10,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,6 ,0 ,1 ,1 ],
+            [1 ,0 ,0 ,0 ,0 ,0 ,1 ,10,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,3 ,0 ,0 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,1 ,0 ,1 ,0 ,0 ,0 ,0 ,0 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,0 ,0 ,9 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,1 ,0 ,1 ,1 ,1 ,3 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,1 ],
+            [1 ,0 ,0 ,0 ,0 ,0 ,1 ,0 ,0 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,6 ,0 ,1 ],
+            [1 ,7 ,0 ,0 ,1 ,0 ,0 ,0 ,9 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,0 ,0 ,0 ,1 ,1 ,3 ,0 ,0 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ]];
+
+            for(let i=0;i<25;i++){
+                for(let j=0;j<25;j++){
                     if(filled[j][i] !== 1){
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
@@ -179,9 +194,7 @@ class level_one {
                         Level.add( shrub );
                     }
                     if (filled[j][i] === 6){
-                        const r = Math.floor(Math.random() * 30)+1
-                        const s = Math.floor(Math.random() * 30)+1
-                        const crystal = this.Crystal(i*30+r-15,j*30+s-15);   
+                        const crystal = this.Crystal(i*30,j*30);   
                         Level.add( crystal );
                     }
                     if (filled[j][i] === 7){
@@ -212,7 +225,7 @@ class level_one {
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'DaylightBox',
+            type: 'night',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
@@ -293,8 +306,8 @@ class level_one {
 
             // minimap (overhead orthogonal camera)
             if (this.Character && this.mapCamera) {
-                this.renderer.setViewport(25, 25, this.mapWidth, this.mapHeight);
-                this.renderer.setScissor(25, 25, this.mapWidth, this.mapHeight);
+                this.renderer.setViewport(50, 50, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(50, 50, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.mapCamera);
             }
@@ -432,18 +445,19 @@ class level_one {
         return wall;
     }
 
+    //this is 4 tiles big
     Pond(x,z){
         const pond = new THREE.Group;
     
         const pond_loader = new GLTFLoader();
         pond_loader.load('./resources/models/Pond/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(1,1,1); 
+            gltf.scene.scale.set(1.5,1.5,1.5); 
             //gltf.scene.position.set(x-15,0,z+15); 
             pond.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
 
         this.pondBody = new CANNON.Body({
-            shape: new CANNON.Cylinder(20,20,100,10),
+            shape: new CANNON.Cylinder(35,35,100,10),
             type: CANNON.Body.STATIC,
             position: new CANNON.Vec3(x,1,z),
         });
@@ -546,7 +560,7 @@ class level_one {
         },(xhr) => xhr, ( err ) => console.error( err ));
 
         this.rockBody = new CANNON.Body({
-            shape: new CANNON.Cylinder(10,10,100,20),
+            shape: new CANNON.Cylinder(10,10,100,10),
             type: CANNON.Body.STATIC,
             position: new CANNON.Vec3(x,1,z),
         });
@@ -564,7 +578,7 @@ class level_one {
     
         const crystal_loader = new GLTFLoader();
         crystal_loader.load('./resources/models/Crystal/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(2,2,2); 
+            gltf.scene.scale.set(50,50,50); 
             gltf.scene.position.set(x,0,z); 
             crystal.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));

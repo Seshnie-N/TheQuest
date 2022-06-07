@@ -203,9 +203,7 @@ class level_one {
                         Level.add( pond );
                     }
                     if (filled[j][i] === 9){
-                        const r = Math.floor(Math.random() * 30)+1
-                        const s = Math.floor(Math.random() * 30)+1
-                        const rock = this.Rock(i*30+r-15,j*30+s-15);   
+                        const rock = this.Rock(i*30,j*30);   
                         Level.add( rock );
                     }
                     if(filled[j][i] === 10){
@@ -311,7 +309,7 @@ class level_one {
                 this.renderer.render(this.scene, this.mapCamera);
             }
 
-            cannonDebugger.update();
+            //cannonDebugger.update();
 
             //this.renderer.render(this.scene, this.camera);
             this.step(t - this.previousRAF);
@@ -561,7 +559,7 @@ class level_one {
         this.rockBody = new CANNON.Body({
             shape: new CANNON.Cylinder(10,10,100,10),
             type: CANNON.Body.STATIC,
-            position: new CANNON.Vec3(x-3,1,z+1),
+            position: new CANNON.Vec3(x,1,z),
         });
         //this.wallBody.position.set(x,5,z);
         this.world.addBody(this.rockBody);
