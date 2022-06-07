@@ -155,31 +155,36 @@ class level_one {
         this.InitaliseTexture();
 
         //stage 20x20 keys 5
-        
-        var filled = [
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
-            [1 ,0 ,4 ,0 ,1 ,1 ,5 ,1 ,1 ,1 ,3 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
-            [1 ,1 ,1 ,5 ,5 ,4 ,0 ,1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,0 ,0 ,0 ,3 ,1 ],
-            [1 ,1 ,1 ,0 ,1 ,1 ,4 ,1 ,0 ,1 ,0 ,9 ,1 ,0 ,0 ,0 ,0 ,8 ,0 ,1 ],
-            [1 ,0 ,0 ,5 ,0 ,1 ,0 ,0 ,0 ,1 ,4 ,0 ,1 ,0 ,1 ,0 ,4 ,0 ,0 ,1 ],
-            [1 ,5 ,9 ,4 ,4 ,1 ,4 ,1 ,0 ,1 ,1 ,1 ,1 ,4 ,1 ,5 ,4 ,0 ,5 ,1 ],
-            [1 ,0 ,4 ,0 ,0 ,1 ,0 ,0 ,0 ,0 ,0 ,5 ,4 ,4 ,1 ,1 ,0 ,1 ,1 ,1 ],
-            [1 ,1 ,1 ,1 ,1 ,1 ,4 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,5 ,1 ,1 ,1 ],
-            [1 ,1 ,1 ,1 ,0 ,4 ,5 ,1 ,4 ,1 ,11,10,10,10,10,1 ,0 ,1 ,1 ,1 ],
-            [1 ,3 ,4 ,1 ,5 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,10,1 ,1 ,1 ,5 ,1 ,1 ,1 ],
-            [1 ,0 ,0 ,0 ,0 ,1 ,1 ,1 ,5 ,1 ,1 ,0 ,0 ,9 ,1 ,1 ,4 ,5 ,0 ,1 ],
-            [1 ,0 ,5 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,5 ,4 ,1 ,1 ,1 ,1 ,4 ,1 ],
-            [1 ,10,1 ,1 ,1 ,1 ,1 ,4 ,0 ,1 ,1 ,1 ,4 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ],
-            [1 ,10,1 ,1 ,0 ,5 ,0 ,0 ,4 ,5 ,0 ,4 ,4 ,5 ,4 ,1 ,1 ,1 ,4 ,1 ],
-            [1 ,10,1 ,1 ,4 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,4 ,0 ,5 ,0 ,4 ,1 ],
-            [1 ,10,10,10,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ],
-            [1 ,1 ,1 ,1 ,0 ,1 ,1 ,0 ,9 ,1 ,1 ,1 ,1 ,1 ,5 ,1 ,1 ,1 ,1 ,1 ],
-            [1 ,1 ,4 ,0 ,5 ,0 ,5 ,4 ,4 ,0 ,5 ,0 ,5 ,0 ,0 ,4 ,0 ,1 ,1 ,1 ],
-            [1 ,1 ,7 ,1 ,1 ,1 ,1 ,5 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,3 ,1 ,1 ,1 ],
-            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ]];
 
-            for(let i=0;i<20;i++){
-                for(let j=0;j<20;j++){
+        var filled = [
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,0 ,4 ,5 ,4 ,1 ,9 ,5 ,0 ,4 ,5 ,4 ,1 ,9 ,5 ,5 ,4 ,4 ,5 ,1 ,10,11,11,11,1 ],
+            [1 ,1 ,1 ,1 ,5 ,1 ,1 ,0 ,1 ,1 ,1 ,5 ,1 ,0 ,4 ,0 ,1 ,1 ,4 ,1 ,10,1 ,1 ,1 ,1 ],
+            [1 ,0 ,4 ,1 ,4 ,0 ,4 ,5 ,1 ,1 ,1 ,4 ,1 ,1 ,4 ,1 ,1 ,1 ,0 ,5 ,4 ,4 ,0 ,5 ,1 ],
+            [1 ,4 ,5 ,5 ,4 ,1 ,1 ,1 ,1 ,6 ,1 ,4 ,0 ,0 ,5 ,5 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,4 ,1 ],
+            [1 ,0 ,0 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,5 ,1 ,1 ,1 ,4 ,5 ,4 ,1 ,10,10,11,1 ,4 ,1 ],
+            [1 ,9 ,4 ,10,1 ,1 ,0 ,4 ,0 ,1 ,1 ,4 ,1 ,1 ,1 ,1 ,1 ,4 ,1 ,10,1 ,1 ,1 ,4 ,1 ],
+            [1 ,1 ,1 ,10,1 ,1 ,5 ,1 ,1 ,1 ,0 ,5 ,1 ,9 ,0 ,0 ,1 ,4 ,1 ,10,1 ,0 ,0 ,0 ,1 ],
+            [1 ,10,10,10,1 ,1 ,0 ,10,10,1 ,4 ,1 ,1 ,0 ,4 ,5 ,4 ,4 ,1 ,0 ,0 ,0 ,1 ,5 ,1 ],
+            [1 ,10,1 ,1 ,0 ,0 ,4 ,1 ,11,1 ,4 ,1 ,1 ,3 ,0 ,9 ,1 ,5 ,1 ,4 ,6 ,4 ,1 ,4 ,1 ],
+            [1 ,11,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,5 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,0 ,5 ,0 ,1 ,4 ,1 ],
+            [1 ,1 ,0 ,4 ,4 ,1 ,5 ,1 ,9 ,0 ,0 ,0 ,9 ,1 ,1 ,1 ,1 ,4 ,1 ,1 ,0 ,1 ,1 ,5 ,1 ],
+            [1 ,1 ,0 ,6 ,0 ,0 ,0 ,1 ,4 ,0 ,0 ,0 ,0 ,1 ,3 ,5 ,1 ,0 ,0 ,0 ,4 ,1 ,1 ,5 ,1 ],
+            [1 ,5 ,0 ,5 ,4 ,1 ,0 ,0 ,0 ,0 ,8 ,0 ,0 ,4 ,4 ,0 ,4 ,5 ,1 ,1 ,1 ,1 ,1 ,4 ,1 ],
+            [1 ,4 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,0 ,0 ,0 ,5 ,1 ,4 ,9 ,1 ,1 ,1 ,11,1 ,0 ,4 ,0 ,1 ],
+            [1 ,4 ,1 ,5 ,0 ,0 ,1 ,1 ,9 ,5 ,4 ,0 ,9 ,1 ,1 ,1 ,1 ,10,10,10,1 ,4 ,1 ,1 ,1 ],
+            [1 ,0 ,0 ,4 ,6 ,4 ,1 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,10,10,10,1 ,1 ,1 ,0 ,1 ,11,1 ],
+            [1 ,5 ,1 ,0 ,0 ,3 ,1 ,10,11,1 ,5 ,1 ,0 ,0 ,1 ,10,1 ,1 ,1 ,1 ,4 ,4 ,9 ,10,1 ],
+            [1 ,0 ,1 ,1 ,1 ,1 ,1 ,10,10,1 ,5 ,0 ,4 ,4 ,4 ,0 ,5 ,0 ,5 ,0 ,4 ,6 ,0 ,1 ,1 ],
+            [1 ,4 ,5 ,4 ,5 ,0 ,1 ,10,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,0 ,1 ,3 ,0 ,0 ,1 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,4 ,0 ,4 ,0 ,1 ,4 ,1 ,0 ,5 ,0 ,4 ,0 ,1 ,4 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,0 ,0 ,9 ,1 ,1 ,1 ,5 ,4 ,4 ,4 ,1 ,4 ,1 ,1 ,1 ,3 ,1 ,0 ,0 ,4 ,0 ,5 ,0 ,1 ],
+            [1 ,0 ,4 ,5 ,0 ,0 ,1 ,0 ,0 ,1 ,1 ,1 ,0 ,1 ,1 ,1 ,1 ,1 ,4 ,1 ,1 ,0 ,6 ,0 ,1 ],
+            [1 ,7 ,5 ,0 ,1 ,4 ,0 ,4 ,9 ,1 ,1 ,1 ,5 ,0 ,0 ,5 ,4 ,0 ,0 ,1 ,1 ,3 ,0 ,0 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ]];
+
+            for(let i=0;i<25;i++){
+                for(let j=0;j<25;j++){
                     if(filled[j][i] !== 1){
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
@@ -189,14 +194,12 @@ class level_one {
                         Level.add( mesh );
                     }
                     if (filled[j][i] === 2){
-                        const mirror = this.Mirror(i*30,j*30,-Math.PI/2);
+                        const mirror = this.Mirror(i*30,j*30,Math.PI);
                         Level.add(mirror);
                     }
                     if (filled[j][i] === 3 ){
                         const key = this.UnHiddenKey(i*30,j*30);
                         Level.add(key);
-                        const triangle = this.Triangle(i*30,j*30);
-                        Level.add(triangle);
                     }
                     if (filled[j][i] === 4){
                         const r = Math.floor(Math.random() * 30)+1
@@ -211,9 +214,7 @@ class level_one {
                         Level.add( shrub );
                     }
                     if (filled[j][i] === 6){
-                        const r = Math.floor(Math.random() * 30)+1
-                        const s = Math.floor(Math.random() * 30)+1
-                        const crystal = this.Crystal(i*30+r-15,j*30+s-15);   
+                        const crystal = this.Crystal(i*30,j*30);   
                         Level.add( crystal );
                     }
                     if (filled[j][i] === 7){
@@ -235,8 +236,14 @@ class level_one {
                     if(filled[j][i] === 11){
                         const key = this.HiddenKey(i*30,j*30);
                         Level.add(key);
-                        const triangle = this.Triangle(i*30,j*30);
-                        Level.add(triangle);
+                    }
+                    if(filled[j][i] === 12){
+                        const mh = this.MirrorHedge(i*30,j*30,0,16);
+                        Level.add(mh);
+                    }
+                    if(filled[j][i] === 13){
+                        const mh = this.MirrorHedge(i*30,j*30,Math.PI,-16);
+                        Level.add(mh);
                     }
                 }
             }
@@ -246,7 +253,7 @@ class level_one {
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'DaylightBox',
+            type: 'night',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
@@ -504,18 +511,19 @@ class level_one {
         return wall;
     }
 
+    //this is 4 tiles big
     Pond(x,z){
         const pond = new THREE.Group;
     
         const pond_loader = new GLTFLoader();
-        pond_loader.load('../../resources/models/Pond/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(1,1,1); 
+        pond_loader.load('./resources/models/Pond/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(1.5,1.5,1.5); 
             //gltf.scene.position.set(x-15,0,z+15); 
             pond.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
 
         this.pondBody = new CANNON.Body({
-            shape: new CANNON.Cylinder(20,20,100,10),
+            shape: new CANNON.Cylinder(35,35,100,10),
             type: CANNON.Body.STATIC,
             position: new CANNON.Vec3(x,1,z),
         });
@@ -540,7 +548,7 @@ class level_one {
         this.scene.add(doorBack);
 
         door_loader = new GLTFLoader();
-        door_loader.load('../../resources/models/door/scene.gltf',function (gltf) {
+        door_loader.load('./resources/models/door/scene.gltf',function (gltf) {
             gltf.scene.scale.set(0.025,0.025,0.025);
             gltf.scene.position.set(x,0,z+14);
 
@@ -607,7 +615,8 @@ class level_one {
             
             return triangle;
         }
-    Mirror(x,z,p) {
+
+   Mirror(x,z,p) {
         let mirror = new THREE.Group;
     
         let geometry;
@@ -620,18 +629,33 @@ class level_one {
             color: 0x777777,
         });
     
-        mirrorCamera.position.set(x-14,15,z-14);
-        mirrorCamera.rotateX( p );
+        mirrorCamera.position.set(x,15,z);
+        //mirrorCamera.rotation.y = -Math.PI/2;
+        mirrorCamera.rotation.x = p;
         mirror.add( mirrorCamera );
     
         return mirror;
+    }
+
+    MirrorHedge(x,z,r,p){
+        const mirrorHedge = new THREE.Group();
+
+        const hedge = this.hedgeWall(x,z);
+
+        mirrorHedge.add( hedge );
+
+        const mirror = this.Mirror(x,z+p,r);
+
+        mirrorHedge.add( mirror );
+
+        return mirrorHedge
     }
 
     Rock(x,z){
         const rock = new THREE.Group;
     
         const rock_loader = new GLTFLoader();
-        rock_loader.load('../../resources/models/Rock/scene.gltf',function (gltf) {
+        rock_loader.load('./resources/models/Rock/scene.gltf',function (gltf) {
             gltf.scene.scale.set(40,40,40); 
             //agltf.scene.scale.set(0.1,0.1,0.1); 
             //gltf.scene.position.set(x-5,0,z+2); 
@@ -639,7 +663,7 @@ class level_one {
         },(xhr) => xhr, ( err ) => console.error( err ));
 
         this.rockBody = new CANNON.Body({
-            shape: new CANNON.Cylinder(10,10,100,20),
+            shape: new CANNON.Cylinder(10,10,100,10),
             type: CANNON.Body.STATIC,
             position: new CANNON.Vec3(x,1,z),
         });
@@ -656,11 +680,22 @@ class level_one {
         const crystal = new THREE.Group;
     
         const crystal_loader = new GLTFLoader();
-        crystal_loader.load('../../resources/models/Crystal/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(2,2,2); 
-            gltf.scene.position.set(x,0,z); 
+        crystal_loader.load('./resources/models/Crystal/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(50,50,50); 
+            //gltf.scene.position.set(x,0,z); 
             crystal.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
+
+        this.crystalBody = new CANNON.Body({
+            shape: new CANNON.Cylinder(35,35,100,10),
+            type: CANNON.Body.STATIC,
+            position: new CANNON.Vec3(x,1,z),
+        });
+        // //this.wallBody.position.set(x,5,z);
+        this.world.addBody(this.crystalBody);
+
+        crystal.position.copy(this.crystalBody.position);
+        crystal.quaternion.copy(this.crystalBody.quaternion);
     
         return crystal;        
     }
@@ -669,7 +704,7 @@ class level_one {
         const grass = new THREE.Group;
     
         grass_loader = new GLTFLoader();
-        grass_loader.load('../../resources/models/spine_grass/scene.gltf',function (gltf) {
+        grass_loader.load('./resources/models/spine_grass/scene.gltf',function (gltf) {
             gltf.scene.scale.set(2,2,2); 
             gltf.scene.position.set(x,0,z); 
             grass.add(gltf.scene);  
@@ -682,7 +717,7 @@ class level_one {
         const shrub = new THREE.Group;
     
         shrub_loader = new GLTFLoader();
-        shrub_loader.load('../../resources/models/low_poly_shrub/scene.gltf',function (gltf) {
+        shrub_loader.load('./resources/models/low_poly_shrub/scene.gltf',function (gltf) {
             gltf.scene.scale.set(25,3,25); 
             gltf.scene.position.set(x,0,z); 
             shrub.add(gltf.scene);  
@@ -690,22 +725,21 @@ class level_one {
     
         return shrub;
     }
-   
 
     InitaliseTexture() {
         const loader = new THREE.TextureLoader();
         cubeMaterials = [
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //right side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //left side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //right side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //left side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img//Hedge_full_perms_texture_seamless.jpg')}), //top side
                 new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //front side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //back side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //front side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
+        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg')});
         const hiddenLoader = new THREE.TextureLoader();
-        hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
+        hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('./resources/img//Hedge_full_perms_texture_seamless.jpg')});
     }
 
     music() {
