@@ -34,6 +34,16 @@ export class skybox {
                 './resources/img/DaylightBox/Daylight Box_Back.bmp', //back
             ];
         }
+        if(this.type === 'MountainBox'){
+            urls = [
+                './resources/img/MountainBox/rainbow_rt.png', //right
+                './resources/img/MountainBox/rainbow_lf.png', //left
+                './resources/img/MountainBox/rainbow_up.png', //top
+                './resources/img/MountainBox/rainbow_dn.png', //bottom
+                './resources/img/MountainBox/rainbow_ft.png', //front
+                './resources/img/MountainBox/rainbow_bk.png', //back
+            ];
+        }
 
         let materials = [];
         for (let i = 0; i < 6; i++) {

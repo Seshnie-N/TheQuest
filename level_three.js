@@ -33,7 +33,7 @@ class level_one {
         this.configPhysics();
         this.addMapCamera();
         this.generateWorld();        
-        //this.addSkybox();
+        this.addSkybox();
         this._LoadAnimatedModels();
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);

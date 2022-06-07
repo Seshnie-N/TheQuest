@@ -33,7 +33,7 @@ class level_one {
         this.configPhysics();
         this.addMapCamera();
         this.generateWorld();        
-        //this.addSkybox();
+        this.addSkybox();
         this._LoadAnimatedModels();
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
@@ -222,7 +222,7 @@ class level_one {
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'night',
+            type: 'MountainBox',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
