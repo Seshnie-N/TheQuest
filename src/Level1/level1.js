@@ -9,7 +9,7 @@ import CannonDebugger from 'cannon-es-debugger';
 import gsap from "gsap";
 
 
-let mirrorCamera, cubeMaterials, ground, tree_loader,key_loader,triangle_loader, grass_loader,shrub_loader, cannonDebugger, key, door, collectedKeys, door_loader, doormixer, opendoor, Pause,hiddenTexture;
+let mirrorCamera, cubeMaterials, ground, tree_loader,key_loader,triangle_loader, grass_loader,shrub_loader, cannonDebugger, key,triangle, door, collectedKeys, door_loader, doormixer, opendoor, Pause,hiddenTexture;
 
 class level_one {
     constructor() {
@@ -124,13 +124,13 @@ class level_one {
 
     addMapCamera(){
         
-        this.mapWidth =window.innerHeight/3;
-        this.mapHeight = window.innerHeight/3;
+        this.mapWidth =300;
+        this.mapHeight = 300;
         this.mapCamera = new THREE.OrthographicCamera(
-            this.mapHeight*1.2,		// Left
-            -this.mapHeight*1.2,		// Right
-            -this.mapHeight*1.2 ,		// Top
-            this.mapHeight*1.2,	// Bottom
+            this.mapHeight/150,		// Left
+            -this.mapHeight,		// Right
+            -this.mapHeight/150,		// Top
+            this.mapHeight,	// Bottom
             1,         // Near
             1000);
         this.mapCamera.position.set(285,300,285);
@@ -185,6 +185,8 @@ class level_one {
                     if (filled[j][i] === 3 ){
                         const key = this.UnHiddenKey(i*30,j*30);
                         Level.add(key);
+                        const triangle = this.Triangle(i*30,j*30);
+                        Level.add(triangle);
                     }
                     if (filled[j][i] === 4){
                         const r = Math.floor(Math.random() * 30)+1
@@ -223,6 +225,8 @@ class level_one {
                     if(filled[j][i] === 11){
                         const key = this.HiddenKey(i*30,j*30);
                         Level.add(key);
+                        const triangle = this.Triangle(i*30,j*30);
+                        Level.add(triangle);
                     }
                 }
             }
@@ -287,15 +291,11 @@ class level_one {
             //check if all keys collected
             if (collectedKeys >= key.children.length){
                 opendoor = true;
-                Pause=true;
-                setTimeout(function(){
-                    let WinOverlay = document.getElementById("Win");
+                setTimeout(function(){ Pause=true;},1000)
+                let WinOverlay = document.getElementById("Win");
                     WinOverlay.style.width = "100%";
-                }
-                    ,1000)
-                
             }else{
-                let width = 140
+                let width =70;
                 this.ObjtextSpan = document.createElement("span")
                 this.ObjtextSpan.id = "objText"
                 this.ObjtextSpan.style.padding = "20px"
@@ -310,9 +310,9 @@ class level_one {
                 this.objText.style.display = "flex";
                 this.objText.style.alignItems = "center";
                 this.objText.style.backgroundColor="#000000"
-                this.objText.style.borderRadius="25px"
+                this.objText.style.borderRadius="25px";
                 this.objText.append(this.ObjtextSpan)
-                this.objText.style.top = "10%";
+                this.objText.style.top = "15%";
                 this.objText.style.left= "50%";
                 this.objText.style.marginLeft= "-"+width+"px"
                 this.objText.unselectable = "on"
@@ -354,8 +354,8 @@ class level_one {
 
             // minimap (overhead orthogonal camera)
             if (this.Character && this.mapCamera) {
-                this.renderer.setViewport(16, h-(h/4)-100, this.mapWidth, this.mapHeight);
-                this.renderer.setScissor(16, h-(h/4)-100, this.mapWidth, this.mapHeight);
+                this.renderer.setViewport(16, h-(300)-16, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(16, h-(300)-16, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.mapCamera);
             }
@@ -549,10 +549,11 @@ class level_one {
     Key(x,z){
         key = new THREE.Group;
         let model;
+        const triangle=this.Triangle(x,z);
         tree_loader = new GLTFLoader();
         tree_loader.load('../../resources/models/key/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(1,1,1);
-            gltf.scene.position.set(x,3,z);
+            gltf.scene.scale.set(0.5,0.5,0.5);
+            gltf.scene.position.set(x,5,z);
             model = gltf.scene;
 
             gsap.to(gltf.scene.position, {y:'+=5',
@@ -569,13 +570,33 @@ class level_one {
             yoyo:true // The yoyo effect
         })
 
-
+            
             key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
-
         return key;
     }
-
+    Triangle(x,z){
+            const triangle = new THREE.Group;
+            triangle_loader = new GLTFLoader();
+            triangle_loader.load('../../resources/models/triangle/scene.gltf',function (gltf) {
+                gltf.scene.scale.set(5,10,5); 
+                gltf.scene.position.set(x,20,z); 
+        
+                gltf.scene.rotation.x = (Math.PI );
+                gsap.to(gltf.scene.position, {
+                    y:'+=5', 
+                    duration:2,
+                    delay: 0, 
+                    ease:'none', 
+                    repeat:-1, 
+                    yoyo:true
+                })
+                triangle.add(gltf.scene);  
+            },(xhr) => xhr, ( err ) => console.error( err ));
+        
+            
+            return triangle;
+        }
     Mirror(x,z,p) {
         let mirror = new THREE.Group;
     
@@ -659,6 +680,7 @@ class level_one {
     
         return shrub;
     }
+   
 
     InitaliseTexture() {
         const loader = new THREE.TextureLoader();
@@ -751,24 +773,28 @@ class level_one {
         img.setAttribute("height", "90");
         img.setAttribute("width", "90");
 
-        let width = 140
+        let width = 200
         this.textSpan = document.createElement("span")
         this.textSpan.id = "keyCount"
         this.textSpan.style.padding = "20px"
         this.textSpan.style.fontFamily = "sans-serif"
         this.textSpan.style.color = '#ffffff'
         this.textSpan.style.fontSize = 45 + 'px'
-        this.textSpan.textContent = "x" + collectedKeys.toString()+" /3"
+        this.textSpan.textContent = "x" + collectedKeys.toString()+"/3"
 
         this.keyCount = document.createElement('div')
         this.keyCount.id = "KeyDiv"
         this.keyCount.style.position = 'absolute';
         this.keyCount.style.display = "flex";
         this.keyCount.style.alignItems = "center";
+        this.keyCount.style.backgroundColor="#000000";
+        this.keyCount.style.borderRadius="25px";
+
         this.keyCount.append(img)
         this.keyCount.append(this.textSpan)
         this.keyCount.style.top = "10%";
         this.keyCount.style.left= "100%";
+        this.keyCount.style.padding="15px";
         this.keyCount.style.marginLeft= "-"+width+"px"
         this.keyCount.unselectable = "on"
         this.keyCount.style.transform="scale(0.5)";
@@ -781,7 +807,7 @@ class level_one {
         let x = this.textSpan.textContent;
         let oldCount = x.replace(/\D/g, '');
         if (collectedKeys.toString() !== oldCount) {
-            this.textSpan.textContent = "x" + collectedKeys.toString() +" /3"
+            this.textSpan.textContent = "x" + collectedKeys.toString() +"/3"
         }
 
     }
@@ -842,7 +868,7 @@ class level_one {
     }
 
     addTimer(){
-        var duration = 60 * 5;
+        var duration = 60 * 1;
         
         var timer = duration, minutes, seconds;
         
@@ -860,7 +886,7 @@ class level_one {
                 minutes = minutes < 10 ? "0" + minutes : minutes;
                 seconds = seconds < 10 ? "0" + seconds : seconds;
 
-                let width = 140
+                let width = innerWidth/2;
                 this.TimertextSpan = document.createElement("span")
                 this.TimertextSpan.id = "timer"
                 this.TimertextSpan.style.padding = "20px"
@@ -874,8 +900,10 @@ class level_one {
                 this.timer.style.position = 'absolute';
                 this.timer.style.display = "flex";
                 this.timer.style.alignItems = "center";
+                this.timer.style.backgroundColor="#000000";
+                this.timer.style.borderRadius="25px";
                 this.timer.append(this.TimertextSpan)
-                this.timer.style.top = "20%";
+                this.timer.style.top = "5%";
                 this.timer.style.left= "100%";
                 this.timer.style.marginLeft= "-"+width+"px"
                 this.timer.unselectable = "on"

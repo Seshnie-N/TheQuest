@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>The Quest-Level 2</title>
+  <link rel="icon" type="image/png" sizes="96x96" href="../../resources/pictures/knight.png">
+  <link rel="stylesheet" href="level2.css">
+</head>
+
+<body>
+
+<div id="myNav" class="overlay">
+  <img id="logo" src="../../resources/pictures/tutorial.jpg" alt="">
+  <h3> Paused </h3>
+  <!-- Overlay content -->
+  <div class="overlay-content">
+    <a href="level2.html">Restart</a>
+    <a href="../../index.html">Exit</a>
+  </div>
+</div>
+
+
+<div id="Win" class="overlay">
+  <img src="../../resources/pictures/tutorial.jpg" alt="">
+  <h3> Congratulations! </h3>
+  <!-- Overlay content -->
+  <div class="overlay-content">
+    <a href="../Level3/level3.html">Proceed to Level 3</a>
+    <a href="level2.html">Restart Level</a>
+    <a href="../../index.html">Exit to main menu</a>
+  </div>
+</div>
+
+
+<div id="Lose" class="overlay">
+  <img src="../../resources/pictures/tutorial.jpg" alt="">
+  <h3> You Lose! </h3>
+  <!-- Overlay content -->
+  <div class="overlay-content">
+    <a href="level2.html">Restart Level</a>
+    <a href="../../index.html">Exit to main menu</a>
+  </div>
+</div>
+
+<section id="loading-screen">
+    <div id="loader"></div>
+</section>
+
+<canvas id="c"></canvas>
+
+</body>
+<script src="../Level2/level2.js" type="module" ></script>
+</html>

@@ -1,0 +1,167 @@
+html, body {
+    font-family: 'Lato', sans-serif;
+    margin: 0;
+    height: 100%;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+        overflow-x: hidden;
+}
+
+.overlay{
+    /* Height & width depends on how you want to reveal the overlay (see JS below) */
+    height: 100%;
+    width: 0;
+    position: absolute; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    background-color: rgb(0,0,0); /* Black fallback color */
+    background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+    overflow-x: hidden; /* Disable horizontal scroll */
+    transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+    zoom: 50%;
+}
+
+
+/* Position the content inside the overlay */
+.overlay-content {
+    position: relative;
+    top: 10%; /* 25% from the top */
+    width: 100%; /* 100% width */
+    text-align: center; /* Centered text/links */
+    margin-top: 30px; /* 30px top margin to avoid conflict with the close button on smaller screens */
+/* The navigation links inside the overlay */
+}
+
+
+.overlay h3 {
+    position: relative;
+    top: 10%;
+    text-decoration: none;
+    font-size: 65px;
+    text-align: center;
+    color: #e0a60a;
+}
+.overlay a {
+    padding: 8px;
+    text-decoration: none;
+    font-size: 50px;
+    color: #818181;
+    display: block; /* Display block instead of inline */
+    transition: 0.3s; /* Transition effects on hover (color) */
+}
+
+/* When you mouse over the navigation links, change their color */
+.overlay a:hover, .overlay a:focus {
+    color: #f1f1f1;
+}
+
+.overlay img {
+    display: block;
+    max-width:690px;
+    max-height:285px;
+    width: auto;
+    height: auto;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* When the height of the screen is less than 450 pixels, change the font-size of the links and position the close button again, so they don't overlap */
+@media screen and (max-height: 450px) {
+    .overlay a {font-size: 20px}
+    .overlay .closebtn {
+        font-size: 40px;
+        top: 15px;
+        right: 35px;
+    }
+}
+
+
+
+#c {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#loading-screen {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(24, 185, 27);
+    opacity: 1;
+    transition: 1s opacity;
+}
+
+#loading-screen.fade-out {
+    opacity: 0;
+}
+
+#loader {
+-webkit-animation: load-man-travel 1.2s infinite linear;
+animation: load-man-travel 1.2s infinite linear;
+background: repeating-linear-gradient(90deg,#e0a60a, #e0a60a 5%, transparent 5%, transparent 35%);
+height: 10px;
+left: 50%;
+margin-top: -5px;
+position: absolute;
+top: 50%;
+width: 200px;
+}
+
+#loader:after, #loader:before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 50%;
+    border: 25px solid #f1f1f1;
+    border-radius: 100%;
+    margin-top: -25px; }
+  #loader:before {
+    --close: -90;
+    -webkit-animation: load-man-chomp 0.35s infinite linear;
+            animation: load-man-chomp 0.35s infinite linear;
+    border-bottom-color: transparent;
+    border-left-color: transparent; }
+  #loader:after {
+    --close: 0;
+    -webkit-animation: load-man-chomp 0.35s infinite linear;    
+            animation: load-man-chomp 0.35s infinite linear;
+    border-right-color: transparent;
+    border-top-color: transparent; }
+@-webkit-keyframes load-man-travel {
+    to {
+      background-position: -200px 0; } }
+  
+  @keyframes load-man-travel {
+    to {
+      background-position: -200px 0; } }
+  
+  @-webkit-keyframes load-man-chomp {
+    0% {
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg); }
+    50% {
+      -webkit-transform: rotate(calc(var(--close) * 1deg));
+              transform: rotate(calc(var(--close) * 1deg)); }
+    100% {
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg); } }
+  
+  @keyframes load-man-chomp {
+    0% {
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg); }
+    50% {
+      -webkit-transform: rotate(calc(var(--close) * 1deg));
+              transform: rotate(calc(var(--close) * 1deg)); }
+    100% {
+      -webkit-transform: rotate(-45deg);
+              transform: rotate(-45deg); } }
