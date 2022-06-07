@@ -9,7 +9,7 @@ import CannonDebugger from 'cannon-es-debugger';
 import gsap from "gsap";
 
 
-let waterCamera, cubeMaterials, ground, tree_loader,key_loader,triangle_loader, grass_loader,shrub_loader, cannonDebugger, key, door, collectedKeys, door_loader, doormixer, opendoor;
+let mirrorCamera, cubeMaterials, ground, tree_loader,key_loader,triangle_loader, grass_loader,shrub_loader, cannonDebugger, key, door, collectedKeys, door_loader, doormixer, opendoor, Pause,hiddenTexture;
 
 class level_one {
     constructor() {
@@ -23,30 +23,31 @@ class level_one {
         collectedKeys = 0;
         
         opendoor = false;
-        this.Pause = false;
+        Pause = false;
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
        // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
-       document.getElementById("explore").onclick = () => {
-        if (this.Character) {
-            this.Character.setStop();
-            document.getElementById("Win").style.width = "0%"
-            this.Pause = false;
-            this.animate();
-        }
-    }
+    //    document.getElementById("explore").onclick = () => {
+    //     if (this.Character) {
+    //         this.Character.setStop();
+    //         document.getElementById("Win").style.width = "0%"
+    //         Pause = false;
+    //         this.animate();
+    //     }
+   // }
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
-        this.addTimer(60*5); //60*5
+        this.addTimer();
         this.configThree();
         this.configPhysics();
         this.addMapCamera();
         this.generateWorld();        
-        //this.addSkybox();
+        this.addSkybox();
         this._LoadAnimatedModels();
         this.addKeyCount();
         this.addPauseButton();
         this.music();
+        this.addSound();
 
         const axesHelper = new THREE.AxesHelper( 600 );
         this.scene.add( axesHelper );
@@ -122,21 +123,18 @@ class level_one {
     }
 
     addMapCamera(){
-        this.mapWidth =window.innerHeight/4;
-        this.mapHeight = window.innerHeight/4;
+        
+        this.mapWidth =window.innerHeight/3;
+        this.mapHeight = window.innerHeight/3;
         this.mapCamera = new THREE.OrthographicCamera(
-            this.mapHeight*1.6 ,		// Left
-            -this.mapHeight*1.75,		// Right
-            -this.mapHeight *1.75,		// Top
-            this.mapHeight*1.75 ,	// Bottom
+            this.mapHeight*1.2,		// Left
+            -this.mapHeight*1.2,		// Right
+            -this.mapHeight*1.2 ,		// Top
+            this.mapHeight*1.2,	// Bottom
             1,         // Near
             1000);
-
-        this.mapCamera.position.set(300,300,300);
-        this.mapCamera.lookAt(new THREE.Vector3(300, 1, 300));
-
-        const helper = new THREE.CameraHelper( this.mapCamera );
-        this.scene.add( helper );
+        this.mapCamera.position.set(285,300,285);
+        this.mapCamera.lookAt(new THREE.Vector3(285, 1, 285));
 
     }
 
@@ -156,32 +154,22 @@ class level_one {
 
         this.InitaliseTexture();
 
-        let filled = [
-            [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [0,0,3,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,7,4,5,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,1,4,0,5,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1],
-            [1,1,1,0,1,1,1,4,1,1,1,1,1,1,0,0,0,2,2,0,1],
-            [1,1,2,4,0,1,1,5,0,5,1,1,1,1,0,1,0,2,2,0,1],
-            [1,1,0,5,5,1,1,0,1,0,1,1,1,1,0,1,0,0,0,0,1],
-            [1,1,0,4,0,1,1,4,0,0,4,0,0,0,0,1,1,0,1,1,1],
-            [1,1,2,1,1,1,1,4,1,0,1,1,1,1,1,1,1,0,1,1,1],
-            [1,1,1,1,1,0,4,0,1,0,1,1,1,1,1,1,1,0,1,1,1],
-            [1,1,0,0,1,0,1,1,1,0,1,1,0,0,0,1,1,0,1,1,1],
-            [1,1,0,0,0,0,1,1,1,0,1,1,0,0,0,1,1,0,0,0,1],
-            [1,1,0,0,1,1,1,1,1,0,1,1,0,0,0,1,1,1,1,0,1],
-            [1,1,1,1,1,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1],
-            [1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1],
-            [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1],
-            [1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
-            [1,1,1,1,1,0,1,1,0,0,1,1,1,1,1,0,1,1,1,1,1],
-            [1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,1,1],
-            [1,1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,2,1,1,1],
-            [1,1,1,0,0,1,1,1,2,2,1,1,1,1,1,1,1,1,1,1,1],
-            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],];
+        //stage 20x20 keys 5
+        
+        var filled = [
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
+            [1 ,0 ,4 ,4 ,5 ,4 ,4 ,5 ,4 ,1 ],
+            [1 ,1 ,4 ,1 ,1 ,5 ,1 ,1 ,4 ,1 ],
+            [1 ,1 ,5 ,1 ,0 ,0 ,0 ,1 ,3 ,1 ],
+            [1 ,1 ,0 ,1 ,0 ,8 ,0 ,1 ,1 ,1 ],
+            [1 ,1 ,5 ,1 ,0 ,0 ,0 ,1 ,11,1 ],
+            [1 ,1 ,0 ,1 ,1 ,5 ,1 ,1 ,10,1 ],
+            [1 ,9 ,5 ,1 ,4 ,0 ,4 ,1 ,10,1 ],
+            [1 ,7 ,4 ,0 ,3 ,1 ,4 ,4 ,5 ,1 ],
+            [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ]];
 
-            for(let i=0;i<20;i++){
-                for(let j=0;j<21;j++){
+            for(let i=0;i<10;i++){
+                for(let j=0;j<10;j++){
                     if(filled[j][i] !== 1){
                         const mesh = this.floorTile(i*30,j*30);
                         Level.add( mesh );
@@ -191,16 +179,12 @@ class level_one {
                         Level.add( mesh );
                     }
                     if (filled[j][i] === 2){
-                        const water = this.Water(i*30,j*30);
-                        Level.add(water);
+                        const mirror = this.Mirror(i*30,j*30,-Math.PI/2);
+                        Level.add(mirror);
                     }
                     if (filled[j][i] === 3 ){
-                        const key = this.Key(i*30,j*30);
+                        const key = this.UnHiddenKey(i*30,j*30);
                         Level.add(key);
-                    }
-                    if (filled[j][i] === 3 ){
-                        const triangle = this.Triangle(i*30,j*30);
-                        Level.add(triangle);
                     }
                     if (filled[j][i] === 4){
                         const r = Math.floor(Math.random() * 30)+1
@@ -214,20 +198,41 @@ class level_one {
                         const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
                         Level.add( shrub );
                     }
+                    if (filled[j][i] === 6){
+                        const r = Math.floor(Math.random() * 30)+1
+                        const s = Math.floor(Math.random() * 30)+1
+                        const crystal = this.Crystal(i*30+r-15,j*30+s-15);   
+                        Level.add( crystal );
+                    }
                     if (filled[j][i] === 7){
                         const door = this.door(i*30,j*30);
                         Level.add( door );
                     }
+                    if (filled[j][i] === 8){
+                        const pond = this.Pond(i*30,j*30);   
+                        Level.add( pond );
+                    }
+                    if (filled[j][i] === 9){
+                        const rock = this.Rock(i*30,j*30);   
+                        Level.add( rock );
+                    }
+                    if(filled[j][i] === 10){
+                        const mesh = this.HiddenTile(i*30,j*30);
+                        Level.add( mesh );
+                    }
+                    if(filled[j][i] === 11){
+                        const key = this.HiddenKey(i*30,j*30);
+                        Level.add(key);
+                    }
                 }
             }
-
             this.scene.add( Level )
     }
 
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'night',
+            type: 'DaylightBox',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
@@ -236,7 +241,7 @@ class level_one {
     _LoadAnimatedModels(){
 
         //set character location in scene
-        this.startPos = new CANNON.Vec3(0,0,0);
+        this.startPos = new CANNON.Vec3(40,0,10);
 
         //Params to be passed to the character class.
         const CharParams = {
@@ -257,23 +262,6 @@ class level_one {
             this.CAM = new CAMERA.ThirdPersonCamera(CamParams);
         }
     }
-
-    // affect objects when hovering over
-    // _onMouseMove(event){
-    //     this.mouse = {
-    //         x: (event.clientX / this.renderer.domElement.clientWidth) * 2 - 1,
-    //         y: -(event.clientY / this.renderer.domElement.clientHeight) * 2 + 1
-    //     }
-    //     this.raycaster.setFromCamera(this.mouse, this.camera);
-    //     let intersects = this.raycaster.intersectObjects(this.keys, true);
-    //
-    //     for (let i = 0; i < intersects.length; i++) {
-    //         if(intersects[i]){
-    //             console.log("clicked" + i);
-    //         }
-    //     }
-    //
-    // }
 
     //Use Raycasting to see if mouse is in contact with a key. If so, collect key, updated number of collected keys and update game UI.
     _onClick(event){
@@ -299,9 +287,13 @@ class level_one {
             //check if all keys collected
             if (collectedKeys >= key.children.length){
                 opendoor = true;
-                this.Pause=true;
-                let WinOverlay = document.getElementById("Win")
-                WinOverlay.style.width = "100%";
+                Pause=true;
+                setTimeout(function(){
+                    let WinOverlay = document.getElementById("Win");
+                    WinOverlay.style.width = "100%";
+                }
+                    ,1000)
+                
             }else{
                 let width = 140
                 this.ObjtextSpan = document.createElement("span")
@@ -317,6 +309,8 @@ class level_one {
                 this.objText.style.position = 'absolute';
                 this.objText.style.display = "flex";
                 this.objText.style.alignItems = "center";
+                this.objText.style.backgroundColor="#000000"
+                this.objText.style.borderRadius="25px"
                 this.objText.append(this.ObjtextSpan)
                 this.objText.style.top = "10%";
                 this.objText.style.left= "50%";
@@ -338,7 +332,7 @@ class level_one {
     //continuous rendering to create animation
     animate() {
          //if game is pause break loop.
-         if (this.Pause === true) {
+         if (Pause === true) {
             return
         }
         requestAnimationFrame((t) => {
@@ -360,8 +354,8 @@ class level_one {
 
             // minimap (overhead orthogonal camera)
             if (this.Character && this.mapCamera) {
-                this.renderer.setViewport(16, h-(h/4)-16, this.mapWidth, this.mapHeight);
-                this.renderer.setScissor(16, h-(h/4)-16, this.mapWidth, this.mapHeight);
+                this.renderer.setViewport(16, h-(h/4)-100, this.mapWidth, this.mapHeight);
+                this.renderer.setScissor(16, h-(h/4)-100, this.mapWidth, this.mapHeight);
                 this.renderer.setScissorTest(true);
                 this.renderer.render(this.scene, this.mapCamera);
             }
@@ -401,7 +395,7 @@ class level_one {
 
             //If Game is over
             if (this.Character.getStop === true) {
-                this.Pause = true;
+                Pause = true;
             }
         }
     }
@@ -419,10 +413,63 @@ class level_one {
             new THREE.PlaneBufferGeometry(30,30),
             ground
         );
-        floor.rotation.set(Math.PI/2,0,0);
+        floor.rotation.set(-Math.PI/2,0,0);
         floor.position.set(x,0,z);
         floor.receiveShadow = true;
+
         return floor;
+    }
+
+    HiddenTile(x,z){
+        const hidden = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(30,30),
+            hiddenTexture
+        );
+        hidden.rotation.set(-Math.PI/2,0,0);
+        hidden.position.set(x,30,z);
+        hidden.receiveShadow = true;
+
+        return hidden;
+    }
+
+    HiddenKey(x,z){
+
+        const hiddenKey = new THREE.Group();
+
+        const hidden = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(30,30),
+            hiddenTexture
+        );
+        hidden.rotation.set(-Math.PI/2,0,0);
+        hidden.position.set(x,30,z);
+        hidden.receiveShadow = true;
+
+        hiddenKey.add(hidden)
+
+        const key = this.Key(x,z);
+        hiddenKey.add(key);
+
+        return hiddenKey;
+    }
+
+    UnHiddenKey(x,z){
+
+        const unHiddenKey = new THREE.Group();
+
+        const unHidden = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry(30,30),
+            ground
+        );
+        unHidden.rotation.set(-Math.PI/2,0,0);
+        unHidden.position.set(x,30,z);
+        unHidden.receiveShadow = true;
+
+        unHiddenKey.add( unHidden );
+
+        const key = this.Key(x,z);
+        unHiddenKey.add(key);
+
+        return unHiddenKey;
     }
 
     hedgeWall(x,z){
@@ -445,6 +492,30 @@ class level_one {
         wall.quaternion.copy(this.wallBody.quaternion);
     
         return wall;
+    }
+
+    Pond(x,z){
+        const pond = new THREE.Group;
+    
+        const pond_loader = new GLTFLoader();
+        pond_loader.load('../../resources/models/Pond/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(1,1,1); 
+            //gltf.scene.position.set(x-15,0,z+15); 
+            pond.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+
+        this.pondBody = new CANNON.Body({
+            shape: new CANNON.Cylinder(20,20,100,10),
+            type: CANNON.Body.STATIC,
+            position: new CANNON.Vec3(x,1,z),
+        });
+        // //this.wallBody.position.set(x,5,z);
+        this.world.addBody(this.pondBody);
+
+        pond.position.copy(this.pondBody.position);
+        pond.quaternion.copy(this.pondBody.quaternion);
+    
+        return pond;        
     }
 
     door(x,z){
@@ -478,27 +549,25 @@ class level_one {
     Key(x,z){
         key = new THREE.Group;
         let model;
-        key_loader = new GLTFLoader();
-        key_loader.load('../../resources/models/Key/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(0.3,0.3,0.3);
+        tree_loader = new GLTFLoader();
+        tree_loader.load('../../resources/models/key/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(1,1,1);
             gltf.scene.position.set(x,3,z);
             model = gltf.scene;
 
-            gsap.to(gltf.scene.position, {
-            y:'+=5',
+            gsap.to(gltf.scene.position, {y:'+=5',
             duration:2, //The speed of the key 
             ease:'none',
             repeat:-1, // Reversing the action 
             yoyo:true // The yoyo effect
-           })
+            })
 
-           gsap.to(gltf.scene.rotation, {
-            y:'+=10',
+            gsap.to(gltf.scene.rotation, {y:'+=10',
             duration:4, //The speed of the key 
             ease:'none',
             repeat:-1, // Reversing the action 
             yoyo:true // The yoyo effect
-       })
+        })
 
 
             key.add(model);
@@ -506,44 +575,63 @@ class level_one {
 
         return key;
     }
-    Triangle(x,z){
-        const triangle = new THREE.Group;
-        triangle_loader = new GLTFLoader();
-        triangle_loader.load('../../resources/models/triangle/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(5,10,5); 
-            gltf.scene.position.set(x,15,z); 
-    
-            gltf.scene.rotation.x = (Math.PI );
-            gsap.to(gltf.scene.position, {
-                y:'+=3', 
-                duration:2, 
-                ease:'none', 
-                repeat:-1, 
-                yoyo:true
-              })
-            triangle.add(gltf.scene);  
-        },(xhr) => xhr, ( err ) => console.error( err ));
-        return triangle;
-    }
-    
-    Water(x,z) {
-        let water = new THREE.Group;
+
+    Mirror(x,z,p) {
+        let mirror = new THREE.Group;
     
         let geometry;
     
         geometry = new THREE.PlaneGeometry(30,30);
-        waterCamera = new Reflector( geometry, {
+        mirrorCamera = new Reflector( geometry, {
             clipBias: 0.003,
             textureWidth: window.innerWidth * window.devicePixelRatio,
             textureHeight: window.innerHeight * window.devicePixelRatio,
             color: 0x777777,
         });
     
-        waterCamera.position.set(x-14,15,z-14);
-        waterCamera.rotateZ( -Math.PI / 2 );
-        water.add( waterCamera );
+        mirrorCamera.position.set(x-14,15,z-14);
+        mirrorCamera.rotateX( p );
+        mirror.add( mirrorCamera );
     
-        return water;
+        return mirror;
+    }
+
+    Rock(x,z){
+        const rock = new THREE.Group;
+    
+        const rock_loader = new GLTFLoader();
+        rock_loader.load('../../resources/models/Rock/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(40,40,40); 
+            //agltf.scene.scale.set(0.1,0.1,0.1); 
+            //gltf.scene.position.set(x-5,0,z+2); 
+            rock.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+
+        this.rockBody = new CANNON.Body({
+            shape: new CANNON.Cylinder(10,10,100,20),
+            type: CANNON.Body.STATIC,
+            position: new CANNON.Vec3(x,1,z),
+        });
+        //this.wallBody.position.set(x,5,z);
+        this.world.addBody(this.rockBody);
+
+        rock.position.copy(this.rockBody.position);
+        rock.quaternion.copy(this.rockBody.quaternion);
+    
+        return rock;        
+    }
+
+    Crystal(x,z){
+        const crystal = new THREE.Group;
+    
+        const crystal_loader = new GLTFLoader();
+        crystal_loader.load('../../resources/models/Crystal/scene.gltf',function (gltf) {
+            gltf.scene.scale.set(2,2,2); 
+            gltf.scene.position.set(x,0,z); 
+            crystal.add(gltf.scene);  
+        },(xhr) => xhr, ( err ) => console.error( err ));
+    
+        return crystal;        
     }
 
     SpineGrass(x,z){
@@ -583,8 +671,11 @@ class level_one {
                 new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide});
+        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
+        const hiddenLoader = new THREE.TextureLoader();
+        hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
     }
+
     music() {
         const listener = new THREE.AudioListener();
         this.camera.add(listener);
@@ -667,7 +758,7 @@ class level_one {
         this.textSpan.style.fontFamily = "sans-serif"
         this.textSpan.style.color = '#ffffff'
         this.textSpan.style.fontSize = 45 + 'px'
-        this.textSpan.textContent = "x" + collectedKeys.toString()
+        this.textSpan.textContent = "x" + collectedKeys.toString()+" /3"
 
         this.keyCount = document.createElement('div')
         this.keyCount.id = "KeyDiv"
@@ -690,7 +781,7 @@ class level_one {
         let x = this.textSpan.textContent;
         let oldCount = x.replace(/\D/g, '');
         if (collectedKeys.toString() !== oldCount) {
-            this.textSpan.textContent = "x" + collectedKeys.toString()
+            this.textSpan.textContent = "x" + collectedKeys.toString() +" /3"
         }
 
     }
@@ -726,7 +817,7 @@ class level_one {
 
     //What Happens when the pause icon is clicked
     onPause() {
-        this.Pause = true;
+        Pause = true;
         let overlay = document.getElementById("myNav")
         overlay.style.width = "100%";
         let close = document.createElement('a')
@@ -745,19 +836,19 @@ class level_one {
     //What Happens when the pause menu is closed
     //Continue rendering game.
     onPauseExit() {
-        this.Pause = false;
+        Pause = false;
         document.getElementById("myNav").style.width = "0%";
         this.animate()
     }
 
-    addTimer(duration){
-        //var duration = 60 * 5;
+    addTimer(){
+        var duration = 60 * 5;
         
         var timer = duration, minutes, seconds;
+        
         setInterval(function () {
-            if(this.Pause){
-                return
-            }else{
+            
+            if(!Pause){
                 const elem = document.getElementById("TimeDiv");
                 if(elem != null){
                     elem.parentNode.removeChild(elem);
@@ -793,14 +884,16 @@ class level_one {
 
                 if (--timer < 0) {
                     timer=0;
-                    this.Pause=true;
+                    Pause=true;
                     let LoseOverlay = document.getElementById("Lose")
                     LoseOverlay.style.width = "100%";
                     
                 }
+            }else{
+                return;
             }
         }, 1000);
-
+    
         
     }
 }

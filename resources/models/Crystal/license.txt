@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Crystal
+* source:	https://sketchfab.com/3d-models/low-poly-crystal-bf8f28fcd29b4da2bf05b0f166b43551
+* author:	Anskar (https://sketchfab.com/Anskar)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Crystal" (https://sketchfab.com/3d-models/low-poly-crystal-bf8f28fcd29b4da2bf05b0f166b43551) by Anskar (https://sketchfab.com/Anskar) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

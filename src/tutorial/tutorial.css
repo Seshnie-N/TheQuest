@@ -26,6 +26,9 @@ padding-bottom: 10px;
   font-size: 60px;
   margin-left: 50px;
 }
+.closebtn:hover {
+  color: #ffffff;
+}
 p{
   color: #ffffff;
   font-size: 2rem;
