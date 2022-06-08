@@ -57,7 +57,7 @@ class level_one {
         const fov = 60;
         const aspect = 1920 / 1080;
         const near = 1.0;
-        const far = 1000.0;
+        const far = 1500.0;
         this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         this.camera.position.set(25,7,25);
 
@@ -398,7 +398,6 @@ class level_one {
         }
 
         //update rotation of skybox for dynamic skybox
-        //this.sb.rotation.y += timeElapsedS*0.1;
         this.Skybox.Update(timeElapsedS);
 
         //update character
@@ -556,6 +555,12 @@ class level_one {
             let model = gltf.scene;
             door.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
+
+        //add a light to the door
+        const door_light = new THREE.PointLight( 0xFFD700, 3, 20 );
+        door_light.position.set( x,21.5,z+13 );
+        door_light.add(new THREE.Mesh( new THREE.SphereGeometry( 0.5, 16, 8 ), new THREE.MeshBasicMaterial( { color: 0xFFD700 } ) ));
+        this.scene.add( door_light );
 
         return door;
     }

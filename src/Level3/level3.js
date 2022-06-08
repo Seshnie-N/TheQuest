@@ -26,15 +26,7 @@ class level_one {
         Pause = false;
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
-       // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
-    //    document.getElementById("explore").onclick = () => {
-    //     if (this.Character) {
-    //         this.Character.setStop();
-    //         document.getElementById("Win").style.width = "0%"
-    //         Pause = false;
-    //         this.animate();
-    //     }
-   // }
+
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
         this.addTimer();
@@ -48,8 +40,8 @@ class level_one {
         this.addPauseButton();
         this.addSound();
 
-        const axesHelper = new THREE.AxesHelper( 600 );
-        this.scene.add( axesHelper );
+        // const axesHelper = new THREE.AxesHelper( 600 );
+        // this.scene.add( axesHelper );
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
@@ -65,7 +57,7 @@ class level_one {
         const fov = 60;
         const aspect = 1920 / 1080;
         const near = 1.0;
-        const far = 1000.0;
+        const far = 1500.0;
         this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         this.camera.position.set(25,7,25);
 
@@ -95,15 +87,16 @@ class level_one {
         const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
         this.scene.add(hemi_light);
 
-        light = new THREE.AmbientLight(0xFFFFFF, 5.0);
-        this.scene.add(light);
+        //add ambient light
+        const ambi_light = new THREE.AmbientLight(0xFFFFFF, 1.0);
+        this.scene.add(ambi_light);
         this.canvas = document.querySelector('#c');
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             antialias: true,
         });
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.BasicShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -560,6 +553,12 @@ class level_one {
             let model = gltf.scene;
             door.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
+
+        //add a light to the door
+        const door_light = new THREE.PointLight( 0xFFD700, 3, 20 );
+        door_light.position.set( x,21.5,z+13 );
+        door_light.add(new THREE.Mesh( new THREE.SphereGeometry( 0.5, 16, 8 ), new THREE.MeshBasicMaterial( { color: 0xFFD700 } ) ));
+        this.scene.add( door_light );
 
         return door;
     }

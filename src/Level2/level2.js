@@ -49,52 +49,71 @@ class level_one {
     }
 
     configThree() {
-       
 
         const fov = 60;
         const aspect = 1920 / 1080;
         const near = 1.0;
-        const far = 1000.0;
+        const far = 1500.0;
         this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         this.camera.position.set(25,7,25);
 
         //create scene
         this.scene = new THREE.Scene();
 
-        //configure light source
-        let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(20, 100, 10);
-        light.target.position.set(0, 0, 0);
+        //first directional light
+        let light = new THREE.DirectionalLight(0xffdb6a, 1.0);
+        light.position.set(300,250,400);
+        light.target.position.set(200,20,0);
         light.castShadow = true;
         light.shadow.bias = -0.001;
         light.shadow.mapSize.width = 2048;
         light.shadow.mapSize.height = 2048;
-        light.shadow.camera.near = 0.1;
-        light.shadow.camera.far = 500.0;
         light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 100;
-        light.shadow.camera.right = -100;
-        light.shadow.camera.top = 100;
-        light.shadow.camera.bottom = -100;
+        light.shadow.camera.far = 700.0;
+        light.shadow.camera.left =350;
+        light.shadow.camera.right = -350;
+        light.shadow.camera.top = 350;
+        light.shadow.camera.bottom = -350;
         this.scene.add(light);
+        this.scene.add(light.target);
+
+        // const helper = new DirectionalLightHelper(light, 10);
+        // this.scene.add(helper);
+
+         //second directional light
+         const light2 = new THREE.DirectionalLight(0xffdb6a, 1.0);
+         light2.position.set(0,300,200);
+         light2.target.position.set(200,20,0);
+         light.castShadow = true;
+         light.shadow.bias = -0.001;
+         light.shadow.mapSize.width = 2048;
+         light.shadow.mapSize.height = 2048;
+         light.shadow.camera.near = 0.5;
+         light.shadow.camera.far = 700.0;
+         light.shadow.camera.left =350;
+         light.shadow.camera.right = -350;
+         light.shadow.camera.top = 350;
+         light.shadow.camera.bottom = -350;
+         this.scene.add( light2 );
+         this.scene.add(light2.target);
 
         //add hemisphere light to scene.
-        const intensity = 0.8;
-        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
+        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 0.8);
         this.scene.add(hemi_light);
 
-        light = new THREE.AmbientLight(0xFFFFFF, 5.0);
-        this.scene.add(light);
+        //add ambient light
+        const ambi_light = new THREE.AmbientLight(0xFFFFFF, 1.0);
+        this.scene.add(ambi_light);
         this.canvas = document.querySelector('#c');
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             antialias: true,
         });
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.BasicShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+
 
         document.body.appendChild(this.renderer.domElement);
 
@@ -230,7 +249,7 @@ class level_one {
         const params = {
             scene : this.scene,
             type: 'dusk',
-            dim: new THREE.Vector3(800,800,800),
+            dim: new THREE.Vector3(900,900,900),
             pos: new THREE.Vector3(300,0,300)
         }
         this.Skybox = new skybox(params);
@@ -285,9 +304,11 @@ class level_one {
             //check if all keys collected
             if (collectedKeys >= key.children.length){
                 opendoor = true;
-                setTimeout(function(){ Pause=true;},1000)
-                let WinOverlay = document.getElementById("Win");
-                    WinOverlay.style.width = "100%";
+                setTimeout(function(){ Pause=true;
+                    let WinOverlay = document.getElementById("Win");
+                    WinOverlay.style.width = "100%";},1600)
+                // let WinOverlay = document.getElementById("Win");
+                //     WinOverlay.style.width = "100%";
             }else{
                 let width =70;
                 this.ObjtextSpan = document.createElement("span")
@@ -537,6 +558,12 @@ class level_one {
             door.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
 
+        //add a light to the door
+        const door_light = new THREE.PointLight( 0xFFD700, 3, 20 );
+        door_light.position.set( x,21.5,z+13 );
+        door_light.add(new THREE.Mesh( new THREE.SphereGeometry( 0.5, 16, 8 ), new THREE.MeshBasicMaterial( { color: 0xFFD700 } ) ));
+        this.scene.add( door_light );
+
         return door;
     }
 
@@ -564,6 +591,10 @@ class level_one {
             yoyo:true // The yoyo effect
         })
 
+        gltf.scene.traverse( function( node ) {
+            if ( node.isMesh ) { node.castShadow = true; }
+
+        } );
             
             key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
@@ -668,15 +699,15 @@ class level_one {
     InitaliseTexture() {
         const loader = new THREE.TextureLoader();
         cubeMaterials = [
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //right side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //left side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
-                new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //front side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //back side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //right side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //left side
+            new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
+            new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //front side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
+        ground = new THREE.MeshLambertMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
         const hiddenLoader = new THREE.TextureLoader();
         hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
     }
