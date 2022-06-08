@@ -301,13 +301,11 @@ class CharacterController {
             case "ShiftLeft": // SHIFT
                 this.CharacterMotions.run = true;
                 break;
+            case "ShiftRight": // SHIFT
+                this.CharacterMotions.run = true;
+                break;
             case "Space": // SPACE
                 this.CharacterMotions.jump = true;
-                break;
-            case 38: // up
-            case 37: // left
-            case 40: // down
-            case 39: // right
                 break;
         }
     }
@@ -329,13 +327,11 @@ class CharacterController {
             case "ShiftLeft": // SHIFT
                 this.CharacterMotions.run = false;
                 break;
+            case "ShiftRight": // SHIFT
+                this.CharacterMotions.run = false;
+                break;
             case "Space": // SPACE
                 this.CharacterMotions.jump = false;
-                break;
-            case 38: // up
-            case 37: // left
-            case 40: // down
-            case 39: // right
                 break;
         }
     }
@@ -503,9 +499,7 @@ class IdleState extends State {
             this._parent.SetState('walk');
          } else if (input.CharacterMotions.jump) {
              this._parent.SetState('jump');
-         }// else if(input.CharacterMotions.throw){
-        //     this._parent.SetState('throw');
-        // }
+         }
     }
 }
 
@@ -550,11 +544,6 @@ class WalkState extends State {
             if (input.CharacterMotions.run) {
                 this._parent.SetState('run');
             }
-
-            // if (input.CharacterMotions.jump) {
-            //     this._parent.SetState('walk_jump');
-            //
-            // }
 
             return;
         }

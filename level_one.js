@@ -5,10 +5,11 @@ import * as CHARACTER from "./Character.js";
 import  * as CAMERA from "./ThirdPersonCamera.js";
 import { GLTFLoader } from './examples/jsm/loaders/GLTFLoader.js';
 import { Reflector } from './examples/jsm/objects/Reflector.js';
+import { OrbitControls} from './examples/jsm/controls/OrbitControls.js';
 import CannonDebugger from 'cannon-es-debugger';
 import gsap from './node_modules/gsap/index.js';
 
-let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, door,  collectedKeys, door_loader, doormixer, opendoor;
+let waterCamera, cubeMaterials, ground, tree_loader, grass_loader,shrub_loader, cannonDebugger, key, door,  collectedKeys, door_loader, doormixer, opendoor,controls;
 
 class level_one {
     constructor() {
@@ -32,12 +33,29 @@ class level_one {
         this.configPhysics();
         this.addMapCamera();
         this.generateWorld();        
-        //this.addSkybox();
+        this.addSkybox();
         this._LoadAnimatedModels();
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
         this.previousRAF = null;
+
+        // // controls
+
+        // controls = new OrbitControls( this.camera, this.renderer.domElement );
+        // controls.listenToKeyEvents( window ); // optional
+
+        // //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
+
+        // controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
+        // controls.dampingFactor = 0.05;
+
+        // controls.screenSpacePanning = false;
+
+        // controls.minDistance = 100;
+        // controls.maxDistance = 1000;
+
+        // controls.maxPolarAngle = Math.PI / 2;
 
         this.animate();
 
@@ -47,7 +65,7 @@ class level_one {
         const fov = 60;
         const aspect = 1920 / 1080;
         const near = 1.0;
-        const far = 1000.0;
+        const far = 1500.0;
         this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
         this.camera.position.set(25,7,25);
 
@@ -55,36 +73,45 @@ class level_one {
         this.scene = new THREE.Scene();
 
         //configure light source
-        let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(20, 100, 10);
-        light.target.position.set(0, 0, 0);
+        let light = new THREE.DirectionalLight(0xFBFAF5, 1.0);
+        light.position.set(400,250,400);
         light.castShadow = true;
         light.shadow.bias = -0.001;
         light.shadow.mapSize.width = 2048;
         light.shadow.mapSize.height = 2048;
-        light.shadow.camera.near = 0.1;
-        light.shadow.camera.far = 500.0;
         light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 100;
-        light.shadow.camera.right = -100;
-        light.shadow.camera.top = 100;
-        light.shadow.camera.bottom = -100;
+        light.shadow.camera.far = 700.0;
+        light.shadow.camera.left =350;
+        light.shadow.camera.right = -350;
+        light.shadow.camera.top = 350;
+        light.shadow.camera.bottom = -350;
         this.scene.add(light);
 
-        //add hemisphere light to scene.
-        const intensity = 0.8;
-        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
-        this.scene.add(hemi_light);
+        this.scene.add(new THREE.CameraHelper(light.shadow.camera));
 
-        light = new THREE.AmbientLight(0xFFFFFF, 5.0);
+        // const helper = new THREE.DirectionalLightHelper( light, 10 );
+        // this.scene.add( helper );
+
+
+
+        // const dirLight1 = new THREE.DirectionalLight( 0xffffff );
+        // dirLight1.position.set( 700,100,700);
+        // this.scene.add( dirLight1 );
+
+
+        //add hemisphere light to scene.
+        // const intensity = 0.8;
+        // const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
+        // this.scene.add(hemi_light);
+
+        light = new THREE.AmbientLight(0xFBFAF5, 1.0);
         this.scene.add(light);
 
         this.renderer = new THREE.WebGLRenderer({
             antialias: true,
         });
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.BasicShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -193,13 +220,13 @@ class level_one {
                 }
             }
 
-            this.scene.add( Level )
+            this.scene.add( Level );
     }
 
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'night',
+            type: 'day',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
@@ -310,7 +337,7 @@ class level_one {
         }
 
         //update rotation of skybox for dynamic skybox
-        //this.sb.rotation.y += timeElapsedS*0.1;
+        this.sb.rotation.y += timeElapsedS*0.01;
 
         //update character
         if (this.Character) {
@@ -358,7 +385,7 @@ class level_one {
             position: new CANNON.Vec3(x,15,z),
         });
         this.world.addBody(this.wallBody);
-
+        wall.receiveShadow = true;
         wall.position.copy(this.wallBody.position);
         wall.quaternion.copy(this.wallBody.quaternion);
     
@@ -401,6 +428,7 @@ class level_one {
             gltf.scene.scale.set(1,1,1);
             gltf.scene.position.set(x,3,z);
             model = gltf.scene;
+            model.castShadow = true;
 
             gsap.to(gltf.scene.position, {y:'+=5',
             duration:2, //The speed of the key 
@@ -471,16 +499,17 @@ class level_one {
 
     InitaliseTexture() {
         const loader = new THREE.TextureLoader();
+        const shine = 0;
         cubeMaterials = [
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //right side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //left side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img//Hedge_full_perms_texture_seamless.jpg')}), //top side
-                new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //front side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //back side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //right side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //left side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //top side
+                new THREE.MeshLambertMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //front side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide});
+        ground = new THREE.MeshLambertMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide, alphaTest:0.1,  shadowSide: true});
     }
 }
 

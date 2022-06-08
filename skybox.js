@@ -24,6 +24,16 @@ export class skybox {
                 './resources/images/nightsky/negX.png',
             ];
         }
+        if (this.type === 'day') {
+            urls = [
+                './resources/img/day2/px.png', //px
+                './resources/img/day2/nx.png', //nx
+                './resources/img/day2/py.png', //py
+                './resources/img/day2/ny.png', //ny
+                './resources/img/day2/pz.png', //pz
+                './resources/img/day2/nz.png', //nz
+            ];
+        }
 
         let materials = [];
         for (let i = 0; i < 6; i++) {
@@ -32,9 +42,9 @@ export class skybox {
                 side: THREE.DoubleSide
             }));
         }
-        let skyGeometry = new THREE.BoxGeometry(900, 900, 900);
+        let skyGeometry = new THREE.BoxGeometry(1300, 1300, 1300);
         this.skybox = new THREE.Mesh(skyGeometry, materials);
-        this.skybox.position.set(300,100,300);
+        this.skybox.position.set(400, 200, 400);
         this.scene.add(this.skybox);
         return this.skybox;
     }
