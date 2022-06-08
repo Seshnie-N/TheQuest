@@ -114,7 +114,7 @@ export class Character {
 
             //Add character marker for minimap
             this.charMarker = new THREE.Mesh(
-                new THREE.SphereGeometry(5),
+                new THREE.SphereGeometry(8),
                 new THREE.MeshBasicMaterial({color: 0xff0000})
             );
             this.charMarker.position.set(this.CharacterBody.position.x, 100, this.CharacterBody.position.z);
