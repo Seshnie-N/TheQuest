@@ -8,13 +8,17 @@ export class skybox {
     init(params){
         this.scene = params.scene;
         this.type = params.type;
+        this.dim = params.dim;
+        this.pos = params.pos;
+        this.makeSkybox();
     }
 
-    function
+
     makeSkybox() {
 
+        //loading in skybox textures
         let urls = [];
-        if (this.type === 'night'){
+        if (this.type === 'night1'){
              urls = [
                 '../../resources/pictures/nightsky/negZ.png',
                 '../../resources/pictures/nightsky/posZ.png',
@@ -45,6 +49,39 @@ export class skybox {
             ];
         }
 
+        if (this.type === 'cloudy') {
+            urls = [
+                '../../resources/pictures/cloudy/px.png', //px
+                '../../resources/pictures/cloudy/nx.png', //nx
+                '../../resources/pictures/cloudy/py.png', //py
+                '../../resources/pictures/cloudy/ny.png', //ny
+                '../../resources/pictures/cloudy/pz.png', //pz
+                '../../resources/pictures/cloudy/nz.png', //nz
+            ];
+        }
+
+        if (this.type === 'night') {
+            urls = [
+                '../../resources/pictures/night/px.png', //px
+                '../../resources/pictures/night/nx.png', //nx
+                '../../resources/pictures/night/py.png', //py
+                '../../resources/pictures/night/ny.png', //ny
+                '../../resources/pictures/night/pz.png', //pz
+                '../../resources/pictures/night/nz.png', //nz
+            ];
+        }
+
+        if (this.type === 'dusk') {
+            urls = [
+                '../../resources/pictures/dusk/px.png', //px
+                '../../resources/pictures/dusk/nx.png', //nx
+                '../../resources/pictures/dusk/py.png', //py
+                '../../resources/pictures/dusk/ny.png', //ny
+                '../../resources/pictures/dusk/pz.png', //pz
+                '../../resources/pictures/dusk/nz.png', //nz
+            ];
+        }
+
         let materials = [];
         for (let i = 0; i < 6; i++) {
             materials.push(new THREE.MeshBasicMaterial({
@@ -52,11 +89,16 @@ export class skybox {
                 side: THREE.DoubleSide
             }));
         }
-        let skyGeometry = new THREE.BoxGeometry(900, 900, 900);
+        let skyGeometry = new THREE.BoxGeometry(this.dim.x, this.dim.y, this.dim.z);
         this.skybox = new THREE.Mesh(skyGeometry, materials);
-        this.skybox.position.set(300,100,300);
+        this.skybox.position.set(this.pos.x, this.pos.y, this.pos.z);
         this.scene.add(this.skybox);
-        return this.skybox;
+    }
+
+    Update(timeElapsed) {
+        if (this.skybox){
+            this.skybox.rotation.y += timeElapsed*0.05;
+        }
     }
 
 }

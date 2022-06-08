@@ -253,9 +253,10 @@ class level_one {
         const params = {
             scene : this.scene,
             type: 'night',
+            dim: new THREE.Vector3(1000,1000,1000),
+            pos: new THREE.Vector3(325,0,325)
         }
         this.Skybox = new skybox(params);
-        this.sb = this.Skybox.makeSkybox();
     }
 
     _LoadAnimatedModels(){
@@ -400,7 +401,7 @@ class level_one {
         }
 
         //update rotation of skybox for dynamic skybox
-        this.sb.rotation.y += timeElapsedS*0.1;
+        this.Skybox.Update(timeElapsedS);
 
         //update character
         if (this.Character) {

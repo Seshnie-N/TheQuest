@@ -48,8 +48,8 @@ class level_one {
         this.addPauseButton();
         this.addSound();
 
-        const axesHelper = new THREE.AxesHelper( 600 );
-        this.scene.add( axesHelper );
+        // const axesHelper = new THREE.AxesHelper( 600 );
+        // this.scene.add( axesHelper );
 
         cannonDebugger = new CannonDebugger(this.scene, this.world);
 
@@ -153,7 +153,7 @@ class level_one {
 
         this.InitaliseTexture();
 
-        //stage 20x20 keys 5
+        //stage 10x10 keys 3
         
         var filled = [
             [1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ,1 ],
@@ -235,10 +235,11 @@ class level_one {
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'DaylightBox',
+            type: 'cloudy',
+            dim: new THREE.Vector3(600,600,600),
+            pos: new THREE.Vector3(150, 0, 150)
         }
         this.Skybox = new skybox(params);
-        this.sb = this.Skybox.makeSkybox();
     }
 
     _LoadAnimatedModels(){
@@ -380,10 +381,11 @@ class level_one {
                 opendoor = false;
             },1500);
 
-        }s
+        }
 
         //update rotation of skybox for dynamic skybox
         //this.sb.rotation.y += timeElapsedS*0.1;
+        this.Skybox.Update(timeElapsedS);
 
         //update character
         if (this.Character) {
