@@ -226,7 +226,7 @@ class level_one {
     addSkybox() {
         const params = {
             scene : this.scene,
-            type: 'day',
+            type: 'cloudy',
         }
         this.Skybox = new skybox(params);
         this.sb = this.Skybox.makeSkybox();
@@ -235,7 +235,7 @@ class level_one {
     _LoadAnimatedModels(){
 
         //set character location in scene
-        this.startPos = new CANNON.Vec3(40,0,10);
+        this.startPos = new CANNON.Vec3(40,100,10);
 
         //Params to be passed to the character class.
         const CharParams = {
@@ -501,15 +501,15 @@ class level_one {
         const loader = new THREE.TextureLoader();
         const shine = 0;
         cubeMaterials = [
-                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //right side
-                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //left side
-                new THREE.MeshBasicMaterial({ map: loader.load('./resources/img/Hedge_full_perms_texture_seamless.jpg')}), //top side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/pictures/hedge.jpg')}), //right side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/pictures/hedge.jpg')}), //left side
+                new THREE.MeshBasicMaterial({ map: loader.load('./resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
                 new THREE.MeshLambertMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //front side
-                new THREE.MeshLambertMaterial({ map: loader.load('./resources/img/hedge.jpg')}), //back side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/pictures/hedge.jpg')}), //front side
+                new THREE.MeshLambertMaterial({ map: loader.load('./resources/pictures/hedge.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshLambertMaterial({ map: loaderGround.load('./resources/img/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide, alphaTest:0.1,  shadowSide: true});
+        ground = new THREE.MeshLambertMaterial({ map: loaderGround.load('./resources/pictures/ulrick-wery-tileableset2-soil.jpg'), side: THREE.DoubleSide, alphaTest:0.1,  shadowSide: true});
     }
 }
 
