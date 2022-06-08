@@ -26,15 +26,7 @@ class level_one {
         Pause = false;
         //Mouse event listeners.
         document.addEventListener("click", (e)=> this._onClick(e), false);
-       // document.addEventListener("mousemove", (e)=> this._onMouseMove(e), false);
-    //    document.getElementById("explore").onclick = () => {
-    //     if (this.Character) {
-    //         this.Character.setStop();
-    //         document.getElementById("Win").style.width = "0%"
-    //         Pause = false;
-    //         this.animate();
-    //     }
-   // }
+
         this.mouse = new THREE.Vector2();
         this.raycaster = new THREE.Raycaster();
         this.addTimer();
@@ -73,37 +65,57 @@ class level_one {
         this.scene = new THREE.Scene();
 
         //configure light source
-        let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(20, 100, 10);
-        light.target.position.set(0, 0, 0);
+
+        //first directional light
+        let light = new THREE.DirectionalLight(0xFBFAF5, 1.0);
+        light.position.set(0,300,300);
+        light.target.position.set(300,20,0);
         light.castShadow = true;
         light.shadow.bias = -0.001;
         light.shadow.mapSize.width = 2048;
         light.shadow.mapSize.height = 2048;
-        light.shadow.camera.near = 0.1;
-        light.shadow.camera.far = 500.0;
         light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 100;
-        light.shadow.camera.right = -100;
-        light.shadow.camera.top = 100;
-        light.shadow.camera.bottom = -100;
+        light.shadow.camera.far = 700.0;
+        light.shadow.camera.left =350;
+        light.shadow.camera.right = -350;
+        light.shadow.camera.top = 350;
+        light.shadow.camera.bottom = -350;
         this.scene.add(light);
+        this.scene.add(light.target);
+
+        // const helper = new DirectionalLightHelper(light, 10);
+        // this.scene.add(helper);
+
+         //second directional light
+         const light2 = new THREE.DirectionalLight(0xFBFAF5, 1.0);
+         light2.position.set(0,300,0);
+         light2.target.position.set(300,20,300);
+         light.castShadow = true;
+         light.shadow.bias = -0.001;
+         light.shadow.mapSize.width = 2048;
+         light.shadow.mapSize.height = 2048;
+         light.shadow.camera.near = 0.5;
+         light.shadow.camera.far = 700.0;
+         light.shadow.camera.left =350;
+         light.shadow.camera.right = -350;
+         light.shadow.camera.top = 350;
+         light.shadow.camera.bottom = -350;
+         this.scene.add( light2 );
+         this.scene.add(light2.target);
 
         //add hemisphere light to scene.
-        const intensity = 0.8;
-        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
+        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 0.8);
         this.scene.add(hemi_light);
 
-        light = new THREE.AmbientLight(0xFFFFFF, 5.0);
-        this.scene.add(light);
+        const ambi_light = new THREE.AmbientLight(0xFFFFFF, 1.0);
+        this.scene.add(ambi_light);
         this.canvas = document.querySelector('#c');
         this.renderer = new THREE.WebGLRenderer({
             canvas: this.canvas,
             antialias: true,
         });
         this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.BasicShadowMap;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -291,9 +303,11 @@ class level_one {
             //check if all keys collected
             if (collectedKeys >= key.children.length){
                 opendoor = true;
-                setTimeout(function(){ Pause=true;},1000)
-                let WinOverlay = document.getElementById("Win");
-                    WinOverlay.style.width = "100%";
+                setTimeout(function(){ Pause=true;
+                    let WinOverlay = document.getElementById("Win");
+                    WinOverlay.style.width = "100%";},1600)
+                // let WinOverlay = document.getElementById("Win");
+                //     WinOverlay.style.width = "100%";
             }else{
                 let width =70;
                 this.ObjtextSpan = document.createElement("span")
@@ -302,7 +316,7 @@ class level_one {
                 this.ObjtextSpan.style.fontFamily = "sans-serif"
                 this.ObjtextSpan.style.color = '#ffffff'
                 this.ObjtextSpan.style.fontSize = 45 + 'px'
-                this.ObjtextSpan.textContent = "Find the Key"
+                this.ObjtextSpan.textContent = "Find the Keys"
         
                 this.objText = document.createElement('div')
                 this.objText.id = "objDiv"
@@ -463,7 +477,6 @@ class level_one {
         );
         unHidden.rotation.set(-Math.PI/2,0,0);
         unHidden.position.set(x,30,z);
-        unHidden.receiveShadow = true;
 
         unHiddenKey.add( unHidden );
 
@@ -479,14 +492,14 @@ class level_one {
             cubeMaterials
         );
         wall.castShadow = true;
-        //wall.position.set(x,5,z);
+        wall.receiveShadow = true;
 
         this.wallBody = new CANNON.Body({
             shape: new CANNON.Box(new CANNON.Vec3(15,15,15)),
             type: CANNON.Body.STATIC,
             position: new CANNON.Vec3(x,15,z),
         });
-        //this.wallBody.position.set(x,5,z);
+        
         this.world.addBody(this.wallBody);
 
         wall.position.copy(this.wallBody.position);
@@ -571,7 +584,11 @@ class level_one {
             yoyo:true // The yoyo effect
         })
 
-            
+        gltf.scene.traverse( function( node ) {
+            if ( node.isMesh ) { node.castShadow = true; }
+
+        } );
+
             key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
         return key;
@@ -686,15 +703,15 @@ class level_one {
     InitaliseTexture() {
         const loader = new THREE.TextureLoader();
         cubeMaterials = [
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //right side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //left side
+                new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //right side
+                new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //left side
                 new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
                 new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //front side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //back side
+                new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //front side
+                new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
+        ground = new THREE.MeshLambertMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
         const hiddenLoader = new THREE.TextureLoader();
         hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
     }

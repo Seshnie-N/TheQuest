@@ -178,8 +178,8 @@ export class Character {
         const _Q = new THREE.Quaternion();
 
         //Speed of movement.
-        let speed = 1;
-        let rSpeed = 1;
+        let speed = 0.8;
+        let rSpeed = 0.8;
 
         //Used to see if the model is standing on another object.
         if (this.CharacterBody.position.y < 1) {
