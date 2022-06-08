@@ -64,27 +64,42 @@ class level_one {
         //create scene
         this.scene = new THREE.Scene();
 
-        //configure light source
-        let light = new THREE.DirectionalLight(0xFFFFFF, 1.0);
-        light.position.set(20, 100, 10);
-        light.target.position.set(0, 0, 0);
-        light.castShadow = true;
-        light.shadow.bias = -0.001;
-        light.shadow.mapSize.width = 2048;
-        light.shadow.mapSize.height = 2048;
-        light.shadow.camera.near = 0.1;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.near = 0.5;
-        light.shadow.camera.far = 500.0;
-        light.shadow.camera.left = 100;
-        light.shadow.camera.right = -100;
-        light.shadow.camera.top = 100;
-        light.shadow.camera.bottom = -100;
-        this.scene.add(light);
+         //directional light
+         let light = new THREE.DirectionalLight(0xc2c5cc, 1.0);
+         light.position.set(650,300,600);
+         light.target.position.set(500,20,300);
+         light.castShadow = true;
+         light.shadow.bias = -0.001;
+         light.shadow.mapSize.width = 2048;
+         light.shadow.mapSize.height = 2048;
+         light.shadow.camera.near = 0.5;
+         light.shadow.camera.far = 1000.0;
+         light.shadow.camera.left =500;
+         light.shadow.camera.right = -500;
+         light.shadow.camera.top = 350;
+         light.shadow.camera.bottom = -350;
+         this.scene.add(light);
+         this.scene.add(light.target);
+ 
+         //second directional light
+         const light2 = new THREE.DirectionalLight( 0xc2c5cc,0.7 );
+         light2.position.set(500,20,100);
+         light2.target.position.set(650,300,600);
+         light.castShadow = true;
+         light.shadow.bias = -0.001;
+         light.shadow.mapSize.width = 2048;
+         light.shadow.mapSize.height = 2048;
+         light.shadow.camera.near = 0.5;
+         light.shadow.camera.far = 1000.0;
+         light.shadow.camera.left =500;
+         light.shadow.camera.right = -500;
+         light.shadow.camera.top = 350;
+         light.shadow.camera.bottom = -350;
+         this.scene.add( light2 );
+         this.scene.add(light2.target);
 
         //add hemisphere light to scene.
-        const intensity = 0.8;
-        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
+        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 0.8);
         this.scene.add(hemi_light);
 
         //add ambient light
@@ -587,6 +602,10 @@ class level_one {
             yoyo:true // The yoyo effect
         })
 
+        gltf.scene.traverse( function( node ) {
+            if ( node.isMesh ) { node.castShadow = true; }
+
+        } );
             
             key.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
@@ -728,15 +747,15 @@ class level_one {
     InitaliseTexture() {
         const loader = new THREE.TextureLoader();
         cubeMaterials = [
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //right side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //left side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
-                new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //front side
-                new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //back side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //right side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //left side
+            new THREE.MeshBasicMaterial({ map: loader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')}), //top side
+            new THREE.MeshBasicMaterial({color: 'green', side: THREE.DoubleSide}), //bottom side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //front side
+            new THREE.MeshLambertMaterial({ map: loader.load('../../resources/pictures/hedge_dark.jpg')}), //back side
             ];
         const loaderGround = new THREE.TextureLoader();
-        ground = new THREE.MeshBasicMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
+        ground = new THREE.MeshLambertMaterial({ map: loaderGround.load('../../resources/pictures/ulrick-wery-tileableset2-soil.jpg')});
         const hiddenLoader = new THREE.TextureLoader();
         hiddenTexture = new THREE.MeshBasicMaterial({ map: hiddenLoader.load('../../resources/pictures/Hedge_full_perms_texture_seamless.jpg')});
     }
