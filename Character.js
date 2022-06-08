@@ -41,6 +41,17 @@ export class Character {
         //Load Model.
         this._LoadModel();
         this.input = new CharacterController();
+
+        //additional directional light to illuminate charcter model
+        const char_light = new THREE.DirectionalLight( 0xFFFFFF, 1.0 );
+        char_light.position.set(0,400,0);
+        char_light.target.position.set(this.Character);
+        this.scene.add( char_light);
+        this.scene.add(char_light);
+
+        // const helper = new THREE.DirectionalLightHelper(char_light, 100);
+        // this.scene.add(helper);
+
     }
 
     //getter functions
@@ -80,11 +91,17 @@ export class Character {
 
 
         const loader = new FBXLoader(this.manager);
+        const tloader = new THREE.TextureLoader();
         loader.setPath('./resources/models/knight/');
         loader.load('Paladin.fbx', (fbx) => {
             fbx.scale.setScalar(0.1);
             fbx.traverse(c => {
                 c.castShadow = true;
+                if ( c.material ) {
+                    console.log("metal detected");
+                    c.material.metalness = 1.0;
+                } 
+            
             });
             this.Character = fbx;
 
@@ -102,7 +119,7 @@ export class Character {
             this.CharacterBody = new CANNON.Body({
                 mass: 1000,
                 position:  this.startPos,
-                material: heavyMaterial
+                material: heavyMaterial,
             });
             this.CharacterBody.addShape(characterShape, new CANNON.Vec3(0, height / 2, ));
             this.CharacterBody.angularDamping = 1;
@@ -114,7 +131,7 @@ export class Character {
 
             //Add character marker for minimap
             this.charMarker = new THREE.Mesh(
-                new THREE.SphereGeometry(5),
+                new THREE.SphereGeometry(8),
                 new THREE.MeshBasicMaterial({color: 0xff0000})
             );
             this.charMarker.position.set(this.CharacterBody.position.x, 100, this.CharacterBody.position.z);

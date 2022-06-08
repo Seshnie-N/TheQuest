@@ -73,8 +73,11 @@ class level_one {
         this.scene = new THREE.Scene();
 
         //configure light source
+
+        //directional light
         let light = new THREE.DirectionalLight(0xFBFAF5, 1.0);
-        light.position.set(400,250,400);
+        light.position.set(100,300,400);
+        light.target.position.set(500,20,100);
         light.castShadow = true;
         light.shadow.bias = -0.001;
         light.shadow.mapSize.width = 2048;
@@ -86,24 +89,30 @@ class level_one {
         light.shadow.camera.top = 350;
         light.shadow.camera.bottom = -350;
         this.scene.add(light);
+        this.scene.add(light.target);
 
-        this.scene.add(new THREE.CameraHelper(light.shadow.camera));
-
-        // const helper = new THREE.DirectionalLightHelper( light, 10 );
-        // this.scene.add( helper );
-
-
-
-        // const dirLight1 = new THREE.DirectionalLight( 0xffffff );
-        // dirLight1.position.set( 700,100,700);
-        // this.scene.add( dirLight1 );
-
+        //second directional light
+        const light2 = new THREE.DirectionalLight( 0xffffff );
+        light2.position.set(400,300,400);
+        light2.target.position.set(200,20,0);
+        light.castShadow = true;
+        light.shadow.bias = -0.001;
+        light.shadow.mapSize.width = 2048;
+        light.shadow.mapSize.height = 2048;
+        light.shadow.camera.near = 0.5;
+        light.shadow.camera.far = 700.0;
+        light.shadow.camera.left =350;
+        light.shadow.camera.right = -350;
+        light.shadow.camera.top = 350;
+        light.shadow.camera.bottom = -350;
+        this.scene.add( light2 );
+        this.scene.add(light2.target);
 
         //add hemisphere light to scene.
-        // const intensity = 0.8;
-        // const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, intensity);
-        // this.scene.add(hemi_light);
+        const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 0.8);
+        this.scene.add(hemi_light);
 
+        //ambient light
         light = new THREE.AmbientLight(0xFBFAF5, 1.0);
         this.scene.add(light);
 
@@ -414,8 +423,15 @@ class level_one {
             });
 
             let model = gltf.scene;
+            
             door.add(model);
         },(xhr) => xhr, ( err ) => console.error( err ));
+
+        //add a light to the door
+        const door_light = new THREE.PointLight( 0xFFD700, 3, 20 );
+        door_light.position.set( x,21,z+12 );
+        door_light.add(new THREE.Mesh( new THREE.SphereGeometry( 0.5, 16, 8 ), new THREE.MeshBasicMaterial( { color: 0xFFD700 } ) ));
+        this.scene.add( door_light );
 
         return door;
     }
@@ -427,9 +443,15 @@ class level_one {
         tree_loader.load('./resources/models/key/scene.gltf',function (gltf) {
             gltf.scene.scale.set(1,1,1);
             gltf.scene.position.set(x,3,z);
-            model = gltf.scene;
-            model.castShadow = true;
 
+            gltf.scene.traverse( function( node ) {
+
+                if ( node.isMesh ) { node.castShadow = true; }
+        
+            } );
+
+            model = gltf.scene;
+            
             gsap.to(gltf.scene.position, {y:'+=5',
             duration:2, //The speed of the key 
             ease:'none',
