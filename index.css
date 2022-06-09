@@ -10,16 +10,17 @@ html, body {
 }
 
 .heading{
-  padding: 1rem;
+  padding-top: 4rem;
   font-family: knight;
   font-size: 10rem;
   text-align: center;
   color: white;
+  
 }
 
 .btn-group{
   position: fixed;
-  top: 70%;
+  top: 60%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
