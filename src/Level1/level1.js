@@ -206,8 +206,8 @@ class level_one {
                         Level.add( spineGrass );
                     }
                     if (filled[j][i] === 5){
-                        const r = Math.floor(Math.random() * 30)+1
-                        const s = Math.floor(Math.random() * 30)+1
+                        const r = Math.floor(Math.random() * 20)+1
+                        const s = Math.floor(Math.random() * 20)+1
                         const shrub = this.Shrub(i*30+r-15,j*30+s-15);   
                         Level.add( shrub );
                     }
@@ -696,7 +696,7 @@ class level_one {
     
         shrub_loader = new GLTFLoader();
         shrub_loader.load('../../resources/models/low_poly_shrub/scene.gltf',function (gltf) {
-            gltf.scene.scale.set(25,3,25); 
+            gltf.scene.scale.set(25,15,25); 
             gltf.scene.position.set(x,0,z); 
             shrub.add(gltf.scene);  
         },(xhr) => xhr, ( err ) => console.error( err ));
