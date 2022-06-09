@@ -66,7 +66,7 @@ class level_one {
 
          //directional light
          let light = new THREE.DirectionalLight(0xc2c5cc, 1.0);
-         light.position.set(650,300,600);
+         light.position.set(500,300,600);
          light.target.position.set(500,20,300);
          light.castShadow = true;
          light.shadow.bias = -0.001;
@@ -80,23 +80,26 @@ class level_one {
          light.shadow.camera.bottom = -350;
          this.scene.add(light);
          this.scene.add(light.target);
+
+        // const helper1 = new THREE.DirectionalLightHelper(light, 10);
+        // this.scene.add(helper1);
  
          //second directional light
-         const light2 = new THREE.DirectionalLight( 0xc2c5cc,0.7 );
-         light2.position.set(500,20,100);
-         light2.target.position.set(650,300,600);
-         light.castShadow = true;
-         light.shadow.bias = -0.001;
-         light.shadow.mapSize.width = 2048;
-         light.shadow.mapSize.height = 2048;
-         light.shadow.camera.near = 0.5;
-         light.shadow.camera.far = 1000.0;
-         light.shadow.camera.left =500;
-         light.shadow.camera.right = -500;
-         light.shadow.camera.top = 350;
-         light.shadow.camera.bottom = -350;
-         this.scene.add( light2 );
-         this.scene.add(light2.target);
+        //  const light2 = new THREE.DirectionalLight( 0xc2c5cc,0.7 );
+        //  light2.position.set(650,300,600);
+        //  light2.target.position.set(500,20,300);
+        //  light2.castShadow = true;
+        //  light2.shadow.bias = -0.001;
+        //  light2.shadow.mapSize.width = 2048;
+        //  light2.shadow.mapSize.height = 2048;
+        //  light2.shadow.camera.near = 0.5;
+        //  light2.shadow.camera.far = 1000.0;
+        //  light2.shadow.camera.left =500;
+        //  light2.shadow.camera.right = -500;
+        //  light2.shadow.camera.top = 350;
+        //  light2.shadow.camera.bottom = -350;
+        //  this.scene.add( light2 );
+        //  this.scene.add(light2.target);
 
         //add hemisphere light to scene.
         const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 0.8);

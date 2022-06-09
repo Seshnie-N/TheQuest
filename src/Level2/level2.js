@@ -62,7 +62,7 @@ class level_one {
 
         //first directional light
         let light = new THREE.DirectionalLight(0xffdb6a, 1.0);
-        light.position.set(300,250,400);
+        light.position.set(450,350,500);
         light.target.position.set(200,20,0);
         light.castShadow = true;
         light.shadow.bias = -0.001;
@@ -77,25 +77,28 @@ class level_one {
         this.scene.add(light);
         this.scene.add(light.target);
 
-        // const helper = new DirectionalLightHelper(light, 10);
-        // this.scene.add(helper);
+        // const helper1 = new THREE.DirectionalLightHelper(light, 10);
+        // this.scene.add(helper1);
 
          //second directional light
-         const light2 = new THREE.DirectionalLight(0xffdb6a, 1.0);
-         light2.position.set(0,300,200);
+         const light2 = new THREE.DirectionalLight(0xffdb6a, 0.8);
+         light2.position.set(450,350,500);
          light2.target.position.set(200,20,0);
-         light.castShadow = true;
-         light.shadow.bias = -0.001;
-         light.shadow.mapSize.width = 2048;
-         light.shadow.mapSize.height = 2048;
-         light.shadow.camera.near = 0.5;
-         light.shadow.camera.far = 700.0;
-         light.shadow.camera.left =350;
-         light.shadow.camera.right = -350;
-         light.shadow.camera.top = 350;
-         light.shadow.camera.bottom = -350;
+         light2.castShadow = true;
+         light2.shadow.bias = -0.001;
+         light2.shadow.mapSize.width = 2048;
+         light2.shadow.mapSize.height = 2048;
+         light2.shadow.camera.near = 0.5;
+         light2.shadow.camera.far = 700.0;
+         light2.shadow.camera.left =350;
+         light2.shadow.camera.right = -350;
+         light2.shadow.camera.top = 350;
+         light2.shadow.camera.bottom = -350;
          this.scene.add( light2 );
          this.scene.add(light2.target);
+
+        // const helper = new THREE.DirectionalLightHelper(light2, 10);
+        // this.scene.add(helper);
 
         //add hemisphere light to scene.
         const hemi_light = new THREE.HemisphereLight(0xB1E1FF, 0xB97A20, 0.8);

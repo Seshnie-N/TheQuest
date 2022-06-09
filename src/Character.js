@@ -13,20 +13,11 @@ export class Character {
 
     init(params){
         this.scene = params.scene;
-        this.world = params.world;
         this.renderer = params.renderer;
         this.camera = params.camera;
         this.startPos = params.startPos;
-
-        //used for bodies and meshes that need to be synced together
-        this.meshes = params.meshes;
-        this.bodies = params.bodies;
-        this.canvas = params.canvas;
+        this.world = params.world;
         this.mapCamera = params.mapCamera;
-
-        //used for bodies and meshes that need to be removed.
-        this.rBodies = params.rBodies;
-        this.rMeshes = params.rMeshes;
 
         this.Stop=false;
 
@@ -77,7 +68,6 @@ export class Character {
             const element = event.target;
             element.remove();
         }
-
 
         const loader = new FBXLoader(this.manager);
         loader.setPath('../../resources/models/knight/');
@@ -194,13 +184,13 @@ export class Character {
         if (this.input.CharacterMotions.jump) {
             const listener = new THREE.AudioListener();
             this.camera.add(listener);
-            // const sound = new THREE.Audio(listener);
-            // const audioLoader = new THREE.AudioLoader();
-            // audioLoader.load('resources/sounds/jumpSound.wav', function (buffer) {
-            //     sound.setBuffer(buffer);
-            //     sound.setVolume(0.3);
-            //     sound.play();
-            // });
+            const sound = new THREE.Audio(listener);
+            const audioLoader = new THREE.AudioLoader();
+            audioLoader.load('../../resources/audio/jumpSound.wav', function (buffer) {
+                sound.setBuffer(buffer);
+                sound.setVolume(0.3);
+                sound.play();
+            });
 
             if (this.CharacterBody.position.y <= this.jumpInitialHeight + 2.5) {
                 if (this.stateMachine._currentState.Name === 'jump') {
@@ -301,13 +291,13 @@ class CharacterController {
             case "ShiftLeft": // SHIFT
                 this.CharacterMotions.run = true;
                 break;
+            case "ShiftRight": // SHIFT
+                this.CharacterMotions.run = true;
+                break;
             case "Space": // SPACE
                 this.CharacterMotions.jump = true;
                 break;
-            case 38: // up
-            case 37: // left
-            case 40: // down
-            case 39: // right
+
                 break;
         }
     }
@@ -329,20 +319,18 @@ class CharacterController {
             case "ShiftLeft": // SHIFT
                 this.CharacterMotions.run = false;
                 break;
+            case "ShiftRight": // SHIFT
+                this.CharacterMotions.run = false;
+                break;
             case "Space": // SPACE
                 this.CharacterMotions.jump = false;
-                break;
-            case 38: // up
-            case 37: // left
-            case 40: // down
-            case 39: // right
                 break;
         }
     }
 
 }
 
-//finite state machine. This is the parent class that will be used for inheritance
+//finite state machine. Each animation state will inherit the attributes of this parent class
 class FiniteStateMachine {
     constructor() {
         this._states = {};
@@ -376,7 +364,7 @@ class FiniteStateMachine {
     }
 }
 
-//inheritance child from above. Used to initial states by adding it to the FSM
+//inheritance child from above. Used to initialise states by adding it to the FSM
 class CharacterFSM extends FiniteStateMachine {
     constructor(proxy) {
         super();
@@ -394,7 +382,7 @@ class CharacterFSM extends FiniteStateMachine {
     }
 }
 
-//Another parent class that will be inherited from.
+//Parent class that each animation state will inherit from
 class State {
     constructor(parent) {
         this._parent = parent;
