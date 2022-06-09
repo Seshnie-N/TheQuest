@@ -68,7 +68,7 @@ class level_one {
 
         //first directional light
         let light = new THREE.DirectionalLight(0xFBFAF5, 1.0);
-        light.position.set(0,300,300);
+        light.position.set(0,450,300);
         light.target.position.set(300,20,0);
         light.castShadow = true;
         light.shadow.bias = -0.001;
@@ -87,19 +87,19 @@ class level_one {
         // this.scene.add(helper);
 
          //second directional light
-         const light2 = new THREE.DirectionalLight(0xFBFAF5, 1.0);
-         light2.position.set(0,300,0);
-         light2.target.position.set(300,20,300);
-         light.castShadow = true;
-         light.shadow.bias = -0.001;
-         light.shadow.mapSize.width = 2048;
-         light.shadow.mapSize.height = 2048;
-         light.shadow.camera.near = 0.5;
-         light.shadow.camera.far = 700.0;
-         light.shadow.camera.left =350;
-         light.shadow.camera.right = -350;
-         light.shadow.camera.top = 350;
-         light.shadow.camera.bottom = -350;
+         const light2 = new THREE.DirectionalLight(0xFBFAF5, 0.8);
+         light2.position.set(0,450,300);
+         light2.target.position.set(300,20,0);
+         light2.castShadow = true;
+         light2.shadow.bias = -0.001;
+         light2.shadow.mapSize.width = 2048;
+         light2.shadow.mapSize.height = 2048;
+         light2.shadow.camera.near = 0.5;
+         light2.shadow.camera.far = 700.0;
+         light2.shadow.camera.left =350;
+         light2.shadow.camera.right = -350;
+         light2.shadow.camera.top = 350;
+         light2.shadow.camera.bottom = -350;
          this.scene.add( light2 );
          this.scene.add(light2.target);
 
