@@ -264,7 +264,7 @@ class level_one {
         const params = {
             scene : this.scene,
             type: 'night',
-            dim: new THREE.Vector3(1000,1000,1000),
+            dim: new THREE.Vector3(1300,1300,1300),
             pos: new THREE.Vector3(325,0,325)
         }
         this.Skybox = new skybox(params);
@@ -919,7 +919,7 @@ class level_one {
     }
 
     addTimer(){
-        var duration = 60 * 7;
+        var duration = 60 * 10;
         
         var timer = duration, minutes, seconds;
         
